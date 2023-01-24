@@ -1,0 +1,80 @@
+.chartdetails {
+    position: relative;
+    margin-left: 900px;
+    height: 150px;
+    width: 150px;
+    margin-top: 300px;
+    animation: fadeIn 4s;
+    /* animation: fadeOut 6s; */
+
+}
+
+@keyframes fadeIn {
+
+    100% {
+        opacity: 1;
+    }
+
+    0% {
+        opacity: 0;
+    }
+
+}
+
+
+
+
+/* @keyframes fadeOut {
+
+    100% {
+        opacity: 0;
+    }
+
+    0% {
+        opacity: 1;
+    }
+
+} */
+
+
+/* .chartdetails {
+    position: absolute;
+    top: 210px;
+    left: 200px;
+    transform: rotate();
+    background: blue;
+    color: black;
+    padding: $pad;
+    border-radius: 6px;
+    width: 440px;
+    height: 100px;
+    box-shadow: 0 0 3px #888888;
+
+    animation-name: dropHeader;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 2.9s;
+}
+
+.chartdetails {
+    text-align: left;
+    padding: 36px $pad * 3;
+}
+
+@keyframes dropHeader {
+    0% {
+        transform: translateY(-260px);
+    }
+
+    80% {
+        transform: translateY(0);
+    }
+
+    90% {
+        transform: rotate() translateY(-10px);
+    }
+
+    100% {
+        transform: rotate() translateY(0);
+    }
+} */

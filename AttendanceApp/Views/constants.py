@@ -1,0 +1,18 @@
+
+
+Login = 'Employee Login Successfully'
+Addemployee = 'Employee Added Sucessfully'
+Logout = 'Employee Logout Successfully'
+shift1time = '"2022-08-31 13:45:00"'
+shift2time = '"2022-08-31 13:45:00"'
+shift3time = '"2022-08-31 13:45:00"'
+shift4time = '"2022-08-31 13:45:00"'
+shift5time = '"2022-08-31 13:45:00"'
+shift6time = '18:00:00'
+shift7time = '17:00:00'
+shift8time = '16:00:00'
+shift9time = '15:00:00'
+shift10time = '14:00:00'
+shift1 = 'Morning'
+shift2 = 'Afternoon'
+shift3 = 'night'

@@ -1,0 +1,46 @@
+{
+  "name": "rest-api-framework",
+  "version": "0.2.0",
+  "description": "Framework for building REST API with TypeScript support",
+  "main": "api.js",
+  "types": "types",
+  "engines": {
+    "node": ">=12.9"
+  },
+  "scripts": {
+    "test": "nyc --reporter=html mocha",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov",
+    "ts-lint": "dtslint types",
+    "lint": "eslint --no-ignore --fix --config .eslintrc.json api.js ./**/*.js"
+  },
+  "author": "Roshan Gade <roshangade@hotmail.com>",
+  "homepage": "https://github.com/roshangade/rest-api-framework",
+  "keywords": [
+    "rest-api",
+    "rest-api-framework",
+    "json-api",
+    "promise",
+    "promise-api",
+    "framework",
+    "javascript",
+    "deferred-tasks",
+    "delayed-jobs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roshangade/rest-api-framework.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^12.x",
+    "chai": "^4.x",
+    "dtslint": "^3.x",
+    "eslint": "^6.x",
+    "eslint-config-google": "^0.14.x",
+    "mocha": "^7.x",
+    "node-mocks-http": "roshangade/node-mocks-http",
+    "nyc": "^15.x",
+    "sinon": "^9.x"
+  },
+  "dependencies": {}
+}

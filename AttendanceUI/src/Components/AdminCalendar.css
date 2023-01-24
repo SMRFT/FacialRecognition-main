@@ -1,0 +1,214 @@
+.AdminCalendar {
+    background-color: rgb(226, 249, 253);
+    color: rgb(0, 0, 0);
+    border-radius: 10px;
+    border-color: rgb(0, 0, 0);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    font-family: monospace;
+    font-style: oblique;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: auto;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 3px,
+}
+
+
+.center {
+    display: block;
+    margin-left: 1700px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    width: 150px;
+    height: 150px;
+    /* background: rgb(48, 47, 47); */
+    border-radius: 50%;
+    border: 0px solid rgb(14, 115, 76);
+    padding: 10px;
+
+}
+
+
+body {
+    background-color: #d21818;
+
+}
+
+.buttonDownload {
+    display: inline-block;
+    position: absolute;
+    padding: 10px 25px;
+    margin-left: 1700px;
+    margin-top: 265px;
+    background-color: #4CC713;
+    color: white;
+    width: 7em;
+    height: 30px;
+
+    font-family: sans-serif;
+    text-decoration: none;
+    font-size: 0.9em;
+    text-align: center;
+    text-indent: 15px;
+}
+
+.buttonDownload:hover {
+    background-color: rgb(245, 106, 106);
+    color: white;
+}
+
+.buttonDownload:before,
+.buttonDownload:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 20px;
+    top: 52%;
+
+}
+
+/* Download box shape  */
+.buttonDownload:before {
+    width: 10px;
+    height: 2px;
+    margin-left: 25px;
+    margin-top: 1px;
+    border-style: solid;
+    border-width: 0 4px 4px;
+}
+
+/* Download arrow shape */
+.buttonDownload:after {
+    width: 10%;
+    height: 10%;
+    margin-left: 25px;
+    margin-top: 7px;
+
+    border-style: solid;
+    border-width: 4px 4px 0 4px;
+    border-color: transparent;
+    border-top-color: inherit;
+
+    animation: downloadArrow 2s linear infinite;
+    animation-play-state: paused;
+}
+
+.buttonDownload:hover:before {
+    border-color: #4CC713;
+}
+
+.buttonDownload:hover:after {
+    border-top-color: #4CC713;
+    animation-play-state: running;
+}
+
+/* keyframes for the download icon anim */
+@keyframes downloadArrow {
+
+    /* 0% and 0.001% keyframes used as a hackish way of having the button frozen on a nice looking frame by default */
+    0% {
+        margin-top: -7px;
+        opacity: 1;
+    }
+
+    0.001% {
+        margin-top: -15px;
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        margin-top: 0;
+        opacity: 0;
+    }
+}
+
+
+.toolbar {
+    display: block;
+
+    margin-bottom: -180px;
+    width: 10%;
+    height: 150px;
+
+
+}
+
+
+/* .summary {
+
+    display: inline-block;
+    position: absolute;
+    padding: 10px 25px;
+    margin-left: 1200px;
+    
+    margin-bottom: -80px;
+    margin-top: -45px;
+    background-color: #4710b4;
+    color: white;
+
+    font-family: sans-serif;
+    text-decoration: none;
+    font-size: 0.92em;
+    text-align: center;
+    text-indent: 15px;
+} */
+
+.previous {
+    display: inline-block;
+    position: absolute;
+    padding: 10px 25px;
+    margin-left: 10px;
+    /* margin-bottom: -20px; */
+    margin-top: -100px;
+    background-color: #5ea3f7;
+    color: rgb(9, 232, 76);
+
+    font-family: sans-serif;
+    text-decoration: none;
+    font-size: 0.92em;
+    text-align: center;
+    text-indent: 15px;
+}
+
+.next {
+    display: inline-block;
+    position: absolute;
+    padding: 10px 25px;
+
+    margin-left: 160px;
+    /* margin-bottom: -20px; */
+    margin-top: -100px;
+    background-color: #5ea3f7;
+    color: rgb(9, 232, 76);
+
+    font-family: sans-serif;
+    text-decoration: none;
+    font-size: 0.92em;
+    text-align: center;
+    text-indent: 15px;
+}
+
+.name {
+    display: inline-block;
+    position: absolute;
+    padding: 20px 25px;
+    margin-left: 1680px;
+    /* margin-bottom: 40px; */
+    /* margin-bottom: -30px; */
+    margin-top: -65px;
+    /* background-color: #35323b; */
+    color: rgb(59, 129, 241);
+    font-family: sans-serif;
+    text-decoration: none;
+    font-size: 1.0em;
+    text-align: center;
+    text-indent: 15px;
+}

@@ -1,0 +1,49 @@
+.navbar a:focus {
+    color: steelblue;
+    font-size: larger;
+    font-family: cursive;
+    width: 180px;
+}
+
+.navbar a:hover {
+    color: rgb(5, 183, 214);
+    font-size: larger;
+}
+
+.nav_link1 {
+    margin-right: 50px;
+    color: cadetblue;
+    font-weight: 900;
+    font-size: larger;
+    font-family: serif;
+    font-style: unset;
+}
+
+.nav_link2 {
+    margin-right: 50px;
+    width: 160px;
+    color: cadetblue;
+    font-weight: 900;
+    font-size: larger;
+    font-family: serif;
+    font-style: unset;
+}
+
+.nav_link3 {
+    margin-right: 50px;
+    width: 140px;
+    color: cadetblue;
+    font-weight: 900;
+    font-size: larger;
+    font-family: serif;
+    font-style: unset;
+}
+
+.nav_link4 {
+    margin-right: 50px;
+    color: cadetblue;
+    font-weight: 900;
+    font-size: larger;
+    font-family: serif;
+    font-style: unset;
+}
