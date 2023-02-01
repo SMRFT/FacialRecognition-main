@@ -19,6 +19,7 @@ function Admincalendar() {
   const name = params.name;
   const sub = name.split('_');
   const id = sub[1]
+  const name1 = sub[0]
   let image = ''
   // let [name, setName] = useState("");
   const [eventData, setEventData] = useState([]);
@@ -229,7 +230,7 @@ function Admincalendar() {
       <br />
       <img src={`${image}`} class="center" />
       <br />
-      <div class="name">{name}</div>
+      <div class="name">{name1}</div>
       <br />
       <i style={{ color: "green", fontSize: "35px", marginBottom: "200px", marginLeft: "1850px" }} onClick={() => setShow(true)} data-toggle="modal" className="bi bi-journal-text" />
       <div className='modal-dialog'>

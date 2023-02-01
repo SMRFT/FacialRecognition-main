@@ -2,9 +2,9 @@ module.exports = Object.freeze({
     shift1: 'Morning',
     shift2: 'Afternoon',
     shift3: 'night',
-    Webcamlogin: 'Thanks For Login A beautiful Day',
+    Webcamlogin: 'Thanks For Login',
     Webcamalreadylogin: 'You Already Logged in Today',
-    Webcamlogout: 'LogOut Successful See You Later',
+    Webcamlogout: 'LogOut Successful',
     Webcamnotlogin: 'You Cant Login Today',
     AddEmp: 'Employee Added Sucessfully',
     AddEmpError: 'Some Error Occured in Add Employee',
@@ -12,5 +12,8 @@ module.exports = Object.freeze({
     shift2time: '13:00:00',
     shift3time: '13:01:00',
     shift4time: '20:00:00',
-
+    lunchlogout: ' its lunchtime!',
+    lunchalreadylogout: 'Ur Already in Lunch!',
+    lunchalreadylogout: 'you are already in lunch',
+    lunchlogin: 'thanks for login Please continue your work'
 });

@@ -10,7 +10,6 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 # image upload via local disk
-
 image_storage = FileSystemStorage(
     # Physical file location ROOT
     location=u'{0}/my_Employee/'.format(
@@ -24,9 +23,8 @@ image_storage = FileSystemStorage(
 def image_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
     extension = filename.split('.')[-1]
-    new_filename = "%s.%s" % (instance.id, extension)
+    new_filename = "%s.%s" % (instance.name, extension)
     return u'picture/{0}'.format(new_filename)
-
 
 # Employee
 
@@ -36,7 +34,7 @@ class Employee(models.Model):
     name = models.CharField(max_length=500)
     mobile = models.CharField(max_length=500)
     department = models.CharField(max_length=500)
-    emailid = models.CharField(max_length=500)
+    email = models.CharField(max_length=500)
     dateofjoining = models.DateField()
     bankaccnum = models.IntegerField()
     # proof = models.FileField()
@@ -46,7 +44,6 @@ class Employee(models.Model):
     imgSrc = models.ImageField(
         upload_to=image_directory_path, storage=image_storage)
     imgSrcname = models.CharField(max_length=500)
-
 
 # Admin Login
 
@@ -86,8 +83,8 @@ class Admincalendarlogin(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     month = models.IntegerField()
+    year = models.IntegerField()
     shift = models.CharField(max_length=500)
-    overtimehours = models.CharField(max_length=500)
     date = models.DateField()
 
 # Event calendar model
@@ -107,20 +104,43 @@ class Hour(models.Model):
 
 
 class Summary(models.Model):
-    id = models.CharField(max_length=500, primary_key=True)
+    id = models.CharField(max_length=500)
     name = models.CharField(max_length=500)
-    month = models.IntegerField()
+    month = models.IntegerField(primary_key=True)
     workingdays = models.IntegerField()
     leavedays = models.IntegerField()
     overtime = models.IntegerField()
     overtimedate = models.DateField()
     leavedates = models.DateField()
     overtimehours = models.CharField(max_length=500)
+    workedhours = models.CharField(max_length=500)
+
+# Employee calendar export model for single employee
 
 
 class Employeeexport(models.Model):
     name = models.CharField(max_length=500)
     start = models.DateTimeField()
     end = models.DateTimeField()
-    # hour = models.DurationField()
     shift = models.CharField(max_length=500)
+
+# Employee calendar export model for all the employee
+
+
+class Summaryexport(models.Model):
+    id = models.CharField(max_length=500, primary_key=True)
+    name = models.CharField(max_length=500)
+    month = models.IntegerField()
+    year = models.IntegerField()
+    workingdays = models.IntegerField()
+    leavedays = models.IntegerField()
+    overtime = models.IntegerField()
+
+
+class Breakhours(models.Model):
+    id = models.CharField(max_length=500)
+    iddate = models.CharField(max_length=500, primary_key=True)
+    name = models.CharField(max_length=500)
+    lunchstart = models.CharField(max_length=500)
+    lunchEnd = models.CharField(max_length=500)
+    date = models.DateField()

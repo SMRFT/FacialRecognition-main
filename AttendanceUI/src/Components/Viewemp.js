@@ -9,6 +9,9 @@ import { Search } from "@material-ui/icons";
 //import bootstrap from 'bootstrap';
 import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
 import AdminCalendar from "./AdminCalendar";
+import { CSVLink } from 'react-csv';
+import DatePicker from "react-datepicker";
+import moment from "moment";
 ///view employee
 const Home = () => {
   const [error, setError] = useState(null);
@@ -57,33 +60,46 @@ const Home = () => {
       });
     window.location.reload(true);
   };
-  // const deleteEmployee = async (e) => {
-  //   const options = {
-  //     title: 'Delete Employee',
-  //     message: 'Are you sure you want to delete this employee?',
-  //     buttons: [
-  //       {
-  //         label: 'Yes',
-  //         onClick: async () => {
-  //           await fetch("http://127.0.0.1:7000/attendance/delemp", {
-  //             method: "POST",
-  //             headers: { "Content-Type": "application/json" },
-  //             credentials: "include",
-  //             body: JSON.stringify({
-  //               id: e.id,
-  //             }),
-  //           });
-  //           window.location.reload(true);
-  //         },
-  //       },
-  //       {
-  //         label: 'No',
-  //         onClick: () => {},
-  //       },
-  //     ],
-  //   };
-  //   ConfirmAlert(options);
-  // };
+
+  //Export details
+  const params = useParams();
+  const name = params.name;
+  let newDate = new Date()
+  const [userdata, setUserdata] = useState([]);
+  const [myMonth, setMyMonth] = useState(new Date());
+  const [myYear, setMyYear] = useState(new Date());
+  const [myDay, setMyDay] = useState(newDate);
+  const minDate = new Date(myYear.getFullYear(), myMonth.getMonth(), 1);
+  const maxDate = new Date(myYear.getFullYear(), myMonth.getMonth() + 1, 0);
+
+  useEffect(() => {
+    const getuserdata = async () => {
+      fetch("http://127.0.0.1:7000/attendance/EmployeeSummaryExport", {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          month: myMonth.getMonth() + 1,
+          year: myYear.getFullYear(),
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setUserdata(data);
+        });
+    };
+    getuserdata();
+  }, [myMonth, myYear]);
+
+  useEffect(() => {
+    setMyDay(new Date(myYear.getFullYear(), myMonth.getMonth(), 1));
+  }, [myMonth, myYear, setMyDay]);
+
+  const renderDayContents = (day, date) => {
+    if (date < minDate || date > maxDate) {
+      return <span></span>;
+    }
+    return <span>{date.getDate()}</span>;
+  };
 
   ///search employee
   const [searchString, setSearchString] = useState("");
@@ -104,6 +120,30 @@ const Home = () => {
       <body>
         <br />
         <br />
+        <div>
+          <i><CSVLink style={{ float: "right", fontSize: "40px", cursor: "pointer", color: "darkblue" }}
+            className="fa fa-download" data={userdata} filename={"payroll"}></CSVLink></i>
+        </div>
+        <div style={{ float: "right", cursor: "pointer" }}>
+          <label>Year</label>
+          <DatePicker style={{ textAlign: "center" }}
+            selected={myYear}
+            onChange={(date) => setMyYear(date)}
+            showYearPicker
+            dateFormat="yyyy"
+          />
+        </div>
+        <div style={{ float: "right", cursor: "pointer" }}>
+          <label>Month</label>
+          <DatePicker
+            selected={myMonth}
+            onChange={(date) => setMyMonth(date)}
+            showMonthYearPicker
+            dateFormat="MMMM"
+            renderCustomHeader={({ date }) => <div></div>}
+          />
+        </div><br />
+
         <div className="input-group rounded" style={{ width: "250px", float: "left" }}>
           <input
             type="search"
@@ -251,7 +291,7 @@ const Home = () => {
                       overlay={<Tooltip id="tooltip">Calender</Tooltip>}
                     >
                       <Link
-                        to={`/AdminCalendar/${user.name + "_" + user.id}`}
+                        to={`/AdminCalendar/${user.name}`}
                         activeClassName="current"
                       >
                         <button

@@ -22,10 +22,17 @@ const WebcamCaptureLogin = () => {
   const [employee, setEmployees] = useState([]);
   const [isShown, setIsShown] = useState(true);
   const [message, setMessage] = useState("");
-
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+  const [duration, setDuration] = useState(null);
+  let [login, setLogin] = useState();
   const handleClick = (event) => {
     setIsShown((current) => !current);
   };
+
+
+
 
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -69,11 +76,15 @@ const WebcamCaptureLogin = () => {
             const Emplogin = fileData.lastModifiedDate;
             let logintime = moment(Emplogin)
             logintime = moment(logintime).format('YYYY-MM-DD HH:mm')
+            let year = moment(logintime).format('YYYY')
             let log = moment(Emplogin)
             let login = log.format('HH:mm')
+            setLogin(login)
             let date = log.format('YYYY-MM-DD')
             let month = moment(logintime).format('MM')
             let iddate = empId[1] + date
+
+            // let lunchStart = '0'
 
             ////employee shift time
 
@@ -86,7 +97,6 @@ const WebcamCaptureLogin = () => {
             }
             else { shift = Myconstants.shift3 }
 
-            let overtimehours = '0'
             const empLoginResultSet = fetch(
               "http://127.0.0.1:7000/attendance/admincalendarlogin",
               {
@@ -101,7 +111,10 @@ const WebcamCaptureLogin = () => {
                   shift: shift,
                   iddate: iddate,
                   month: month,
-                  overtimehours: overtimehours
+                  month: month,
+                  year: year
+                  // lunchstart: lunchStart,
+                  // lunchEnd: lunchStart,
                 }),
               })
 
@@ -202,18 +215,14 @@ const WebcamCaptureLogin = () => {
         style={{ display: isShown ? "none" : "block" }}
       >
         <div style={{ marginLeft: "700px", marginTop: "-700px", fontSize: "20px" }}>
-          {/* <button class="btn btn-success btn-ladda" data-style="expand-left">{"ID:" + employee.id}</button> */}
-          {/* <button class="btn btn-success btn-ladda" data-style="expand-left">{"Name:" + employee.name}</button>
-          <button class="btn btn-success btn-ladda" data-style="expand-left">{"designation:" + employee.designation}</button> */}
           <br />
-          <b></b>
-          <button class="btn btn-success btn-ladda" data-style="expand-left">{employee.name}</button>
-          <br />
-          <b></b>
-          <button class="btn btn-success btn-ladda-progress" data-style="contract">{employee.designation}</button>
-
+          {employee.id && <p>ID: {employee.id}</p>}
+          {employee.name && <p>Name: {employee.name}</p>}
+          {employee.designation && <p>Designation: {employee.designation}</p>}
+          {login && <p>Logintime: {login}</p>}
           <br />
         </div>
+
         <div className="col-lg" style={{ marginLeft: "800px", marginTop: "100px" }}>
           <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
             <i class="bi bi-check-circle"> Done</i>

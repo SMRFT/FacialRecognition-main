@@ -1,20 +1,20 @@
+from calendar import monthrange
 from time import time
 from unicodedata import name
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from dateutil import parser
 import jwt
 import datetime
 from io import StringIO
-from .constants import Login, Logout, shift1time, shift2time, shift3time, shift4time, shift1, shift2, shift3
 from django.shortcuts import render
 from datetime import datetime, timedelta
 from django.db.models import Count
+from .constants import Login, Logout
 from django.db.models.functions import TruncDate
-from AttendanceApp.models import Employee, Admincalendarlogin, Hour
-from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer
+from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours
+from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer
 from django.db.models import Q
 import json
 import calendar
@@ -93,10 +93,12 @@ class AdmincalendarloginView(APIView):
     @ csrf_exempt
     def post(self, request):
         data = request.data
+        print(data)
         serializer = AdmincalendarSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        print("calendar details", request.data)
         serializer.save()
-        data = Login
+        data = 'calendardata has Been Added Successfully'
         return Response(data, status=status.HTTP_200_OK)
 
 # Admincalendar For Logout
@@ -112,7 +114,7 @@ class AdmincalendarlogoutView(APIView):
         user.end = data["end"]
         user.date = data["date"]
         user.save()
-        data = Logout
+        data = 'Updated Successfully'
         return Response(data, status=status.HTTP_200_OK)
 
 # Retrieve Data By Designation
@@ -152,7 +154,6 @@ class RetrieveCalendarDataById(APIView):
         data = request.data
         employeelist = Admincalendarlogin.objects.filter(
             id=data["id"], month=data["month"]).values()
-        # print(employeelist)
         # Adding 1 to every id (103 as 1031,1032) to avoid duplicate id error in calendar
         i = 1
         for employee in employeelist:
@@ -162,40 +163,38 @@ class RetrieveCalendarDataById(APIView):
             # Calculating worked hours of an employee
             start_time = employee['start']
             end_time = employee['end']
-            name = employee['name']
             hour = end_time - start_time
             employee['hour'] = hour
 
-          # Getting * hrs default by timedelta to calculate
+            # Getting 8 hr default by timedelta to calculate overtime
             t2 = timedelta(hours=8, minutes=0, seconds=0)
 
-           # If the employee done overtime the barcolour should be red
+            # If the employee done overtime the barcolor should be red
             if hour > t2:
                 employee['barColor'] = 'red'
             else:
                 employee['barColor'] = 'blue'
 
-            employee['text'] = name
+            employee['text'] = 'Event'
             employee["id"] = emp_id
 
-            # employee['shift'] = shift
         serializers = HourcalendarSerializer(employeelist, many=True)
         return Response(serializers.data)
 
 # Retrieve Summary details
 
 
-# Retrieve Summary details
 class Summary(APIView):
     @ csrf_exempt
     def post(self, request):
         data = request.data
         employeedata = Admincalendarlogin.objects.filter(
             id=data["id"], month=data["month"]).values()
-        # Calculating working days (finding len of the employeedata query)
 
+        # Calculating working days (finding len of the employeedata query)
         def workingdays():
             return len(employeedata)
+
         # Calculating leave days (finding missing dates using dataframe)
 
         def leavedays():
@@ -259,6 +258,7 @@ class Summary(APIView):
             employee["workedhours"] = hour
         serializers = SummarySerializer(employeedata, many=True)
         return Response(serializers.data)
+# Export Calendar Details
 
 
 class RetriveEmployeeexport(APIView):
@@ -269,3 +269,84 @@ class RetriveEmployeeexport(APIView):
             name=data["name"]).values()
         serializer = EmployeeexportSerializer(Empdetail, many=True)
         return Response(serializer.data)
+
+
+# Export Calendar Details
+
+
+class RetriveSummaryExport(APIView):
+    def post(self, request):
+        data = request.data
+        month = data["month"]
+        year = data["year"]
+
+        # Get all employees who have logged in during the specified month and year
+        emp_data = Admincalendarlogin.objects.filter(
+            Q(month=month) & Q(year=year)).values()
+
+        emp_ids = emp_data.values_list("name", flat=True).distinct()
+
+        # Create a list to store the details for each employee
+        emp_details = []
+
+        for emp_id in emp_ids:
+            # Split the name and id of the employee
+            emp_id_split = emp_id.split("_")
+            id = emp_id_split[1]
+            name = emp_id_split[0]
+            # Get the number of working days for the employee during the specified month and year
+            working_days = emp_data.filter(name=emp_id).count()
+            # Get the number of days in the specified month and year
+            month_days = monthrange(year, month)[1]
+            # Calculate the number of leave days
+            leave_days = month_days - working_days
+
+            # Get the number of overtime hours for the employee during the specified month and year
+            overtime_hours = 0
+            for employee in emp_data.filter(name=emp_id):
+                start_time = employee["start"]
+                end_time = employee["end"]
+                hour = end_time - start_time
+                if hour > timedelta(hours=8):
+                    overtime_hours += (hour - timedelta(hours=8)
+                                       ).total_seconds() / 3600
+
+            # Add the details for the employee to the list
+            emp_details.append({
+                "id": id,
+                "name": name,
+                "month": month,
+                "year": year,
+                "workingdays": working_days,
+                "leavedays": leave_days,
+                "overtime": overtime_hours,
+            })
+
+        # Serialize the employee details list and return the response
+        serializer = SummaryexportSerializer(emp_details, many=True)
+        return Response(serializer.data)
+
+
+class BreakhoursView(APIView):
+    @ csrf_exempt
+    def post(self, request):
+        data = request.data
+        serializer = BreakhoursSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = Login
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class BreakhourslogoutView(APIView):
+    @csrf_exempt
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        user = (Breakhours.objects.get(
+            id=data["id"], date=data["date"]))
+        user.name = data["name"]
+        user.lunchEnd = data["lunchEnd"]
+        user.date = data["date"]
+        user.save()
+        data = Logout
+        return Response(data, status=status.HTTP_200_OK)

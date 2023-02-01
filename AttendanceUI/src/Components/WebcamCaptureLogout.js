@@ -21,6 +21,7 @@ const WebcamCaptureLogout = () => {
   const [employee, setEmployees] = useState([]);
   const [isShown, setIsShown] = useState(true);
   const [message, setMessage] = useState("")
+  let [logout, setLogout] = useState("")
   const handleClick = (event) => {
     setIsShown((current) => !current);
   };
@@ -76,12 +77,13 @@ const WebcamCaptureLogout = () => {
 
 
             logouttime = moment(logouttime).format('YYYY-MM-DD HH:mm')
-            console.log(logouttime)
+
 
             let log = moment(Emplogout)
 
 
             let logout = log.format('HH:mm')
+            setLogout(logout)
             let shifttime = '2023-01-12 05:00'
             let overtimehours = logouttime - shifttime
             console.log(overtimehours)
@@ -195,10 +197,12 @@ const WebcamCaptureLogout = () => {
       >
         <div style={{ marginLeft: "700px", marginTop: "-350px", fontSize: "20px" }}>
           <b></b>
-          <button class="btn btn-success btn-ladda" data-style="expand-left">{employee.name}</button>
           <br />
-          <b></b>
-          <button class="btn btn-success btn-ladda-progress" data-style="contract">{employee.designation}</button>
+          {employee.id && <p>ID: {employee.id}</p>}
+          {employee.name && <p>Name: {employee.name}</p>}
+          {employee.designation && <p>Designation: {employee.designation}</p>}
+          {logout && <p>Logouttime: {logout}</p>}
+          <br />
 
         </div>
         <div className="col-lg" style={{ marginLeft: "760px", marginTop: "150px" }}>

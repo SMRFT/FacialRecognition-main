@@ -15,6 +15,9 @@ function App() {
   const navigateToLogout = () => {
     navigate("/WebcamCaptureLogout");
   };
+  const navigateToBreak = () => {
+    navigate("/Break");
+  };
   return (
     <div className="row">
       <div className="col-lg-12">
@@ -28,21 +31,26 @@ function App() {
 
       <div body>
         <Row gutter={[16, 16]}>
-          <Col xs={{ span: 4 }}>
+          <Col xs={{ span: 3 }}>
             <button className="Admin" onClick={navigateToAdmin}>
               <h1 style={{ color: "white" }}><b>Admin</b></h1>
             </button>
           </Col>
 
-          <Col xs={{ span: 4 }}>
+          <Col xs={{ span: 3 }}>
             <button className="Login" onClick={navigateToLogin}>
               <h1 style={{ color: "white" }}><b>Login</b></h1>
             </button>
           </Col>
 
-          <Col xs={{ span: 4 }}>
+          <Col xs={{ span: 3 }}>
             <button className="Logout" onClick={navigateToLogout}>
               <h1 style={{ color: "white" }}><b>Logout</b></h1>
+            </button>
+          </Col>
+          <Col xs={{ span: 3 }}>
+            <button className="Break" onClick={navigateToBreak}>
+              <h1 style={{ color: "white" }}><b>Break</b></h1>
             </button>
           </Col>
         </Row>
