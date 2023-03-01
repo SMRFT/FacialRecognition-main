@@ -1,0 +1,52 @@
+{
+  "name": "react-whatsapp",
+  "description": "React component for whatsapp click to chat",
+  "version": "0.3.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://react-whatsapp.netlify.com/",
+  "author": "André Lins <andrelucas01@hotmail.com> (https://andrelmlins.github.io/)",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "react-dependency-scripts start",
+    "build": "react-dependency-scripts build",
+    "build:app": "react-dependency-scripts build-app",
+    "test": "react-dependency-scripts test",
+    "coverage": "react-dependency-scripts test --coverage"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^11.2.5",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dependency-scripts": "^1.0.6",
+    "react-dom": "^17.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrelmlins/react-whatsapp.git"
+  },
+  "keywords": [
+    "react",
+    "whatsapp",
+    "click-to-chat"
+  ],
+  "bugs": {
+    "url": "https://github.com/andrelmlins/react-whatsapp/issues"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

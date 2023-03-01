@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { Col, Row } from "react-bootstrap";
 import "./Addemp.css";
 import Myconstants from "../Components/Myconstants";
+
 function Addemp() {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");
@@ -23,6 +24,8 @@ function Addemp() {
   const [bankaccnum, setBankAccNum] = useState("");
   const [address, setAddress] = useState("");
   const [proof, setProof] = useState(null);
+  const [proof_url, setProofUrl] = useState("");
+  const [certificates_url, setCertificateUrl] = useState("");
   const [certificates, setCertificate] = useState(null);
   const [message, setMessage] = useState("");
   const [isShown, setIsShown] = useState(true);
@@ -35,7 +38,7 @@ function Addemp() {
   const handleClick = (event) => {
     setIsShown((current) => !current);
   };
-  const { register, handleSubmit, watch, setError, clearErrors, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const handleImageSelect = (event) => {
     setImgSrc(event.target.files[0]);
   };
@@ -44,17 +47,17 @@ function Addemp() {
     document.getElementById("selectImage").value = "";
   };
 
-  const handleFileSelect = (e) => {
-    setProof(e.target.files);
-  };
+
   const handleRemoveFile = () => {
     setProof(null);
     document.getElementById("selectFile").value = "";
   };
 
-  const handleCertificateSelect = (eve) => {
-    setCertificate(eve.target.files);
+  const handleCertificateSelect = (e) => {
+    setCertificate(e.target.files[0]);
+
   };
+
   const handleRemoveCertificate = () => {
     setCertificate(null);
     document.getElementById("selectCertificate").value = "";
@@ -79,7 +82,7 @@ function Addemp() {
   const onSubmit = async (details) => {
     const data = new FormData();
     const comprefaceImage = new FormData();
-    data.append("name", name + "_" + id);
+    data.append("name", name);
     data.append("mobile", mobile);
     data.append("department", selectedDepartment);
     data.append("designation", designation);
@@ -96,17 +99,29 @@ function Addemp() {
     comprefaceImage.append("file", imgSrc);
     let formDataNew = new FormData();
     formDataNew.append("file", imgSrc);
+    let formData = new FormData();
+    formData.append("file", proof);
+    formData.append("file", certificates);
     try {
       const res = await axios({
         method: "post",
         url: "http://localhost:7000/attendance/addemp",
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
         data: data,
       });
+      const { proof_url, certificates_url } = res.data;
+      console.log(res.data)
+      setProofUrl(proof_url);
+      console.log("proof_url: ", proof_url)
+      setCertificateUrl(certificates_url);
+      console.log("certificates_url: ", certificates_url)
       const res2 = await axios
         ({
           method: "POST",
           headers: {
-            "x-api-key": "3371a872-1954-40d7-b039-72deffd4aff3",
+            "x-api-key": "6b447d65-7b43-4e94-ada9-cf54e57bdf16",
           },
           url: "http://localhost:8000/api/v1/recognition/faces/?subject=" + name + "_" + id,
           data: comprefaceImage,
@@ -116,9 +131,12 @@ function Addemp() {
       } else {
         setMessage(Myconstants.AddEmpError);
       }
-    } catch (err) {
+    }
+    catch (err) {
     }
   };
+
+  // Refresh function
   function refreshPage() {
     {
       window.location.reload();
@@ -148,6 +166,8 @@ function Addemp() {
     }
     return new File([u8arr], filename);
   }
+
+  // Validation for forms
   function validateName(name) {
     let error = "";
     if (!name.match(/^[a-zA-Z]*$/)) {
@@ -411,21 +431,10 @@ function Addemp() {
                 )}
               </div>
               <br />
-              <div className="mx-5 form-group">
-                <input id="selectFile" type="file" onChange={handleFileSelect} hidden /><b>Choose a PAN or Aadhaar proof :</b>
-                <label for="selectFile" className="mx-4 bi bi-folder-check" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
-                {proof && (
-                  <>
-                    <span className="mx-3">{proof.name}</span>
-                    <button className="btn btn-danger" onClick={handleRemoveFile}>
-                      <i className="fa fa-times"></i>
-                    </button>
-                  </>
-                )}
-              </div>
+
               <br />
               <div className="mx-5 form-group">
-                <input id="formFileMultiple" type="file" onChange={handleCertificateSelect} multiple hidden /><b>Choose a Certificates (multiple file select) :</b>
+                <input id="formFileMultiple" type="file" accept=".pdf" onChange={handleCertificateSelect} multiple hidden /><b>Choose a Certificates (multiple file select) :</b>
                 <label for="formFileMultiple" className="mx-4 bi bi-folder-plus" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
                 {certificates && (
                   <>
@@ -459,8 +468,21 @@ function Addemp() {
             <div><b>Name : </b>{name}</div>
             <div><b>Mobile : </b>{mobile}</div>
             <div><b>Designation : </b>{designation}</div>
-            <div><b>Address : </b>{address}</div><br /><br /><br />
-            <i className="bi bi-check-circle" onClick={() => { refreshPage(); }} style={{ fontSize: "40px", color: "green", marginLeft: "100px" }}> </i>
+            <div><b>Address : </b>{address}</div><br />
+            {proof_url && (
+              <div>
+                <h4>Proof</h4>
+                <iframe src={proof_url} width="50%" height="400px" />
+              </div>
+            )}
+            {certificates_url && (
+              <div>
+                <h4>Certificates</h4>
+                <iframe src={certificates_url} width="50%" height="400px" />
+              </div>
+            )}
+            <br />
+            <i className="bi bi-check-circle" onClick={() => { refreshPage(); }} style={{ fontSize: "40px", color: "green", marginLeft: "100px", cursor: "pointer" }}> </i>
           </div>
           <br />
           <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>

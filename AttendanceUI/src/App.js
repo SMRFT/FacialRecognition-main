@@ -29,7 +29,7 @@ function App() {
       </div>
       <br />
 
-      <div body>
+      <div class="admin-container" body>
         <Row gutter={[16, 16]}>
           <Col xs={{ span: 3 }}>
             <button className="Admin" onClick={navigateToAdmin}>

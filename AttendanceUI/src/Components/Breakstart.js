@@ -49,7 +49,7 @@ const WebcamCaptureLogin = () => {
                 {
                     method: "POST",
                     headers: {
-                        "x-api-key": "3371a872-1954-40d7-b039-72deffd4aff3",
+                        "x-api-key": "6b447d65-7b43-4e94-ada9-cf54e57bdf16",
                     },
                     body: formData,
                 }
@@ -98,7 +98,7 @@ const WebcamCaptureLogin = () => {
                         }
                         else { shift = Myconstants.shift3 }
 
-
+                        let takentime = '0'
                         const empLoginResultSet = fetch(
                             "http://127.0.0.1:7000/attendance/lunchhourslogin",
                             {
@@ -111,6 +111,7 @@ const WebcamCaptureLogin = () => {
                                     lunchEnd: logintime,
                                     iddate: iddate,
                                     date: date,
+                                    Breakhour: takentime
 
 
                                 }),
@@ -189,40 +190,41 @@ const WebcamCaptureLogin = () => {
                 </Navbar.Collapse>
             </Navbar>
 
-            <div className="container">
+            <div className="container" >
                 <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
             </div>
 
             <button style={{ marginLeft: "250px", marginTop: "-100px", borderColor: "#b9adad", blockSize: "50px", inlineSize: "100px" }} className="In" onClick={() => { capture(); handleClick(); }}>
-                <i class="bi bi-camera2">LunchLogout</i>
+                <i>Lunch Out</i>
             </button>
 
-            <div style={{ color: "red", fontSize: "18px", marginLeft: "750px", marginBottom: "400px" }} className="message">{message ? <p>{message}</p> : null}</div>
+            <div style={{ color: "red", fontSize: "18px", marginLeft: "900px", marginTop: "200px" }} className="message">{message ? <p>{message}</p> : null}</div>
 
             {imgSrc && (
                 <img
-                    className="screenshot"
-                    style={{ height: "150px", width: "200px", marginTop: "-1600px", marginLeft: "700px" }}
+                    // class="container1"
+                    class="rounded-border-gradient1"
+                    style={{ height: "200px", width: "300px", marginTop: "-2300px", marginLeft: "850px" }}
                     src={imgSrc}
                     alt="capture"
                 />
             )}
 
             <div
-                className="empdetails"
+                // className="empdetails"
                 style={{ display: isShown ? "none" : "block" }}
             >
-                <div style={{ marginLeft: "700px", marginTop: "-700px", fontSize: "20px" }}>
+                <div class="rounded-border-gradient1" style={{ marginLeft: "850px", marginTop: "-1050px", fontSize: "20px", width: "300px" }}>
                     <br />
-                    {employee.id && <p>ID: {employee.id}</p>}
-                    {employee.name && <p>Name: {employee.name}</p>}
-                    {employee.designation && <p>Designation: {employee.designation}</p>}
-                    {login && <p>Logout time: {login}</p>}
+                    {employee.id && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>ID: {employee.id}</p>}
+                    {employee.name && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Name: {employee.name}</p>}
+                    {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Designation: {employee.designation}</p>}
+                    {login && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Logout time: {login}</p>}
                     <br />
 
                 </div>
 
-                <div className="col-lg" style={{ marginLeft: "800px", marginTop: "100px" }}>
+                <div className="col-lg" style={{ marginLeft: "950px", marginTop: "100px" }}>
                     <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
                         <i class="bi bi-check-circle"> Done</i>
                     </button>

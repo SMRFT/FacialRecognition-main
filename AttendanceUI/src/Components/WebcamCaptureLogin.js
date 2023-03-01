@@ -14,6 +14,9 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-r
 import { render } from "react-dom";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { FilterTiltShift } from "@material-ui/icons";
+import axios from 'axios';
+import ReactWhatsapp from 'react-whatsapp';
+// import { Twilio } from 'twilio';
 
 const WebcamCaptureLogin = () => {
   const webcamRef = React.useRef(null);
@@ -26,6 +29,8 @@ const WebcamCaptureLogin = () => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [duration, setDuration] = useState(null);
+  const [email, setEmail] = useState([]);
+
   let [login, setLogin] = useState();
   const handleClick = (event) => {
     setIsShown((current) => !current);
@@ -47,7 +52,7 @@ const WebcamCaptureLogin = () => {
         {
           method: "POST",
           headers: {
-            "x-api-key": "3371a872-1954-40d7-b039-72deffd4aff3",
+            "x-api-key": "6b447d65-7b43-4e94-ada9-cf54e57bdf16",
           },
           body: formData,
         }
@@ -66,12 +71,42 @@ const WebcamCaptureLogin = () => {
               .then((res) => res.json())
               .then(
                 (data) => {
+                  const email = data.email;
+                  // const phonenumber = data.mobile
+                  setEmail(email);
+                  fetch("http://127.0.0.1:7000/attendance/send-email/", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
+                    },
+                    body: JSON.stringify({ subject: subject, message: messages, recipient: email }),
+                  })
+                  // <ReactWhatsapp number="+91-7904019642" message="Hello World!!!" />
+                  console.log("email", email);
+
+                  fetch("http://127.0.0.1:7000/attendance/send-whatsapp/", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
+                    },
+                    body: JSON.stringify({ message: messages, to: "WhatsApp:+91" + data.mobile }),
+                  })
+                    .then(response => {
+                      // console.log('response', response);
+                    })
+                    .catch(error => {
+                      console.log('error', error);
+                    });
+
                   setEmployees(data);
                 },
                 (error) => {
                   console.log("Error");
                 }
               );
+
             ////employee time format change
             const Emplogin = fileData.lastModifiedDate;
             let logintime = moment(Emplogin)
@@ -85,8 +120,18 @@ const WebcamCaptureLogin = () => {
             let iddate = empId[1] + date
 
             // let lunchStart = '0'
-
+            // console.log(data.name)
             ////employee shift time
+            const subject = "Shanmuga Hospital Login Details";
+            const messages = `Name: ${empId[0]},
+Employee id:${empId[1]},
+Date: ${date},
+Shift Login time: ${logintime}`;
+
+            // const recipient = "parthipanmurugan335317@gmail.com";
+            // const recipient = email
+            // console.log(recipient)
+
 
             let shift;
             if (login >= Myconstants.shift1time && login < Myconstants.shift2time) {
@@ -101,7 +146,10 @@ const WebcamCaptureLogin = () => {
               "http://127.0.0.1:7000/attendance/admincalendarlogin",
               {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+
+                },
                 body: JSON.stringify({
                   id: empId[1],
                   name: nameOfLoggedInEmp,
@@ -113,12 +161,13 @@ const WebcamCaptureLogin = () => {
                   month: month,
                   month: month,
                   year: year
-                  // lunchstart: lunchStart,
-                  // lunchEnd: lunchStart,
+
                 }),
               })
 
+
               .then((empLoginResultSet) => {
+
                 if (empLoginResultSet.status === 200) {
                   setMessage(Myconstants.Webcamlogin);
                 } else {
@@ -126,6 +175,8 @@ const WebcamCaptureLogin = () => {
                 }
 
               })
+
+
           });
         })
         .catch(function (error) {
@@ -228,8 +279,13 @@ const WebcamCaptureLogin = () => {
             <i class="bi bi-check-circle"> Done</i>
           </button>
         </div>
+        <div>
+          {/* <button onClick={sendEmail}>Send Email</button> */}
+        </div>
       </div>
+
     </React.Fragment >
   );
 };
+
 export default WebcamCaptureLogin;

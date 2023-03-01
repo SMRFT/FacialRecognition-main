@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-5#y-^bdkqu5-_2ttnr7(^*ai-i$2nh+ef)7+t$+%+hhol59h@!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -128,42 +128,50 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-# REACT_DIR = os.environ.get('REACT_DIR', '/path/to/react/app/')
-# REACT_ROOT_URL_FILES = os.environ.get(
-#     "REACT_ROOT_URL_FILES", 'favicon.png manifest.json robots.txt').split(" ")
+
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-# MEDIA_URL = '/media/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATICFILES_DIRS = [
-#     os.path.join(REACT_DIR, 'AttendanceUI', 'build', 'static')
-# ]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# STATICFILES_STORAGE = 'myproject.storage.S3Storage'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'AttendanceUI/build/static')
-# ]
+
 
 # for authentication
 
 AUTH_USER_MODEL = 'AttendanceApp.Admin'
 
-
+APPEND_SLASH = False
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+# ALLOWED_HOSTS = ['.ngrok.io']
 
 # mongo storage connection
 
-# DEFAULT_GRIDFS_URL = 'mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority'
-# if set to None, it will refuse to serve files and raise an Exception
-# DEFAULT_GRIDFS_SERVE_URL = None
-# DEFAULT_GRIDFS_COLLECTION = 'storage'
+GRIDFS_STORAGE_OPTIONS = {
+    'location': 'mongodb://localhost:27017/',
+    'database': 'data',
+    'base_url': '/media/',
+}
+DEFAULT_FILE_STORAGE = 'gridfs_storage.storage.GridFSStorage'
 
-# DEFAULT_FILE_STORAGE = 'gridfs_storage.storage.GridFSStorage'
+# email sender
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'parthibansmrft@gmail.com'
+EMAIL_HOST_PASSWORD = 'jgnuxbycnzywwvlw'
+
+# whatsapp
+TWILIO_ACCOUNT_SID = 'ACe1d37f2342c44648499add958166abe2'
+TWILIO_AUTH_TOKEN = 'c6ff1b2f81b4fcac652d4d71fce766a2'
+#whatsapp vonage
+VONAGE_API_KEY = '4be358a0'
+VONAGE_API_SECRET = '6GF9TK0JGgbe4V0A'
+VONAGE_BRAND_NAME = 'parthiban'

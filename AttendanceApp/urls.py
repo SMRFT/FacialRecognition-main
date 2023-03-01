@@ -1,16 +1,18 @@
 from calendar import calendar
 import imp
 from pickle import FROZENSET
-from django.conf.urls import url
+# from django.conf.urls import url
 from django.urls import path, include
 from AttendanceApp import views
 from AttendanceApp.Views.deteteemp import DeleteEmp
 from AttendanceApp.Views.adminview import EmployeeView, AdminLogin, AdminReg
-from AttendanceApp.Views.retrieveemp import EmployeeEditView, RetriveEmp, EmployeeSearchView, RetriveEmpById, AdminCalendarView, AdmincalendarloginView, AdmincalendarlogoutView, RetrieveCalendarDataById,  RetriveEmpdesignationCount, RetriveEmpBydesignation, Summary, RetriveEmployeeexport, BreakhoursView, BreakhourslogoutView, RetriveSummaryExport
+from AttendanceApp.Views.retrieveemp import EmployeeEditView, RetriveEmp, EmployeeSearchView, RetriveEmpById, AdminCalendarView, AdmincalendarloginView, AdmincalendarlogoutView, RetrieveCalendarDataById,  RetriveEmpdesignationCount, RetriveEmpBydesignation, Summary, RetriveEmployeeexport, BreakhoursView, BreakhourslogoutView, RetriveSummaryExport, RetriveBreakhours, send_email, send_whatsapp,upload_file,get_file
 from .views import EmployeeView
 from django.conf.urls.static import static
 from django.conf import settings
+from django.urls import path
 
+# from .views import send_email
 urlpatterns = [
 
     path('addemp', EmployeeView.as_view()),
@@ -31,9 +33,14 @@ urlpatterns = [
     path('EmployeeExport', RetriveEmployeeexport.as_view()),
     path('lunchhourslogin', BreakhoursView.as_view()),
     path('lunchhourslogout', BreakhourslogoutView.as_view()),
-    path('EmployeeSummaryExport', RetriveSummaryExport.as_view())
-
-
+    path('EmployeeSummaryExport', RetriveSummaryExport.as_view()),
+    path('breakhours', RetriveBreakhours.as_view()),
+    path('send-email/', send_email, name='send_email'),
+    path('send-whatsapp/', send_whatsapp, name='send_whatsapp'),
+    path('upload_file/', upload_file, name='upload_file'),
+    path('get_file', get_file, name='get_file'),
+    # path('message/', send_whatsapp, name='message')
 ]
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

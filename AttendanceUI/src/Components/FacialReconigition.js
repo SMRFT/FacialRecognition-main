@@ -13,7 +13,7 @@ function FaceRecognition(elem) {
         {
             method: "POST",
             headers: {
-                "x-api-key": '3371a872-1954-40d7-b039-72deffd4aff3',
+                "x-api-key": '6b447d65-7b43-4e94-ada9-cf54e57bdf16',
             },
             body: formData
         }

@@ -47,6 +47,10 @@ const Home = () => {
   const navigate = useNavigate();
   const navigateToCalendar = () => {
   };
+
+  const Fileviewer = useNavigate();
+  const navigateToFileviewer = () => {
+  };
   ///delete employee
   const deleteEmployee = async (e) => {
     if (window.confirm("Are you sure you want to delete this employee?"))
@@ -287,11 +291,12 @@ const Home = () => {
                         <i className="bi bi-person-x-fill"></i>
                       </button>
                     </OverlayTrigger>
+
                     <OverlayTrigger
                       overlay={<Tooltip id="tooltip">Calender</Tooltip>}
                     >
                       <Link
-                        to={`/AdminCalendar/${user.name}`}
+                        to={`/AdminCalendar/${user.name + '_' + user.id}`}
                         activeClassName="current"
                       >
                         <button
@@ -299,6 +304,21 @@ const Home = () => {
                           className="btn text-primary btn-act"
                           data-toggle="modal">
                           <i className="bi bi-calendar3-week-fill"></i>
+                        </button>
+                      </Link>
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                      overlay={<Tooltip id="tooltip">Documents</Tooltip>}
+                    >
+                      <Link
+                        to={`/Fileviewer/${user.name}`}
+                        activeClassName="current"
+                      >
+                        <button
+                          onClick={() => navigateToFileviewer(user)}
+                          className="btn text-primary btn-act"
+                          data-toggle="modal">
+                          <i class="bi bi-file-text"></i>
                         </button>
                       </Link>
                     </OverlayTrigger>
@@ -313,6 +333,7 @@ const Home = () => {
                     <Modal.Footer></Modal.Footer>
                   </Modal>
                 </tr>
+
               ))}
             </tbody>
           </ReactBootStrap.Table>

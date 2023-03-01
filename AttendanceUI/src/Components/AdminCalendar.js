@@ -180,25 +180,30 @@ function Admincalendar() {
   const [userdata, setUserdata] = useState([]);
   useEffect(() => {
     const getuserdata = async () => {
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear();
+
       fetch("http://127.0.0.1:7000/attendance/EmployeeExport", {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: name
+          id: id,
+          month: currentMonth,
+          year: currentYear
         }),
       })
         .then((res) => res.json())
         .then(
           (data) => {
             setUserdata(data)
-            // console.log(data)
+            console.log(data)
           },
 
         );
 
     }
     getuserdata();
-    // console.log(setUserdata)
   }, []);
 
   return (
@@ -242,7 +247,7 @@ function Admincalendar() {
             <div>
               <b>Employee Id: </b>{empid.id}
               <br />
-              <b>Name: </b>{name}
+              <b>Name: </b>{name1}
               <br />
               <b>Over Time Days: </b>{summarydata.overtime} <i style={{ color: "green", fontSize: "20px" }} onClick={() => setOtbox(true)} className="bi bi-file-plus"></i>
               <div style={{ float: "right" }}>

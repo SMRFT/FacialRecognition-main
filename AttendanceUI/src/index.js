@@ -12,6 +12,7 @@ import WebcamCaptureLogin from "./Components/WebcamCaptureLogin";
 import Break from "./Components/Break";
 import Breakstart from "./Components/Breakstart";
 import Breakend from "./Components/Breakend";
+import Fileviewer from "./Components/Fileviewer";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -28,6 +29,7 @@ root.render(
       <Route path="/Breakstart/*" element={<Breakstart />} />
       <Route path="/Breakend/*" element={<Breakend />} />
       <Route path="/AdminCalendar/:name" element={<AdminCalendar />} />
+      <Route path="/Fileviewer/:name" element={<Fileviewer />} />
     </Routes>
   </BrowserRouter>
 );

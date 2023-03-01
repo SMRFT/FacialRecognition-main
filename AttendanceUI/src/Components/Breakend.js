@@ -1,5 +1,6 @@
 import Webcam from "react-webcam";
 import React from "react";
+import axios from 'axios';
 import moment from "moment";
 import { useState, useEffect } from "react";
 //import { ReactDOM } from "react";
@@ -22,6 +23,7 @@ const WebcamCaptureLogout = () => {
     const [isShown, setIsShown] = useState(true);
     const [message, setMessage] = useState("")
     let [logout, setLogout] = useState("")
+    const [breakhours, setBreakhours] = useState([]);
     const handleClick = (event) => {
         setIsShown((current) => !current);
     };
@@ -43,7 +45,7 @@ const WebcamCaptureLogout = () => {
                 {
                     method: "POST",
                     headers: {
-                        "x-api-key": "3371a872-1954-40d7-b039-72deffd4aff3",
+                        "x-api-key": "6b447d65-7b43-4e94-ada9-cf54e57bdf16",
                     },
                     body: formData,
                 }
@@ -64,11 +66,15 @@ const WebcamCaptureLogout = () => {
                             .then(
                                 (data) => {
                                     setEmployees(data);
+                                    console.log(data)
                                 },
                                 (error) => {
                                     console.log("Error");
                                 }
                             );
+
+
+
 
                         const Emplogout = fileData.lastModifiedDate;
 
@@ -84,15 +90,13 @@ const WebcamCaptureLogout = () => {
 
                         let logout = log.format('HH:mm')
                         setLogout(time)
-                        let shifttime = '2023-01-12 05:00'
-                        let overtimehours = logouttime - shifttime
-                        console.log(overtimehours)
+
 
                         let date = log.format('YYYY-MM-DD')
 
 
                         const empLogoutResultSet = fetch("http://127.0.0.1:7000/attendance/lunchhourslogout", {
-                            method: "PUT",
+                            method: "Post",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 id: empId[1],
@@ -104,23 +108,43 @@ const WebcamCaptureLogout = () => {
                             .then((empLogoutResultSet) => {
                                 if (empLogoutResultSet.status === 200) {
                                     setMessage(Myconstants.lunchlogin);
+                                    return fetch("http://127.0.0.1:7000/attendance/breakhours", {
+                                        method: "Post",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            id: empId[1],
+                                            date: date
+                                        }),
+                                    })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            setBreakhours(data);
+                                            console.log(data)
+
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error fetching breakhours data: ", error);
+                                        });
                                 } else {
                                     setMessage(Myconstants.Webcamnotlogin);
                                 }
+
                             })
                     });
                 })
                 .catch(function (error) {
-                    // console.log("Request failed: " + JSON.stringify(error));
+
                 });
         });
     }, [webcamRef, setImgSrc]);
+
 
     function refreshPage() {
         {
             window.location.reload();
         }
     }
+
     //converting "image source" (url) to "Base64"
     const toDataURL = (url) =>
         fetch(url)
@@ -147,6 +171,10 @@ const WebcamCaptureLogout = () => {
         return new File([u8arr], filename);
     }
     // console.log("employee details:" + JSON.stringify(employee));
+    // const break1 = breakhours
+    // console.log(break1)
+    // const breakhour = break1[0].Breakhour;
+    // console.log(breakhour)
 
     return (
         <React.Fragment>
@@ -176,36 +204,50 @@ const WebcamCaptureLogout = () => {
             </div>
 
             <button style={{ marginLeft: "250px", marginTop: "-100px", borderColor: "#b9adad", blockSize: "50px", inlineSize: "100px" }} className="Out" onClick={() => { capture(); handleClick(); }}>
-                <i class="bi bi-camera2">Logintime</i>
+                <i>Lunch In</i>
             </button>
 
-            <div style={{ color: "red", fontSize: "18px", marginLeft: "700px", marginBottom: "100px" }} className="message">{message ? <p>{message}</p> : null}</div>
-
+            <div style={{ color: "red", fontSize: "18px", marginLeft: "930px", marginTop: "200px" }} className="message">{message ? <p>{message}</p> : null}</div>
             {imgSrc && (
                 <img
-                    className="screenshot"
-                    style={{ height: "150px", width: "200px", marginTop: "-900px", marginLeft: "700px" }}
+                    // class="container1"
+                    class="rounded-border-gradient1"
+                    style={{ height: "200px", width: "300px", marginTop: "-2300px", marginLeft: "850px" }}
                     src={imgSrc}
                     alt="capture"
                 />
             )}
 
-
             <div
                 className="empdetails"
                 style={{ display: isShown ? "none" : "block" }}
             >
-                <div style={{ marginLeft: "700px", marginTop: "-350px", fontSize: "20px" }}>
+                <div class="rounded-border-gradient1" style={{ marginLeft: "850px", marginTop: "-1050px", fontSize: "20px", width: "300px" }}>
                     <b></b>
                     <br />
-                    {employee.id && <p>ID: {employee.id}</p>}
-                    {employee.name && <p>Name: {employee.name}</p>}
-                    {employee.designation && <p>Designation: {employee.designation}</p>}
-                    {logout && <p>Login time: {logout}</p>}
+                    {employee.id && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>ID: {employee.id}</p>}
+                    {employee.name && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Name: {employee.name}</p>}
+                    {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Designation: {employee.designation}</p>}
+
+                    {logout && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Login time: {logout}</p>}
+
+                    <div>
+                        {breakhours.map(item => (
+                            <div key={item.id}>
+                                {/* <p style={{ fontWeight: "bold", marginLeft: "40px" }}>logout time: {item.lunchstart}</p> */}
+                                <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Breakhour: {item.Breakhour}</p>
+                                {/* <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Date: {item.date}</p> */}
+                            </div>
+                        ))}
+                    </div>
                     <br />
 
                 </div>
-                <div className="col-lg" style={{ marginLeft: "760px", marginTop: "150px" }}>
+
+                <div>
+
+                </div>
+                <div className="col-lg" style={{ marginLeft: "950px", marginTop: "130px" }}>
                     <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
                         <i class="bi bi-check-circle"> Done</i>
                     </button>

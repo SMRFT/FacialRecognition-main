@@ -1,5 +1,10 @@
+from twilio.rest import Client
+from django.http import JsonResponse, HttpResponse
+from django.core.mail import send_mail
 from calendar import monthrange
 from time import time
+import base64
+import json
 from unicodedata import name
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,13 +19,18 @@ from django.db.models import Count
 from .constants import Login, Logout
 from django.db.models.functions import TruncDate
 from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours
-from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer
+from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer,EmployeeSerializer
 from django.db.models import Q
 import json
 import calendar
 import datetime
 import pandas as pd
 import numpy as np
+from django.conf import settings
+from django.http import HttpResponse
+from pymongo import MongoClient
+from gridfs import GridFS
+from bson import ObjectId
 
 # Retrieve Employee
 
@@ -93,7 +103,7 @@ class AdmincalendarloginView(APIView):
     @ csrf_exempt
     def post(self, request):
         data = request.data
-        print(data)
+        # print(data)
         serializer = AdmincalendarSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         print("calendar details", request.data)
@@ -114,7 +124,7 @@ class AdmincalendarlogoutView(APIView):
         user.end = data["end"]
         user.date = data["date"]
         user.save()
-        data = 'Updated Successfully'
+        data = Logout
         return Response(data, status=status.HTTP_200_OK)
 
 # Retrieve Data By Designation
@@ -165,7 +175,7 @@ class RetrieveCalendarDataById(APIView):
             end_time = employee['end']
             hour = end_time - start_time
             employee['hour'] = hour
-
+            name = employee['name']
             # Getting 8 hr default by timedelta to calculate overtime
             t2 = timedelta(hours=8, minutes=0, seconds=0)
 
@@ -175,7 +185,7 @@ class RetrieveCalendarDataById(APIView):
             else:
                 employee['barColor'] = 'blue'
 
-            employee['text'] = 'Event'
+            employee['text'] = name
             employee["id"] = emp_id
 
         serializers = HourcalendarSerializer(employeelist, many=True)
@@ -220,19 +230,21 @@ class Summary(APIView):
             start_time = employee['start']
             end_time = employee['end']
             hour = end_time - start_time
+            # print(hour)
             employee['hour'] = hour
             t2 = timedelta(hours=8, minutes=0, seconds=0)
             if hour > t2:
                 employee['barColor'] = 'red'
                 overtime += 1
                 overtime_dates.append(date)
-                overime_dates_string = "\n".join(
-                    date.strftime("%Y-%m-%d") for date in overtime_dates)
+
                 overtime_hours = hour - t2
             #    worked_hours = hour - overtime_hours
             else:
                 employee['barColor'] = 'blue'
         # Calculating leave dates (finding missing dates using dataframe)
+        overime_dates_string = "\n".join(
+            date.strftime("%Y-%m-%d") for date in overtime_dates)
 
         def leavedates():
             data = employeedata.values("date")
@@ -262,12 +274,40 @@ class Summary(APIView):
 
 
 class RetriveEmployeeexport(APIView):
-    @ csrf_exempt
+    @csrf_exempt
     def post(self, request):
         data = request.data
-        Empdetail = Admincalendarlogin.objects.filter(
-            name=data["name"]).values()
-        serializer = EmployeeexportSerializer(Empdetail, many=True)
+        emp_data = Admincalendarlogin.objects.filter(
+            id=data["id"], month=data["month"], year=data["year"]).values()
+        emp_details = []
+
+        for employee in emp_data:
+            id = employee["id"]
+            name = employee["name"]
+            date = employee["date"]
+            start_time = employee["start"]
+            end_time = employee["end"]
+            hour = (end_time - start_time)
+            break_hours = Breakhours.objects.filter(
+                id=id, date=date).values("Breakhour")
+
+            if break_hours:
+                break_hours = break_hours[0]["Breakhour"]
+            else:
+                break_hours = 0
+
+            emp_details.append({
+                "id": id,
+                "name": name,
+                "date": date,
+                "start": employee["start"],
+                "end": employee["end"],
+                "hour": hour,
+                "Breakhour": break_hours,
+            })
+
+        # Serialize the employee details list and return the response
+        serializer = EmployeeexportSerializer(emp_details, many=True)
         return Response(serializer.data)
 
 
@@ -320,6 +360,7 @@ class RetriveSummaryExport(APIView):
                 "workingdays": working_days,
                 "leavedays": leave_days,
                 "overtime": overtime_hours,
+
             })
 
         # Serialize the employee details list and return the response
@@ -340,13 +381,120 @@ class BreakhoursView(APIView):
 
 class BreakhourslogoutView(APIView):
     @csrf_exempt
-    def put(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         data = request.data
         user = (Breakhours.objects.get(
             id=data["id"], date=data["date"]))
         user.name = data["name"]
         user.lunchEnd = data["lunchEnd"]
         user.date = data["date"]
+        lunch_start = user.lunchstart
+
+        start_datetime = datetime.datetime.strptime(
+            lunch_start, '%Y-%m-%d %I:%M %p')
+        end_datetime = datetime.datetime.strptime(
+            user.lunchEnd, '%Y-%m-%d %I:%M %p')
+        difference = end_datetime - start_datetime
+        print("Lunch break duration: ", difference)
+        user.Breakhour = difference
         user.save()
         data = Logout
-        return Response(data, status=status.HTTP_200_OK)
+        return Response({'lunchStart': lunch_start, 'logout': data,  'Breakhour': str(difference)}, status=status.HTTP_200_OK)
+
+
+class RetriveBreakhours(APIView):
+    @csrf_exempt
+    def post(self, request):
+        data = request.data
+        Empbreak = Breakhours.objects.filter(
+            id=data["id"], date=data["date"]).values()
+        serializer = BreakhoursSerializer(
+            Empbreak, many=True)
+        return Response(serializer.data)
+
+#Email
+@csrf_exempt
+def send_email(request):
+    data = json.loads(request.body)
+    subject = data['subject']
+    # print("data", data)
+    message = data['message']
+    recipient = data['recipient']
+    from_email = 'parthibansmrft@gmail.com'
+    signature = 'Contact Us, \n Shanmuga Hospital, \n 24, Saradha College Road,\n Salem-636007 Tamil Nadu,\n 8754033833,\n info@shanmugahospital.com,\n https://shanmugahospital.com/'
+
+    send_mail(subject,  message + '\n\n\n\n\n' +
+              signature, from_email, [recipient], fail_silently=False)
+    return JsonResponse({'message': 'Email sent successfully'})
+
+#Whatsapp using Twilio 
+@csrf_exempt
+def send_whatsapp(request):
+    account_sid = 'ACe1d37f2342c44648499add958166abe2'
+    auth_token = 'c6ff1b2f81b4fcac652d4d71fce766a2'
+
+    data = json.loads(request.body)
+    message = data['message']
+    to=data['to']
+    signature = 'Contact Us, \n Shanmuga Hospital, \n 24, Saradha College Road,\n Salem-636007 Tamil Nadu,\n 8754033833,\n info@shanmugahospital.com,\n https://shanmugahospital.com/'
+    client = Client(account_sid, auth_token)
+    client.messages.create(
+        to=to,
+        from_='whatsapp:+14155238886',
+        body=message+"\n\n"+signature)
+    return HttpResponse("whatsapp message sent sucessfully")
+    
+...
+@csrf_exempt
+def upload_file(request):
+    if request.method == 'POST':
+        # Connect to MongoDB
+        client = MongoClient('mongodb://localhost:27017/')
+        db = client['data']
+        fs = GridFS(db)
+
+        # Open the uploaded file and read its contents
+        uploaded_file = request.FILES['file']
+        file_contents = uploaded_file.read()
+
+        # Store the file using GridFS
+        file_id = fs.put(file_contents, filename=uploaded_file.name)
+
+        # Check if the file was stored inline or as chunks
+        file_info = db.fs.files.find_one({'_id': file_id})
+        if 'chunks' in file_info:
+            # The file was stored as chunks
+            return HttpResponse(f'File uploaded with ID {file_id} (stored as chunks)')
+        else:
+            # The file was stored inline
+            return HttpResponse(f'File uploaded with ID {file_id} (stored inline)')
+
+
+
+
+
+@csrf_exempt
+def get_file(request):
+    # Connect to MongoDB
+    
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client['data']
+    fs = GridFS(db)
+    print("gridfs",fs)
+    filename = request.GET.get('filename')
+    print("filename",filename)
+    # file = fs.find_one({"filename": "parthiban.pdf"})
+    file = fs.find_one({"filename": filename })
+    print("file",file)
+    if file is not None:
+        # Return the file contents as an HTTP response
+        response = HttpResponse(file.read())
+        print("type",response )
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment; filename=%s' % file.filename
+        print("filename",file.filename)
+        return response
+    else:
+        # Return a 404 error if the file is not found
+        return HttpResponse(status=404)
+ 

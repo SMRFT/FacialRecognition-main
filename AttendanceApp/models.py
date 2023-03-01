@@ -8,7 +8,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from gridfs_storage.storage import GridFSStorage
 # image upload via local disk
 image_storage = FileSystemStorage(
     # Physical file location ROOT
@@ -23,8 +25,9 @@ image_storage = FileSystemStorage(
 def image_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
     extension = filename.split('.')[-1]
-    new_filename = "%s.%s" % (instance.name, extension)
+    new_filename = f"{instance.name}_{instance.id}.{extension}"
     return u'picture/{0}'.format(new_filename)
+
 
 # Employee
 
@@ -37,13 +40,15 @@ class Employee(models.Model):
     email = models.CharField(max_length=500)
     dateofjoining = models.DateField()
     bankaccnum = models.IntegerField()
-    # proof = models.FileField()
-    # certificates = models.FileField()
+    # proof = models.FileField(storage=GridFSStorage())
+    certificates = models.FileField(storage=GridFSStorage())
     designation = models.CharField(max_length=500)
     address = models.CharField(max_length=500)
     imgSrc = models.ImageField(
-        upload_to=image_directory_path, storage=image_storage)
+        upload_to=image_directory_path, storage=image_storage) 
     imgSrcname = models.CharField(max_length=500)
+
+
 
 # Admin Login
 
@@ -122,7 +127,11 @@ class Employeeexport(models.Model):
     name = models.CharField(max_length=500)
     start = models.DateTimeField()
     end = models.DateTimeField()
-    shift = models.CharField(max_length=500)
+    # month = models.IntegerField()
+    # year = models.IntegerField()
+    # shift = models.CharField(max_length=500)
+    Breakhour = models.CharField(max_length=500)
+    hour = models.CharField(max_length=500)
 
 # Employee calendar export model for all the employee
 
@@ -144,3 +153,4 @@ class Breakhours(models.Model):
     lunchstart = models.CharField(max_length=500)
     lunchEnd = models.CharField(max_length=500)
     date = models.DateField()
+    Breakhour = models.CharField(max_length=500)

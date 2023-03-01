@@ -16,63 +16,28 @@ from AttendanceApp.serializers import EmployeeSerializer, AdminSerializer
 from PIL import Image
 import io
 # django file storage
-"""
-class EmployeeView(APIView):
-    @csrf_exempt
-    def post(self, request):
-        #image=open(request.data['img'],'rb')
-        #im = Image.open(request.data['img'])
-        #image_bytes = io.BytesIO()
-        #im.save(image_bytes, format='JPEG')
-        #request.data['img']=image_bytes.getvalue()
-        serializer = EmployeeSerializer(data=request.data)
-        #print(serializer)
-        #serializer.img.replace(image,filename=serializer.id)
-        serializer.is_valid(raise_exception=True)
-        serializer.save() #saving User profile
-        return Response(serializer.data)
-"""
-"""
-class EmployeeView(APIView):
-    @csrf_exempt
-    def post(self, request):
-        im = Image.open(request.data['img'])
-        image_bytes = io.BytesIO()
-        im.save(image_bytes, format='JPEG')
-        request.data['img']=image_bytes.getvalue()
-        serializer = EmployeeSerializer(data=request.data)
-        print(request.data['img'])
-        serializer.is_valid(raise_exception=True)
-        serializer.save() #saving User profile
-        return Response(serializer.data)
-"""
-'''
-#Compreface
-from tkinter import Y
-from compreface import CompreFace
-from compreface.service import RecognitionService
-from compreface.collections import FaceCollection
-from compreface.collections.face_collections import Subjects
-from django.http import JsonResponse
-DOMAIN: str = 'http://localhost'
-PORT: str = '8000'
-API_KEY: str = '54cc82e7-9a68-4676-bb75-a3315748598c'
-#API_KEY: str = 'da1647cc-856c-4c77-9aa2-0b221cea2754'
-compre_face: CompreFace = CompreFace(DOMAIN, PORT)
-recognition: RecognitionService = compre_face.init_face_recognition(API_KEY)
-face_collection: FaceCollection = recognition.get_face_collection()
-subjects: Subjects = recognition.get_subjects()
-'''
-
+from gridfs import GridFS
+from pymongo import MongoClient
 
 class EmployeeView(APIView):
     @csrf_exempt
     def post(self, request):
+        # proof_file = request.FILES['proof']
+        certificates_file = request.FILES['certificates']
+        file_contents = certificates_file.read()
         serializer = EmployeeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        request.COOKIES.get('jwt')
-        return Response(Addemployee)
+        employee = serializer.save()
+        # Store the files in GridFS
+        client = MongoClient("mongodb://localhost:27017/")
+        db = client["data"]
+        fs = GridFS(db)
+        # certificates_filename =employee.name+".pdf"
+        # proof_file_id = fs.put(proof_file, filename=proof_file.name, employee_id=employee.id)
+        certificates_file_id = fs.put(file_contents, filename=employee.name+".pdf", employee_id=employee.id)
+        return Response({'message': 'New Employee Has Been Added Successfully'})
+
+
 
 
 class AdminLogin(APIView):

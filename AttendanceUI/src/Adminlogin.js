@@ -31,9 +31,9 @@ function Adminlogin() {
 
         const content = await response.json();
 
-        console.log(content)
+        // console.log(content)
 
-        console.log("response:", +response.status)
+        // console.log("response:", +response.status)
 
         if (response.status === 200) {
             setMessage("Logged in successfully");

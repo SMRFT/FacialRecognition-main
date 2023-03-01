@@ -12,8 +12,8 @@ module.exports = Object.freeze({
     shift2time: '13:00:00',
     shift3time: '13:01:00',
     shift4time: '20:00:00',
-    lunchlogout: ' its lunchtime!',
+    lunchlogout: ' have a lunch!',
     lunchalreadylogout: 'Ur Already in Lunch!',
     lunchalreadylogout: 'you are already in lunch',
-    lunchlogin: 'thanks for login Please continue your work'
+    lunchlogin: 'thanks for login'
 });
