@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Col, Row } from "react-bootstrap";
 import "./Addemp.css";
 import Myconstants from "../Components/Myconstants";
-
+import "../Logo.css";
 function Addemp() {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");

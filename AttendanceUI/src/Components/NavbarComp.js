@@ -4,7 +4,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Viewemp from './Viewemp';
 import Addemp from './Addemp';
 import Dashboard from './Dashboard';
-
+import "../Logo.css";
 import "./NavbarComp.css"
 export default class NavbarComp extends Component {
     render() {

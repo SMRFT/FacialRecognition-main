@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import React from "react";
 import "./Fileviewer.css";
+import "../Logo.css";
 import { Navbar, Nav } from "react-bootstrap";
 import profile from "../images/smrft.png";
 import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";

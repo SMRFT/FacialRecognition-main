@@ -58,7 +58,7 @@ function Adminlogin() {
                 <img src={profile} className="smrft_logo" alt="logo" />
             </div>
             <div class="screen-1">
-                <img src={logo} className="logo1" alt="logo" />
+                {/* <img src={logo} className="logo1" alt="logo" /> */}
                 <form onSubmit={submit}>
                     <div style={{ color: 'green', font: "caption", fontStyle: "Times", fontFamily: "-moz-initial", fontSize: "40px", textAlign: "center" }}>Admin Login</div>
                     <br />

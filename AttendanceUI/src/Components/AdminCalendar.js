@@ -13,7 +13,7 @@ import Viewemp from "./Viewemp";
 import "../Components/AdminCalendar.css";
 import { DayPilot, DayPilotScheduler } from "daypilot-pro-react";
 import Fade from '@material-ui/core/Fade';
-
+import "../Logo.css";
 function Admincalendar() {
   const params = useParams();
   const name = params.name;
@@ -209,9 +209,9 @@ function Admincalendar() {
   return (
     <div>
       <div>
-        <style>{"body { background-color: rgb(255, 255, 255); }"}</style>
-        <div className="main"></div>
-        <div className="logo">
+        <style>{'body { background-color: rgb(255, 255, 255); }'}</style>
+        <div className='main'></div>
+        <div className='logo'>
           <img src={profile} className="smrft_logo" alt="logo" />
         </div>
       </div>

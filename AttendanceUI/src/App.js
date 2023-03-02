@@ -1,6 +1,6 @@
 import "./App.css";
 import profile from "./images/smrft.png";
-
+import "./Logo.css";
 import { useNavigate } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
 

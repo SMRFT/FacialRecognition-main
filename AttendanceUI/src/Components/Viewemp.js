@@ -12,6 +12,7 @@ import AdminCalendar from "./AdminCalendar";
 import { CSVLink } from 'react-csv';
 import DatePicker from "react-datepicker";
 import moment from "moment";
+import "../Logo.css";
 ///view employee
 const Home = () => {
   const [error, setError] = useState(null);

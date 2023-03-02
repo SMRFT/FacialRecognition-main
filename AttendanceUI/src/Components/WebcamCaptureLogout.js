@@ -4,6 +4,7 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 //import { ReactDOM } from "react";
 import "../WebcamCapture.css";
+import "../Logo.css";
 import Myconstants from "../Components/Myconstants";
 import { useNavigate } from "react-router-dom";
 import "../Admin";

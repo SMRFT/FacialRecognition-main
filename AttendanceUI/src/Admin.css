@@ -1,3 +1,24 @@
+.logo {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.smrft_logo {
+  width: 100%;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .logo {
+    max-width: 50%;
+  }
+
+  .smrft_logo {
+    width: auto;
+    height: 100%;
+  }
+}
+
 .logo1 {
   margin-top: -3em;
   height: 50%;
@@ -10,12 +31,27 @@
   width: 30%;
 }
 
+@media (max-width: 768px) {
+  .logo1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo1 {
+    margin-top: -100px;
+    width: 70%;
+  }
+}
+
+
 .screen-1 {
   background: #f1f7fe;
   padding: 2em;
   display: flex;
-  margin-left: 700px;
-  margin-top: 200px;
+  margin: 200px auto;
   height: 350px;
   width: 550px;
   flex-direction: column;
@@ -24,7 +60,14 @@
   gap: 2em;
 }
 
-
+/* Add media query for screens smaller than 768px */
+@media (max-width: 767px) {
+  .screen-1 {
+    margin: 2em;
+    width: auto;
+    max-width: 90%;
+  }
+}
 
 .screen-1 .email {
   background: white;
@@ -38,29 +81,11 @@
   margin-top: -3em;
 }
 
-.screen-1 .email input {
-  outline: none;
-  border: none;
-}
-
-.screen-1 .email input::-moz-placeholder {
-  color: black;
-  font-size: 0.9em;
-}
-
-.screen-1 .email input:-ms-input-placeholder {
-  color: black;
-  font-size: 0.9em;
-}
-
-.screen-1 .email input::placeholder {
-  color: black;
-  font-size: 0.9em;
-}
-
-.screen-1 .email ion-icon {
-  color: #4d4d4d;
-  margin-bottom: -0.2em;
+/* Add media query for screens smaller than 576px */
+@media (max-width: 575px) {
+  .screen-1 .email {
+    margin-top: -2em;
+  }
 }
 
 .screen-1 .password {
@@ -72,35 +97,6 @@
   gap: 0.5em;
   border-radius: 20px;
   color: #4d4d4d;
-}
-
-.screen-1 .password input {
-  outline: none;
-  border: none;
-}
-
-.screen-1 .password input::-moz-placeholder {
-  color: black;
-  font-size: 0.9em;
-}
-
-.screen-1 .password input:-ms-input-placeholder {
-  color: black;
-  font-size: 0.9em;
-}
-
-.screen-1 .password input::placeholder {
-  color: black;
-  font-size: 0.9em;
-}
-
-.screen-1 .password ion-icon {
-  color: #4d4d4d;
-  margin-bottom: -0.2em;
-}
-
-.screen-1 .password .show-hide {
-  margin-right: -5em;
 }
 
 .screen-1 .login {
@@ -120,9 +116,21 @@
   padding-bottom: 10em;
 }
 
+/* Add media query for screens smaller than 768px */
+@media (max-width: 767px) {
+  .screen-1 .footer {
+    gap: 2em;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 5em;
+  }
+}
+
 .screen-1 .footer span {
   cursor: pointer;
 }
+
 
 button {
   cursor: pointer;
@@ -172,6 +180,14 @@ button {
 @media (min-width: 768px) {
   .button-78 {
     padding: 19px 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .button-78 {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
   }
 }
 
@@ -231,15 +247,7 @@ button {
 
 .button-78:active:not(:disabled):after {
   background-image: linear-gradient(#541a0f 0, #0c0d0d 100%);
-  bottom: 4px;
-  left: 4px;
-  right: 4px;
-  top: 4px;
-}
 
-.button-78:disabled {
-  cursor: default;
-  opacity: .24;
 }
 
 .form-input {

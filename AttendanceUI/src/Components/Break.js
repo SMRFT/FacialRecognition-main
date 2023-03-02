@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
 import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
+import "../Logo.css";
 function Break() {
     const navigate = useNavigate();
     const navigateToBreakstart = () => {

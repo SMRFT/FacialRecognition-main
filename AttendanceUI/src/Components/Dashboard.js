@@ -3,6 +3,7 @@ import * as ReactBootStrap from "react-bootstrap";
 import React, { useState, useEffect, useCallback } from "react";
 import { Item } from 'semantic-ui-react';
 import './Dashboard.css'
+import "../Logo.css";
 import { Table } from 'react-bootstrap'
 const Donut = () => {
     const [donutchartdetails, setDonutchartdetails] = useState([]);
