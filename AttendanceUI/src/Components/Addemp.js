@@ -184,7 +184,7 @@ function Addemp() {
   }
   function validateMobile(mobile) {
     let error = "";
-    if (mobile !== "" && !/^[0-9]{10}$/.test(mobile)) {
+    if (mobile !== "" && !/^[0-9]{11}$/.test(mobile)) {
       error = "*Mobile Number should only contain 10 digits";
     }
     return error;
@@ -208,6 +208,13 @@ function Addemp() {
     let error = "";
     if (dateofjoining !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(dateofjoining)) {
       error = "*Invalid date format. Please use YYYY-MM-DD";
+    } else if (dateofjoining !== "") {
+      const parts = dateofjoining.split('-');
+      const month = parseInt(parts[1], 10);
+      if (month < 1 || month > 12) {
+
+        error = "*Invalid month. Please use a value between 1 and 12";
+      }
     }
     return error;
   }
