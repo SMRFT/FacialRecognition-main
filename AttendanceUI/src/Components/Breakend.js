@@ -176,7 +176,6 @@ const WebcamCaptureLogout = () => {
     // console.log(break1)
     // const breakhour = break1[0].Breakhour;
     // console.log(breakhour)
-
     return (
         <React.Fragment>
             <div>
@@ -187,15 +186,14 @@ const WebcamCaptureLogout = () => {
                 </div>
             </div>
 
-            <Navbar style={{ width: '500px', marginLeft: '250px', marginTop: '-40px' }}>
+            <Navbar style={{ width: '500px', marginLeft: '250px', marginTop: '-90px' }}>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
                         className="mr-auto my-2 my-lg"
                         style={{ marginLeft: '100px' }}
                         navbarScroll>
-                        <Nav.Link as={Link} to="/Break" >
-                            <div style={{ color: "green", fontFamily: "cursive", ':hover': { background: "blue" } }}>Break</div></Nav.Link>
+                        <Nav.Link as={Link} to="/" className='nav_link1'>Home</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
@@ -204,57 +202,43 @@ const WebcamCaptureLogout = () => {
                 <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
             </div>
 
-            <button style={{ marginLeft: "250px", marginTop: "-100px", borderColor: "#b9adad", blockSize: "50px", inlineSize: "100px" }} className="Out" onClick={() => { capture(); handleClick(); }}>
-                <i>Lunch In</i>
+            <button className="In" onClick={() => { capture(); handleClick(); }}>
+                <i class="bi bi-camera2"> Check In</i>
             </button>
 
-            <div style={{ color: "red", fontSize: "18px", marginLeft: "930px", marginTop: "200px" }} className="message">{message ? <p>{message}</p> : null}</div>
             {imgSrc && (
                 <img
-                    // class="container1"
-                    class="rounded-border-gradient1"
-                    style={{ height: "200px", width: "300px", marginTop: "-2300px", marginLeft: "850px" }}
+                    className="screenshot"
                     src={imgSrc}
                     alt="capture"
                 />
             )}
 
-            <div
-                className="empdetails"
-                style={{ display: isShown ? "none" : "block" }}
-            >
-                <div class="rounded-border-gradient1" style={{ marginLeft: "850px", marginTop: "-1050px", fontSize: "20px", width: "300px" }}>
-                    <b></b>
+            <div className="empdetails" style={{ display: isShown ? "none" : "block" }}>
+                <div>
                     <br />
-                    {employee.id && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>ID: {employee.id}</p>}
-                    {employee.name && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Name: {employee.name}</p>}
-                    {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Designation: {employee.designation}</p>}
-
-                    {logout && <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Login time: {logout}</p>}
-
+                    {employee.id && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>ID: {employee.id}</p>}
+                    {employee.name && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Name: {employee.name}</p>}
+                    {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Designation: {employee.designation}</p>}
                     <div>
                         {breakhours.map(item => (
                             <div key={item.id}>
                                 {/* <p style={{ fontWeight: "bold", marginLeft: "40px" }}>logout time: {item.lunchstart}</p> */}
-                                <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Breakhour: {item.Breakhour}</p>
+                                <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Breakhour: {item.Breakhour}</p>
                                 {/* <p style={{ fontWeight: "bold", marginLeft: "40px" }}>Date: {item.date}</p> */}
                             </div>
                         ))}
                     </div>
-                    <br />
-
                 </div>
-
-                <div>
-
-                </div>
-                <div className="col-lg" style={{ marginLeft: "950px", marginTop: "130px" }}>
+                <div className="message" style={{ marginLeft: "30px", marginTop: "10px" }}>{message ? <p>{message}</p> : null}</div>
+                <div className="col-lg" style={{ marginLeft: "80px", marginTop: "10px" }}>
                     <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
-                        <i class="bi bi-check-circle"> Done</i>
+                        <i className="bi bi-check-circle"> Done</i>
                     </button>
                 </div>
             </div>
-        </React.Fragment>
+
+        </React.Fragment >
     );
 };
 export default WebcamCaptureLogout;

@@ -6,6 +6,7 @@ import "./NavbarComp.css"
 import { Table } from 'react-bootstrap'
 import { CSVLink } from 'react-csv';
 import profile from "../images/smrft.png";
+import logo from "../images/smrft_logo.png";
 import { Navbar, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { BrowserRouter as Router, Link, useParams } from "react-router-dom";
@@ -219,21 +220,25 @@ function Admincalendar() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="mr-auto my-2 my-lg-0" style={{ maxHeight: "200px" }} navbarScroll>
-            <Nav.Link as={Link} to="/" className='nav_link1'>
+            <Nav.Link as={Link} to="/" >
               <div style={{ color: "green", fontFamily: "cursive" }}>Home</div>
             </Nav.Link>
-            <Nav.Link as={Link} to="/Admin/Viewemp" className='nav_link2'>
+            <Nav.Link as={Link} to="/Admin/Viewemp">
               <div style={{ color: "green", fontFamily: "cursive" }}>Employee Details</div>
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
+      <div class="page-heading">
+        <h1>Summary Of Employee</h1>
+      </div>
       <div className="col-sm-8">
         <i>
           <CSVLink data={userdata} filename={name} class="buttonDownload"></CSVLink></i>
       </div>
       <br />
-      <img src={`${image}`} class="center" />
+      <img src={`${image}`} class="center" alt="profile" />
+
       <br />
       <div class="name">{name1}</div>
       <br />

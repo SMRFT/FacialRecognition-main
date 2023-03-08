@@ -12,7 +12,9 @@ import AdminCalendar from "./AdminCalendar";
 import { CSVLink } from 'react-csv';
 import DatePicker from "react-datepicker";
 import moment from "moment";
+import axios from 'axios';
 import "../Logo.css";
+import "./Viewemp.css";
 ///view employee
 const Home = () => {
   const [error, setError] = useState(null);
@@ -116,6 +118,40 @@ const Home = () => {
         .includes(searchString.toString().toLowerCase())
     );
   });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isIframeVisible, setIsIframeVisible] = useState(false);
+  const [message, setMessage] = useState("");
+  const viewFile = () => {
+    setIsLoading(true);
+    const queryParams = new URLSearchParams();
+
+    axios.post(`http://localhost:7000/attendance/get_file?filename=${filteredResults.name}.pdf`, {
+      filename: `${filteredResults.name}.pdf`,
+    }, {
+      responseType: "blob"
+    })
+      .then(response => {
+        const file = new Blob([response.data], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        const iframe = document.createElement('iframe');
+        iframe.src = fileURL;
+        iframe.style.width = '100%';
+        iframe.style.height = `${window.innerHeight}px`;
+        document.body.appendChild(iframe);
+        setIsLoading(false);
+        setIsIframeVisible(true);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+        setMessage(
+          error.response && error.response.status === 404
+            ? "File not found."
+            : "An error occurred while retrieving the file."
+        );
+      });
+  };
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
@@ -125,11 +161,20 @@ const Home = () => {
       <body>
         <br />
         <br />
-        <div>
-          <i><CSVLink style={{ float: "right", fontSize: "40px", cursor: "pointer", color: "darkblue" }}
+        {/* <OverlayTrigger
+          overlay={<Tooltip id="tooltip">Download payroll data</Tooltip>}
+
+        > */}
+        <div class="Download3">
+
+          <i><CSVLink style={{
+            float: "right", fontSize: "25px", width: "100px",
+            height: "50px", cursor: "pointer", color: "darkblue", marginTop: "25px", marginLeft: "10px"
+          }}
             className="fa fa-download" data={userdata} filename={"payroll"}></CSVLink></i>
         </div>
-        <div style={{ float: "right", cursor: "pointer" }}>
+        {/* </OverlayTrigger> */}
+        <div class="date-picker" style={{ float: "right", cursor: "pointer" }}>
           <label>Year</label>
           <DatePicker style={{ textAlign: "center" }}
             selected={myYear}
@@ -138,7 +183,7 @@ const Home = () => {
             dateFormat="yyyy"
           />
         </div>
-        <div style={{ float: "right", cursor: "pointer" }}>
+        <div class="date-picker" style={{ float: "right", cursor: "pointer" }}>
           <label>Month</label>
           <DatePicker
             selected={myMonth}
@@ -268,33 +313,34 @@ const Home = () => {
                   <td>{user.address}</td>
                   <td>
                     <OverlayTrigger
-                      overlay={<Tooltip id={`tooltip-top`}>Edit</Tooltip>}
+                      overlay={<Tooltip id="tooltip">Edit</Tooltip>}
+                      placement="left"
                     >
                       <button
                         onClick={() => editEmployee(user)}
                         className="btn text-warning btn-act"
                         data-toggle="modal"
                       >
-                        <i
-                          style={{ color: "black" }}
-                          className="bi bi-pencil-square"
-                        ></i>
+                        <i className="bi bi-pencil-fill"></i>
                       </button>
                     </OverlayTrigger>
+
                     <OverlayTrigger
-                      overlay={<Tooltip id="bottom">Delete</Tooltip>}
+                      overlay={<Tooltip id="tooltip">Delete</Tooltip>}
+                      placement="left"
                     >
                       <button
                         onClick={() => deleteEmployee(user)}
                         className="btn text-danger btn-act"
                         data-toggle="modal"
                       >
-                        <i className="bi bi-person-x-fill"></i>
+                        <i className="bi bi-trash-fill"></i>
                       </button>
                     </OverlayTrigger>
 
                     <OverlayTrigger
-                      overlay={<Tooltip id="tooltip">Calender</Tooltip>}
+                      overlay={<Tooltip id="tooltip">Calendar</Tooltip>}
+                      placement="left"
                     >
                       <Link
                         to={`/AdminCalendar/${user.name + '_' + user.id}`}
@@ -303,13 +349,16 @@ const Home = () => {
                         <button
                           onClick={() => navigateToCalendar(user)}
                           className="btn text-primary btn-act"
-                          data-toggle="modal">
-                          <i className="bi bi-calendar3-week-fill"></i>
+                          data-toggle="modal"
+                        >
+                          <i className="bi bi-calendar3-week"></i>
                         </button>
                       </Link>
                     </OverlayTrigger>
+
                     <OverlayTrigger
-                      overlay={<Tooltip id="tooltip">Documents</Tooltip>}
+                      overlay={<Tooltip id="tooltip">Files</Tooltip>}
+                      placement="left"
                     >
                       <Link
                         to={`/Fileviewer/${user.name}`}
@@ -318,11 +367,13 @@ const Home = () => {
                         <button
                           onClick={() => navigateToFileviewer(user)}
                           className="btn text-primary btn-act"
-                          data-toggle="modal">
-                          <i class="bi bi-file-text"></i>
+                          data-toggle="modal"
+                        >
+                          <i className="bi bi-file-earmark-text"></i>
                         </button>
                       </Link>
                     </OverlayTrigger>
+
                   </td>
                   <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>

@@ -184,52 +184,44 @@ const WebcamCaptureLogin = () => {
                         className="mr-auto my-2 my-lg"
                         style={{ marginLeft: '100px' }}
                         navbarScroll>
-                        <Nav.Link as={Link} to="/Break" >
-                            <div style={{ color: "green", fontFamily: "cursive", ':hover': { background: "blue" } }}>Break</div></Nav.Link>
+                        <Nav.Link as={Link} to="/" className='nav_link1'>Home</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
 
-            <div className="container" >
+            <div className="container">
                 <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
             </div>
 
-            <button style={{ marginLeft: "250px", marginTop: "-100px", borderColor: "#b9adad", blockSize: "50px", inlineSize: "100px" }} className="In" onClick={() => { capture(); handleClick(); }}>
-                <i>Lunch Out</i>
+            <button className="In" onClick={() => { capture(); handleClick(); }}>
+                <i class="bi bi-camera2"> Check In</i>
             </button>
-
-            <div style={{ color: "red", fontSize: "18px", marginLeft: "900px", marginTop: "200px" }} className="message">{message ? <p>{message}</p> : null}</div>
 
             {imgSrc && (
                 <img
-                    // class="container1"
-                    class="rounded-border-gradient1"
-                    style={{ height: "200px", width: "300px", marginTop: "-2300px", marginLeft: "850px" }}
+                    className="screenshot"
                     src={imgSrc}
                     alt="capture"
                 />
             )}
 
-            <div
-                // className="empdetails"
-                style={{ display: isShown ? "none" : "block" }}
-            >
-                <div class="rounded-border-gradient1" style={{ marginLeft: "850px", marginTop: "-1050px", fontSize: "20px", width: "300px" }}>
+            <div className="empdetails" style={{ display: isShown ? "none" : "block" }}>
+                <div>
                     <br />
                     {employee.id && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>ID: {employee.id}</p>}
                     {employee.name && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Name: {employee.name}</p>}
                     {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Designation: {employee.designation}</p>}
-                    {login && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Logout time: {login}</p>}
+                    {login && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Logintime: {login}</p>}
                     <br />
-
                 </div>
-
-                <div className="col-lg" style={{ marginLeft: "950px", marginTop: "100px" }}>
+                <div className="message" style={{ marginLeft: "30px", marginTop: "10px" }}>{message ? <p>{message}</p> : null}</div>
+                <div className="col-lg" style={{ marginLeft: "80px", marginTop: "10px" }}>
                     <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
-                        <i class="bi bi-check-circle"> Done</i>
+                        <i className="bi bi-check-circle"> Done</i>
                     </button>
                 </div>
             </div>
+
         </React.Fragment >
     );
 };

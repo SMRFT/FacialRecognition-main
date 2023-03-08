@@ -1,10 +1,11 @@
+//This component is to render a camera which captures screenshot of an employee 
+//and matches to compreface and db and retrieves the details of an employee and 
+//stores the logout details of an employee to calculate the employee logout information
 import Webcam from "react-webcam";
 import React from "react";
 import moment from "moment";
 import { useState, useEffect } from "react";
-//import { ReactDOM } from "react";
 import "../WebcamCapture.css";
-import "../Logo.css";
 import Myconstants from "../Components/Myconstants";
 import { useNavigate } from "react-router-dom";
 import "../Admin";
@@ -23,22 +24,23 @@ const WebcamCaptureLogout = () => {
   const [isShown, setIsShown] = useState(true);
   const [message, setMessage] = useState("")
   let [logout, setLogout] = useState("")
+
+  //Function for hide and show for employee details
   const handleClick = (event) => {
     setIsShown((current) => !current);
   };
 
   const capture = React.useCallback(() => {
+    //Function to get camera screenshot image of an employee and changing it as dataurl
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
-
     toDataURL(imageSrc).then((dataUrl) => {
-
       var fileData = dataURLtoFile(dataUrl, "imageName.jpg");
-
+      //Appending the image to formdata as dataurl format
       let formData = new FormData();
       formData.append("file", fileData);
       formData.append("file", imageSrc);
-
+      //Posting image to compreface
       const recognize = fetch(
         "http://localhost:8000/api/v1/recognition/recognize",
         {
@@ -53,9 +55,8 @@ const WebcamCaptureLogout = () => {
         .then(function (data) {
           var nameEmp = data.result.map(function (recognizedEmp) {
             const nameOfLoggedInEmp = recognizedEmp.subjects[0].subject;
-
             const empId = nameOfLoggedInEmp.split("_");
-
+            //Post method to show the employee details using id
             const res = fetch("http://127.0.0.1:7000/attendance/showempById", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -71,27 +72,19 @@ const WebcamCaptureLogout = () => {
                 }
               );
 
+            //Formatting time,date,month for posting
             const Emplogout = fileData.lastModifiedDate;
-
-
             let logouttime = moment(Emplogout)
-
-
             logouttime = moment(logouttime).format('YYYY-MM-DD HH:mm')
-
-
             let log = moment(Emplogout)
-
-
             let logout = log.format('HH:mm')
             setLogout(logout)
             // let shifttime = '2023-01-12 05:00'
             // let overtimehours = logouttime - shifttime
             // console.log(overtimehours)
-
             let date = log.format('YYYY-MM-DD')
 
-
+            //Updating logout information of employee to db using the above data
             const empLogoutResultSet = fetch("http://127.0.0.1:7000/attendance/admincalendarlogout", {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -103,6 +96,7 @@ const WebcamCaptureLogout = () => {
               }),
             })
               .then((empLogoutResultSet) => {
+                //Logout successfull message from constant file
                 if (empLogoutResultSet.status === 200) {
                   setMessage(Myconstants.Webcamlogout);
                 } else {
@@ -112,11 +106,12 @@ const WebcamCaptureLogout = () => {
           });
         })
         .catch(function (error) {
-          // console.log("Request failed: " + JSON.stringify(error));
         });
     });
   }, [webcamRef, setImgSrc]);
 
+  //Function for done icon to reload window 
+  //after getting logout information of an employee saved to db
   function refreshPage() {
     {
       window.location.reload();
@@ -159,15 +154,14 @@ const WebcamCaptureLogout = () => {
         </div>
       </div>
 
-      <Navbar style={{ width: '500px', marginLeft: '250px', marginTop: '-40px' }}>
+      <Navbar style={{ width: '500px', marginLeft: '250px', marginTop: '-90px' }}>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
             className="mr-auto my-2 my-lg"
             style={{ marginLeft: '100px' }}
             navbarScroll>
-            <Nav.Link as={Link} to="/" >
-              <div style={{ color: "green", fontFamily: "cursive", ':hover': { background: "blue" } }}>Home</div></Nav.Link>
+            <Nav.Link as={Link} to="/" className='nav_link1'>Home</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -176,37 +170,29 @@ const WebcamCaptureLogout = () => {
         <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
       </div>
 
-      <button style={{ marginLeft: "250px", marginTop: "-100px", borderColor: "#b9adad", blockSize: "50px", inlineSize: "100px" }} className="Out" onClick={() => { capture(); handleClick(); }}>
+      <button className="Out" onClick={() => { capture(); handleClick(); }}>
         <i class="bi bi-camera2">CheckOut</i>
       </button>
-
-      <div style={{ color: "red", fontSize: "18px", marginLeft: "700px", marginBottom: "100px" }} className="message">{message ? <p>{message}</p> : null}</div>
 
       {imgSrc && (
         <img
           className="screenshot"
-          style={{ height: "150px", width: "200px", marginTop: "-900px", marginLeft: "700px" }}
           src={imgSrc}
           alt="capture"
         />
       )}
 
-
-      <div
-        className="empdetails"
-        style={{ display: isShown ? "none" : "block" }}
-      >
-        <div style={{ marginLeft: "700px", marginTop: "-350px", fontSize: "20px" }}>
-          <b></b>
+      <div className="empdetails" style={{ display: isShown ? "none" : "block" }}>
+        <div>
           <br />
-          {employee.id && <p>ID: {employee.id}</p>}
-          {employee.name && <p>Name: {employee.name}</p>}
-          {employee.designation && <p>Designation: {employee.designation}</p>}
-          {logout && <p>Logouttime: {logout}</p>}
+          {employee.id && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>ID: {employee.id}</p>}
+          {employee.name && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Name: {employee.name}</p>}
+          {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Designation: {employee.designation}</p>}
+          {logout && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Logouttime: {logout}</p>}
           <br />
-
         </div>
-        <div className="col-lg" style={{ marginLeft: "760px", marginTop: "150px" }}>
+        <div className="message" style={{ marginLeft: "30px", marginTop: "10px" }}>{message ? <p>{message}</p> : null}</div>
+        <div className="col-lg" style={{ marginLeft: "80px", marginTop: "10px" }}>
           <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
             <i class="bi bi-check-circle"> Done</i>
           </button>

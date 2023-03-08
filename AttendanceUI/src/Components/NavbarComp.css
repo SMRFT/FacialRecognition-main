@@ -1,49 +1,30 @@
-.navbar a:focus {
-    color: steelblue;
-    font-size: larger;
-    font-family: cursive;
-    width: 180px;
-}
-
-.navbar a:hover {
-    color: rgb(5, 183, 214);
-    font-size: larger;
-}
-
-.nav_link1 {
-    margin-right: 50px;
-    color: cadetblue;
-    font-weight: 900;
-    font-size: larger;
-    font-family: serif;
-    font-style: unset;
-}
-
-.nav_link2 {
-    margin-right: 50px;
-    width: 160px;
-    color: cadetblue;
-    font-weight: 900;
-    font-size: larger;
-    font-family: serif;
-    font-style: unset;
-}
-
-.nav_link3 {
-    margin-right: 50px;
-    width: 140px;
-    color: cadetblue;
-    font-weight: 900;
-    font-size: larger;
-    font-family: serif;
-    font-style: unset;
-}
-
+.nav_link1,
+.nav_link2,
+.nav_link3,
 .nav_link4 {
     margin-right: 50px;
     color: cadetblue;
     font-weight: 900;
-    font-size: larger;
+    font-size: large;
     font-family: serif;
     font-style: unset;
+    white-space: nowrap;
+}
+
+
+.nav_link1:hover,
+.nav_link2:hover,
+.nav_link3:hover,
+.nav_link4:hover {
+    color: darkseagreen !important;
+    font-family: monospace !important;
+}
+
+.nav_link1.active,
+.nav_link2.active,
+.nav_link3.active,
+.nav_link4.active {
+    color: forestgreen !important;
+    font-size: larger !important;
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
 }

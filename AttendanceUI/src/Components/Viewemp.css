@@ -1,0 +1,57 @@
+.date-picker {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.date-picker input {
+    width: 100px;
+    height: 30px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.date-picker i {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.date-picker i:hover {
+    color: #333;
+}
+
+.year-picker .react-datepicker__year-read-view {
+    padding: 0;
+}
+
+.year-picker .react-datepicker__year-read-view:hover {
+    background-color: transparent;
+}
+
+.year-picker .react-datepicker__year-dropdown-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    margin: 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 1;
+}
+
+.year-picker .react-datepicker__year-option {
+    margin: 0 5px;
+}
+
+.year-picker .react-datepicker__navigation {
+    display: none;
+}

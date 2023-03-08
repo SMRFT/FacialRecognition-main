@@ -7,6 +7,16 @@
   border-width: 2px;
 }
 
+.In,
+.Out {
+  margin-left: 250px;
+  margin-top: -100px;
+  border-color: #b9adad;
+  block-size: 50px;
+  inline-size: 100px;
+  font-size: 14px;
+}
+
 .In:hover {
   background-color: green;
   color: aliceblue;
@@ -27,6 +37,22 @@ video {
   border: 1px solid rgb(227, 250, 125);
   border-width: 2px;
   border-radius: 20%;
+  height: 150px;
+  width: 200px;
+  margin-top: -650px;
+  margin-left: 350px;
+  border-width: 1px;
+  border-radius: 10%;
+}
+
+.empdetails {
+  margin-top: -250px;
+  margin-left: 700px;
+}
+
+.message {
+  color: red;
+  font-size: 18px;
 }
 
 .lds-circle {
@@ -44,23 +70,151 @@ video {
   animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
 
-@keyframes lds-circle {
 
-  0%,
-  100% {
-    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+@media only screen and (max-width: 820px) {
+  .container {
+    width: 500px;
+    height: 350px;
   }
 
-  0% {
-    transform: rotateY(0deg);
+  video {
+    max-height: 45vh;
+    height: 330px;
+    width: 480px;
   }
 
-  50% {
-    transform: rotateY(1800deg);
-    animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+  .lds-circle>div {
+    width: 32px;
+    height: 32px;
+    margin: 4px;
   }
 
-  100% {
-    transform: rotateY(3600deg);
+  .screenshot {
+    height: 150px;
+    width: 150px;
+    margin-top: -600px;
+    margin-left: 600px;
+  }
+
+  .In,
+  .Out {
+    margin: 0 auto;
+    margin-left: 250px;
+    margin-top: -100px;
+    block-size: 40px;
+    inline-size: 80px;
+  }
+
+  .empdetails {
+    margin-top: -240px;
+    margin-left: 600px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .container {
+    width: 500px;
+    height: 350px;
+  }
+
+  video {
+    max-height: 45vh;
+    height: 330px;
+    width: 480px;
+  }
+
+  .lds-circle>div {
+    width: 32px;
+    height: 32px;
+    margin: 4px;
+  }
+
+  .screenshot {
+    height: 150px;
+    width: 150px;
+    margin-top: -600px;
+    margin-left: 550px;
+  }
+
+  .In,
+  .Out {
+    margin: 0 auto;
+    margin-left: 250px;
+    margin-top: -100px;
+    block-size: 40px;
+    inline-size: 80px;
+    font-size: smaller;
+  }
+
+  .empdetails {
+    margin-top: -250px;
+    margin-left: 550px;
+  }
+}
+
+@media only screen and (max-width: 560px) {
+  .container {
+    width: 400px;
+    height: 300px;
+  }
+
+  video {
+    height: 250px;
+    width: 380px;
+  }
+
+  .screenshot {
+    height: 150px;
+    width: 150px;
+    margin-top: -550px;
+    margin-left: 450px;
+  }
+
+  .In,
+  .Out {
+    margin: 0 auto;
+    margin-left: 180px;
+    margin-top: -100px;
+    block-size: 40px;
+    inline-size: 80px;
+  }
+
+  .empdetails {
+    margin-top: -250px;
+    margin-left: 450px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    width: 300px;
+    height: 250px;
+  }
+
+  video {
+    height: 200px;
+    width: 280px;
+  }
+
+  .screenshot {
+    height: 100px;
+    width: 100px;
+    margin-top: -460px;
+    margin-left: 350px;
+  }
+
+  .In,
+  .Out {
+    margin: 0 auto;
+    margin-left: 120px;
+    margin-top: -100px;
+    block-size: 40px;
+    inline-size: 80px;
+    font-size: xx-small;
+  }
+
+  .empdetails {
+    margin-top: -200px;
+    margin-left: 350px;
   }
 }

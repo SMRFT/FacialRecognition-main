@@ -40,3 +40,32 @@ body {
         height: 40px;
     }
 }
+
+
+.page-heading {
+    text-align: center;
+    margin-bottom: -80px;
+}
+
+.page-heading h1 {
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+    text-shadow: 2px 2px #ddd;
+}
+
+.page-heading h1 span {
+    color: #f00;
+}
+
+.page-heading p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #666;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.message {
+    margin-bottom: -0.9rem;
+}

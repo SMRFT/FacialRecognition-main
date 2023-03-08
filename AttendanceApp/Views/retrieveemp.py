@@ -246,20 +246,21 @@ class Summary(APIView):
         overime_dates_string = "\n".join(
             date.strftime("%Y-%m-%d") for date in overtime_dates)
 
+
         def leavedates():
             data = employeedata.values("date")
             df = pd.DataFrame(data)
             df = df.set_index("date")
             df.index = pd.to_datetime(df.index)
             todayDate = datetime.date.today()
-            if todayDate.day > 31:
-                todayDate += datetime.timedelta(7)
-            x = todayDate.replace(day=1)
-            nxt_mnth = x.replace(day=28) + datetime.timedelta(days=4)
-            y = nxt_mnth - datetime.timedelta(days=nxt_mnth.day)
-            xy = pd.date_range(start=x, end=y).difference(df.index)
+            print(todayDate)
+            start_date = todayDate.replace(day=1)
+            end_date =todayDate
+            print(end_date)
+            xy = pd.date_range(start=start_date, end=end_date).difference(df.index)
             leave_dates = " ".join(date.strftime("%Y-%m-%d") for date in xy)
             return leave_dates
+
         for employee in employeedata:
             employee["overtime"] = overtime
             employee["workingdays"] = workingdays()

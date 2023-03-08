@@ -1,10 +1,11 @@
+//This component is to render a camera which captures screenshot of an employee 
+//and matches to compreface and db and retrieves the details of an employee and 
+//stores the login details of an employee to calculate the employee login information
 import Webcam from "react-webcam";
 import React from "react";
 import moment from "moment";
 import { useState, useEffect } from "react";
-//import { ReactDOM } from "react";
 import "../WebcamCapture.css";
-import "../Logo.css";
 import Myconstants from "../Components/Myconstants";
 import { Navigate, useNavigate } from "react-router-dom";
 import "../Admin";
@@ -31,23 +32,24 @@ const WebcamCaptureLogin = () => {
   const [endTime, setEndTime] = useState(null);
   const [duration, setDuration] = useState(null);
   const [email, setEmail] = useState([]);
-
   let [login, setLogin] = useState();
+
+  //Function for hide and show for employee details
   const handleClick = (event) => {
     setIsShown((current) => !current);
   };
 
-
-
-
   const capture = React.useCallback(() => {
+    //Function to get camera screenshot image of an employee and changing it as dataurl
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
     toDataURL(imageSrc).then((dataUrl) => {
       var fileData = dataURLtoFile(dataUrl, "imageName.jpg");
+      //Appending the image to formdata as dataurl format
       let formData = new FormData();
       formData.append("file", fileData);
       formData.append("file", imageSrc);
+      //Posting image to compreface
       const recognize = fetch(
         "http://localhost:8000/api/v1/recognition/recognize",
         {
@@ -63,7 +65,7 @@ const WebcamCaptureLogin = () => {
           var nameEmp = data.result.map(function (recognizedEmp) {
             const nameOfLoggedInEmp = recognizedEmp.subjects[0].subject;
             const empId = nameOfLoggedInEmp.split("_");
-
+            //Post method to show the employee details using id
             const res = fetch("http://127.0.0.1:7000/attendance/showempById", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -75,6 +77,8 @@ const WebcamCaptureLogin = () => {
                   const email = data.email;
                   // const phonenumber = data.mobile
                   setEmail(email);
+                  // <ReactWhatsapp number="+91-7904019642" message="Hello World!!!" />
+                  // console.log("email", email);
                   fetch("http://127.0.0.1:7000/attendance/send-email/", {
                     method: "POST",
                     headers: {
@@ -83,9 +87,6 @@ const WebcamCaptureLogin = () => {
                     },
                     body: JSON.stringify({ subject: subject, message: messages, recipient: email }),
                   })
-                  // <ReactWhatsapp number="+91-7904019642" message="Hello World!!!" />
-                  console.log("email", email);
-
                   fetch("http://127.0.0.1:7000/attendance/send-whatsapp/", {
                     method: "POST",
                     headers: {
@@ -95,7 +96,6 @@ const WebcamCaptureLogin = () => {
                     body: JSON.stringify({ message: messages, to: "WhatsApp:+91" + data.mobile }),
                   })
                     .then(response => {
-                      // console.log('response', response);
                     })
                     .catch(error => {
                       console.log('error', error);
@@ -108,7 +108,7 @@ const WebcamCaptureLogin = () => {
                 }
               );
 
-            ////employee time format change
+            //Formatting time,date,month for posting
             const Emplogin = fileData.lastModifiedDate;
             let logintime = moment(Emplogin)
             logintime = moment(logintime).format('YYYY-MM-DD HH:mm')
@@ -122,17 +122,17 @@ const WebcamCaptureLogin = () => {
 
             // let lunchStart = '0'
             // console.log(data.name)
+
             ////employee shift time
             const subject = "Shanmuga Hospital Login Details";
             const messages = `Name: ${empId[0]},
-Employee id:${empId[1]},
-Date: ${date},
-Shift Login time: ${logintime}`;
+            Employee id:${empId[1]},
+            Date: ${date},
+            Shift Login time: ${logintime}`;
 
             // const recipient = "parthipanmurugan335317@gmail.com";
             // const recipient = email
             // console.log(recipient)
-
 
             let shift;
             if (login >= Myconstants.shift1time && login < Myconstants.shift2time) {
@@ -143,13 +143,13 @@ Shift Login time: ${logintime}`;
             }
             else { shift = Myconstants.shift3 }
 
+            //Posting login information of employee to db using the above data
             const empLoginResultSet = fetch(
               "http://127.0.0.1:7000/attendance/admincalendarlogin",
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-
                 },
                 body: JSON.stringify({
                   id: empId[1],
@@ -162,13 +162,10 @@ Shift Login time: ${logintime}`;
                   month: month,
                   month: month,
                   year: year
-
                 }),
               })
-
-
               .then((empLoginResultSet) => {
-
+                //Login successfull message from constant file
                 if (empLoginResultSet.status === 200) {
                   setMessage(Myconstants.Webcamlogin);
                 } else {
@@ -176,16 +173,15 @@ Shift Login time: ${logintime}`;
                 }
 
               })
-
-
           });
         })
         .catch(function (error) {
-
         });
     });
   }, [webcamRef, setImgSrc]);
 
+  //Function for done icon to reload window 
+  //after getting login information of an employee saved to db
   function refreshPage() {
     {
       window.location.reload();
@@ -193,7 +189,6 @@ Shift Login time: ${logintime}`;
   }
 
   //converting "image source" (url) to "Base64"
-
   const toDataURL = (url) =>
     fetch(url)
       .then((response) => response.blob())
@@ -237,8 +232,7 @@ Shift Login time: ${logintime}`;
             className="mr-auto my-2 my-lg"
             style={{ marginLeft: '100px' }}
             navbarScroll>
-            <Nav.Link as={Link} to="/" >
-              <div style={{ color: "green", fontFamily: "cursive", ':hover': { background: "blue" } }}>Home</div></Nav.Link>
+            <Nav.Link as={Link} to="/" className='nav_link1'>Home</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -247,41 +241,32 @@ Shift Login time: ${logintime}`;
         <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
       </div>
 
-      <button style={{ marginLeft: "250px", marginTop: "-100px", borderColor: "#b9adad", blockSize: "50px", inlineSize: "100px" }} className="In" onClick={() => { capture(); handleClick(); }}>
+      <button className="In" onClick={() => { capture(); handleClick(); }}>
         <i class="bi bi-camera2"> Check In</i>
       </button>
-
-      <div style={{ color: "red", fontSize: "18px", marginLeft: "750px", marginBottom: "500px" }} className="message">{message ? <p>{message}</p> : null}</div>
 
       {imgSrc && (
         <img
           className="screenshot"
-          style={{ height: "150px", width: "200px", marginTop: "-1600px", marginLeft: "700px" }}
           src={imgSrc}
           alt="capture"
         />
       )}
 
-      <div
-        className="empdetails"
-        style={{ display: isShown ? "none" : "block" }}
-      >
-        <div style={{ marginLeft: "700px", marginTop: "-700px", fontSize: "20px" }}>
-          <br />
-          {employee.id && <p>ID: {employee.id}</p>}
-          {employee.name && <p>Name: {employee.name}</p>}
-          {employee.designation && <p>Designation: {employee.designation}</p>}
-          {login && <p>Logintime: {login}</p>}
-          <br />
-        </div>
-
-        <div className="col-lg" style={{ marginLeft: "800px", marginTop: "100px" }}>
-          <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
-            <i class="bi bi-check-circle"> Done</i>
-          </button>
-        </div>
+      <div className="empdetails" style={{ display: isShown ? "none" : "block" }}>
         <div>
-          {/* <button onClick={sendEmail}>Send Email</button> */}
+          <br />
+          {employee.id && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>ID: {employee.id}</p>}
+          {employee.name && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Name: {employee.name}</p>}
+          {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Designation: {employee.designation}</p>}
+          {login && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Logintime: {login}</p>}
+          <br />
+        </div>
+        <div className="message" style={{ marginLeft: "30px", marginTop: "10px" }}>{message ? <p>{message}</p> : null}</div>
+        <div className="col-lg" style={{ marginLeft: "80px", marginTop: "10px" }}>
+          <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
+            <i className="bi bi-check-circle"> Done</i>
+          </button>
         </div>
       </div>
 
