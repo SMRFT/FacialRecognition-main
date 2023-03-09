@@ -24,7 +24,7 @@ function Admincalendar() {
   let image = ''
   // let [name, setName] = useState("");
   const [eventData, setEventData] = useState([]);
-  const [summarydata, setSummaryData] = useState({ workingdays: ' ', leavedays: ' ', overtime: ' ', leavedates: ' ', overtimehours: '' });
+  const [summarydata, setSummaryData] = useState({ workingdays: ' ', leavedays: ' ', overtime: ' ', leavedates: ' ', overtimehours: '', workinghours: '' });
   const [show, setShow] = useState(false);
   const [Otbox, setOtbox] = useState(false);
   const [leavebox, setleavebox] = useState(false);
@@ -103,6 +103,7 @@ function Admincalendar() {
       empdata["overtimehours"] = emp.overtimehours;
       empdata["overtime"] = emp.overtime;
       empdata["leavedates"] = emp.leavedates;
+      empdata["workinghours"] = emp.workinghours;
 
 
       setSummaryData({
@@ -111,7 +112,8 @@ function Admincalendar() {
         overtime: emp.overtime,
         overtimedate: emp.overtimedate,
         leavedates: emp.leavedates,
-        overtimehours: emp.overtimehours
+        overtimehours: emp.overtimehours,
+        workinghours: emp.workinghours
       });
     });
     // let dates = summarydata.leavedates.split(',');
@@ -150,6 +152,7 @@ function Admincalendar() {
       empdata["workingdays"] = emp.workingdays;
       empdata["leavedays"] = emp.leavedays;
       empdata["overtime"] = emp.overtime;
+      empdata["workinghours"] = emp.workinghours;
       console.log(emp)
       setSummaryData({
         workingdays: emp.workingdays,
@@ -244,61 +247,96 @@ function Admincalendar() {
       <br />
       <i style={{ color: "green", fontSize: "35px", marginBottom: "200px", marginLeft: "1850px" }} onClick={() => setShow(true)} data-toggle="modal" className="bi bi-journal-text" />
       <div className='modal-dialog'>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>SUMMARY</Modal.Title>
+        <Modal show={show} onHide={handleClose} >
+          <Modal.Header closeButton style={{ backgroundColor: '', color: 'white' }}>
+            <Modal.Title style={{ color: 'Green' }}>SUMMARY</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>
-              <b>Employee Id: </b>{empid.id}
-              <br />
-              <b>Name: </b>{name1}
-              <br />
-              <b>Over Time Days: </b>{summarydata.overtime} <i style={{ color: "green", fontSize: "20px" }} onClick={() => setOtbox(true)} className="bi bi-file-plus"></i>
-              <div style={{ float: "right" }}>
-                <i style={{ color: "green", fontSize: "20px" }} onClick={() => setOtbox(false)} className="bi bi-cross"></i>
-                <Fade in={Otbox}>
-                  <ReactBootStrap.Table className="table table-hover table-bordered table-striped">
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Worked Hours</th>
-                        <th>Overtime Hours</th>
+            <div className="container1">
+              <div className="col">
+                <div className="col">
+                  <b>Employee Id: </b>{empid.id}
+                </div>
+                <br />
+                <div className="col">
+                  <b>Name: </b>{name1}
+                </div>
+                <br />
+              </div>
+              <div className="col">
+                <div className="col">
+                  <b>Working Days: </b>{summarydata.workingdays}
+                </div>
+                <br />
+                <div className="col">
+                  <b>Over Time Days: </b>{summarydata.overtime} <i style={{ color: "green", fontSize: "20px", cursor: "pointer" }} onClick={() => setOtbox(!Otbox)} className={`bi ${Otbox ? 'bi-file-minus' : 'bi-file-plus'}`}></i>
+                </div>
+                <br />
+                <div className="col">
+                  <b>leave Days: </b>
+                  <span style={{ color: '' }}>{summarydata.leavedays}</span>
+                  <i style={{ color: "green", fontSize: "20px", cursor: "pointer" }} onClick={() => setleavebox(!leavebox)} className={`bi ${leavebox ? 'bi-file-minus' : 'bi-file-plus'}`}></i>
+                </div>
+              </div>
 
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr key={id}>
-                        <td>{summarydata.overtimedate}</td>
-                        <td>{ }</td>
-                        <td>{summarydata.overtimehours}</td>
-                      </tr>
-                    </tbody>
-                  </ReactBootStrap.Table>
-                </Fade>
+              <div className="col">
+                <div className="col">
+                  {Otbox &&
+                    <Fade in={Otbox}>
+                      <ReactBootStrap.Table striped
+                        bordered="danger"
+                        borderColor="danger"
+                        hover
+                        variant="success">
+                        <thead>
+                          <tr>
+                            <th>Overtime Date</th>
+                            <th>Worked Hours</th>
+                            <th>Overtime Hours</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr key={id}>
+                            <td>{summarydata.overtimedate}</td>
+                            <td>{summarydata.workedhours}</td>
+                            <td>{summarydata.overtimehours}</td>
+                          </tr>
+                        </tbody>
+                      </ReactBootStrap.Table>
+                    </Fade>
+                  }
+                </div>
+                <div className="col">
+                  {leavebox && (
+                    <Fade in={leavebox}>
+                      <ReactBootStrap.Table striped
+                        bordered="danger"
+                        borderColor="danger"
+                        hover
+                        variant="success">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {summarydata.leavedates.split('\n').map((date, index) => (
+                            <tr key={index}>
+                              <td style={{ border: '1px solid black', padding: '5px', borderRadius: '5px' }}>{date}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+
+                      </ReactBootStrap.Table>
+                    </Fade>
+                  )}
+
+                </div>
               </div>
-              <br />
-              <b>Working Days: </b>{summarydata.workingdays}
-              <br />
-              <b>Leave Days: </b>{summarydata.leavedays} <i style={{ color: "green", fontSize: "20px" }} onClick={() => setleavebox(true)} className="bi bi-file-plus"></i>
-              <div style={{ float: "right" }}>
-                <Fade in={leavebox}>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <td>{summarydata.leavedates}</td>
-                    </tbody>
-                  </table>
-                </Fade>
-              </div>
-              <br />
             </div>
           </Modal.Body>
         </Modal>
+
       </div>
       <div className={"toolbar"}>
         <button style={{ borderRadius: 10 }} class="previous" type="button" onClick={ev => previous()}>PREVIOUS</button>

@@ -5,11 +5,15 @@ body {
 
 .download-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-end;
-    align-items: center;
     margin-top: 20px;
 }
+
+.download-container>* {
+    align-self: flex-end;
+}
+
 
 .download-button,
 .view-button {

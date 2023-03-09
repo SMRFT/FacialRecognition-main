@@ -17,6 +17,9 @@
     border-radius: 3px,
 }
 
+.container1 {
+    width: 100%;
+}
 
 .center {
     display: block;
@@ -142,24 +145,7 @@ body {
 }
 
 
-/* .summary {
 
-    display: inline-block;
-    position: absolute;
-    padding: 10px 25px;
-    margin-left: 1200px;
-    
-    margin-bottom: -80px;
-    margin-top: -45px;
-    background-color: #4710b4;
-    color: white;
-
-    font-family: sans-serif;
-    text-decoration: none;
-    font-size: 0.92em;
-    text-align: center;
-    text-indent: 15px;
-} */
 
 .previous {
     display: inline-block;
@@ -211,4 +197,55 @@ body {
     font-size: 1.0em;
     text-align: center;
     text-indent: 15px;
+}
+
+.modal-dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-dialog .modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-dialog .modal-header .modal-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.modal-dialog .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-dialog .modal-body b {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.modal-dialog .modal-body i {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.modal-dialog .modal-body table {
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.modal-dialog .modal-body table td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.modal-header .close {
+    background-color: red;
+    color: white;
 }

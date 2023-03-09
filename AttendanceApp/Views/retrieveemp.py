@@ -207,19 +207,22 @@ class Summary(APIView):
 
         # Calculating leave days (finding missing dates using dataframe)
 
+
+
         def leavedays():
-            data = employeedata.values('date')
+            data = employeedata.values("date")
             df = pd.DataFrame(data)
-            df = df.set_index('date')
+            df = df.set_index("date")
             df.index = pd.to_datetime(df.index)
             todayDate = datetime.date.today()
-            if todayDate.day > 31:
-                todayDate += datetime.timedelta(7)
-            x = todayDate.replace(day=1)
-            nxt_mnth = x.replace(day=28) + datetime.timedelta(days=4)
-            y = nxt_mnth - datetime.timedelta(days=nxt_mnth.day)
-            xy = pd.date_range(start=x, end=y).difference(df.index)
+            # print(todayDate)
+            start_date = todayDate.replace(day=1)
+            # print("start",start_date)
+            end_date =todayDate
+            # print(end_date)
+            xy = pd.date_range(start=start_date, end=end_date).difference(df.index)
             return len(xy)
+
         # Calculating Overtime and overtime details
         overtime = 0
         overtime_dates = []
@@ -246,17 +249,15 @@ class Summary(APIView):
         overime_dates_string = "\n".join(
             date.strftime("%Y-%m-%d") for date in overtime_dates)
 
-
+        # leavedays="0"
         def leavedates():
             data = employeedata.values("date")
             df = pd.DataFrame(data)
             df = df.set_index("date")
             df.index = pd.to_datetime(df.index)
             todayDate = datetime.date.today()
-            print(todayDate)
             start_date = todayDate.replace(day=1)
             end_date =todayDate
-            print(end_date)
             xy = pd.date_range(start=start_date, end=end_date).difference(df.index)
             leave_dates = " ".join(date.strftime("%Y-%m-%d") for date in xy)
             return leave_dates
@@ -351,7 +352,7 @@ class RetriveSummaryExport(APIView):
                 if hour > timedelta(hours=8):
                     overtime_hours += (hour - timedelta(hours=8)
                                        ).total_seconds() / 3600
-
+            print(overtime_hours)
             # Add the details for the employee to the list
             emp_details.append({
                 "id": id,

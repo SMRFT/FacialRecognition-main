@@ -40,7 +40,7 @@ class Employee(models.Model):
     email = models.CharField(max_length=500)
     dateofjoining = models.DateField()
     bankaccnum = models.IntegerField()
-    # proof = models.FileField(storage=GridFSStorage())
+    proof = models.FileField(storage=GridFSStorage())
     certificates = models.FileField(storage=GridFSStorage())
     designation = models.CharField(max_length=500)
     address = models.CharField(max_length=500)

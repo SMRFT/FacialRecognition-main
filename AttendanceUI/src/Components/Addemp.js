@@ -1,3 +1,4 @@
+//This components renders a Form to add information of an employee to db 
 import Webcam from "react-webcam";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -7,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { Col, Row } from "react-bootstrap";
 import "./Addemp.css";
 import Myconstants from "../Components/Myconstants";
-import "../Logo.css";
+
 function Addemp() {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");
@@ -24,54 +25,60 @@ function Addemp() {
   const [bankaccnum, setBankAccNum] = useState("");
   const [address, setAddress] = useState("");
   const [proof, setProof] = useState(null);
-  const [proof_url, setProofUrl] = useState("");
-  const [certificates_url, setCertificateUrl] = useState("");
   const [certificates, setCertificate] = useState(null);
   const [message, setMessage] = useState("");
   const [isShown, setIsShown] = useState(true);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const departments = ["IT", "HR", "LAB", "RT TECH", "PHARMACY", "TELECALLER", "FRONT OFFICE", "SECURITY", "ELECTRICIAN", "ACCOUNTS", "NURSING", "HOUSE KEEPING", "DENSIST CONSULTANT", "COOK"];
-
-  function handleChange(e) {
-    setSelectedDepartment(e.target.value);
-  }
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  //Functions to show and hide employee details added to db
   const handleClick = (event) => {
     setIsShown((current) => !current);
   };
-  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  //Functions for selecting department using dropdown
+  function handleChange(e) {
+    setSelectedDepartment(e.target.value);
+  }
+
+  //Function for image ,Proof and certificates upload
+  //Image upload using file upload icon
   const handleImageSelect = (event) => {
     setImgSrc(event.target.files[0]);
   };
-  const handleRemoveImage = () => {
-    setImgSrc(null);
-    document.getElementById("selectImage").value = "";
-  };
-
-
-  const handleRemoveFile = () => {
-    setProof(null);
-    document.getElementById("selectFile").value = "";
-  };
-
-  const handleCertificateSelect = (e) => {
-    setCertificate(e.target.files[0]);
-
-  };
-
-  const handleRemoveCertificate = () => {
-    setCertificate(null);
-    document.getElementById("selectCertificate").value = "";
-  };
-
+  //Image upload using camera
   useEffect(() => {
     if (imgSrc) {
       setImage(URL.createObjectURL(imgSrc));
     }
   }, [imgSrc]);
+  const handleFileSelect = (e) => {
+    setProof(e.target.files[0]);
+  };
+  const handleCertificateSelect = (e) => {
+    setCertificate(e.target.files[0]);
+  };
+
+  //Function for image ,Proof and certificates remove and reupload when selected wrong
+  const handleRemoveImage = () => {
+    setImgSrc(null);
+    document.getElementById("selectImage").value = "";
+  };
+  const handleRemoveFile = () => {
+    setProof(null);
+    document.getElementById("selectFile").value = "";
+  };
+  const handleRemoveCertificate = () => {
+    setCertificate(null);
+    document.getElementById("selectCertificate").value = "";
+  };
+
   const Capture = React.useCallback(() => {
+    //Function to get camera screenshot image of an employee and changing it as dataurl
     const imageSrc = webcamRef.current.getScreenshot();
     toDataURL(imageSrc).then((dataUrl) => {
       var fileData = dataURLtoFile(dataUrl, "image.jpg");
+      //Appending the image to formdata as dataurl format
       let formData = new FormData();
       formData.append("file", fileData);
       formData.append("file", imageSrc);
@@ -80,6 +87,7 @@ function Addemp() {
     });
   }, [webcamRef, setImgSrc]);
   const onSubmit = async (details) => {
+    //Appending all the information given by the user to data and posting it to db
     const data = new FormData();
     const comprefaceImage = new FormData();
     data.append("name", name);
@@ -111,12 +119,7 @@ function Addemp() {
         },
         data: data,
       });
-      const { proof_url, certificates_url } = res.data;
-      console.log(res.data)
-      setProofUrl(proof_url);
-      console.log("proof_url: ", proof_url)
-      setCertificateUrl(certificates_url);
-      console.log("certificates_url: ", certificates_url)
+      //Posting image to compreface
       const res2 = await axios
         ({
           method: "POST",
@@ -127,6 +130,7 @@ function Addemp() {
           data: comprefaceImage,
         });
       if (res.status === 200 && res2.status === 201) {
+        //Employee added successfull message from constant file
         setMessage(Myconstants.AddEmp);
       } else {
         setMessage(Myconstants.AddEmpError);
@@ -136,12 +140,15 @@ function Addemp() {
     }
   };
 
-  // Refresh function
+  //Function for done icon to reload window 
+  //after getting information of an employee saved to db
   function refreshPage() {
     {
       window.location.reload();
     }
   }
+
+  //converting "image source" (url) to "Base64"
   const toDataURL = (url) =>
     fetch(url)
       .then((response) => response.blob())
@@ -168,6 +175,7 @@ function Addemp() {
   }
 
   // Validation for forms
+  // Validation for name
   function validateName(name) {
     let error = "";
     if (!name.match(/^[a-zA-Z]*$/)) {
@@ -175,6 +183,7 @@ function Addemp() {
     }
     return error;
   }
+  // Validation for id
   function validateId(id) {
     let error = "";
     if (!id.match(/^[0-9]*$/)) {
@@ -182,14 +191,15 @@ function Addemp() {
     }
     return error;
   }
+  // Validation for mobile
   function validateMobile(mobile) {
     let error = "";
-    if (mobile !== "" && !/^[0-9]{11}$/.test(mobile)) {
+    if (mobile !== "" && !/^[0-9]{10}$/.test(mobile)) {
       error = "*Mobile Number should only contain 10 digits";
     }
     return error;
   }
-
+  // Validation for designation
   function validateDesignation(designation) {
     let error = "";
     if (!designation.match(/^[a-zA-Z]*$/)) {
@@ -197,6 +207,7 @@ function Addemp() {
     }
     return error;
   }
+  // Validation for email
   function validateEmail(email) {
     let error = "";
     if (email !== "" && !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email)) {
@@ -204,6 +215,7 @@ function Addemp() {
     }
     return error;
   }
+  // Validation for Date Of Joining
   function validateDateOfJoining(dateofjoining) {
     let error = "";
     if (dateofjoining !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(dateofjoining)) {
@@ -218,6 +230,7 @@ function Addemp() {
     }
     return error;
   }
+  // Validation for Bank Account Number
   function validateBankAccNum(bankaccnum) {
     let error = "";
     if (bankaccnum !== "" && !/^[0-9]{9,18}$/.test(bankaccnum)) {
@@ -225,6 +238,7 @@ function Addemp() {
     }
     return error;
   }
+  // Validation for Address
   function validateAddress(address) {
     let error = "";
     if (!address.match(/^[0-9/,a-zA-Z- 0-9.]*$/)) {
@@ -232,6 +246,7 @@ function Addemp() {
     }
     return error;
   }
+
   return (
     <body>
       <div>
@@ -438,7 +453,18 @@ function Addemp() {
                 )}
               </div>
               <br />
-
+              <div className="mx-5 form-group">
+                <input id="selectFile" type="file" accept=".pdf" onChange={handleFileSelect} hidden /><b>Choose a PAN or Aadhaar proof :</b>
+                <label for="selectFile" className="mx-4 bi bi-folder-check" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
+                {proof && (
+                  <>
+                    <span className="mx-3">{proof.name}</span>
+                    <button className="btn btn-danger" onClick={handleRemoveFile}>
+                      <i className="fa fa-times"></i>
+                    </button>
+                  </>
+                )}
+              </div>
               <br />
               <div className="mx-5 form-group">
                 <input id="formFileMultiple" type="file" accept=".pdf" onChange={handleCertificateSelect} multiple hidden /><b>Choose a Certificates (multiple file select) :</b>
@@ -476,18 +502,6 @@ function Addemp() {
             <div><b>Mobile : </b>{mobile}</div>
             <div><b>Designation : </b>{designation}</div>
             <div><b>Address : </b>{address}</div><br />
-            {proof_url && (
-              <div>
-                <h4>Proof</h4>
-                <iframe src={proof_url} width="50%" height="400px" />
-              </div>
-            )}
-            {certificates_url && (
-              <div>
-                <h4>Certificates</h4>
-                <iframe src={certificates_url} width="50%" height="400px" />
-              </div>
-            )}
             <br />
             <i className="bi bi-check-circle" onClick={() => { refreshPage(); }} style={{ fontSize: "40px", color: "green", marginLeft: "100px", cursor: "pointer" }}> </i>
           </div>

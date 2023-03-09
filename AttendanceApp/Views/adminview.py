@@ -22,7 +22,8 @@ from pymongo import MongoClient
 class EmployeeView(APIView):
     @csrf_exempt
     def post(self, request):
-        # proof_file = request.FILES['proof']
+        proof_file = request.FILES['proof']
+        file_contents1 = proof_file.read()
         certificates_file = request.FILES['certificates']
         file_contents = certificates_file.read()
         serializer = EmployeeSerializer(data=request.data)
@@ -33,7 +34,7 @@ class EmployeeView(APIView):
         db = client["data"]
         fs = GridFS(db)
         # certificates_filename =employee.name+".pdf"
-        # proof_file_id = fs.put(proof_file, filename=proof_file.name, employee_id=employee.id)
+        proof_file_id = fs.put(file_contents1, filename=employee.id+".pdf", employee_id=employee.id)
         certificates_file_id = fs.put(file_contents, filename=employee.name+".pdf", employee_id=employee.id)
         return Response({'message': 'New Employee Has Been Added Successfully'})
 

@@ -361,7 +361,7 @@ const Home = () => {
                       placement="left"
                     >
                       <Link
-                        to={`/Fileviewer/${user.name}`}
+                        to={`/Fileviewer/${user.name + '_' + user.id}`}
                         activeClassName="current"
                       >
                         <button
