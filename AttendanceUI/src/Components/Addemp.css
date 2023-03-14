@@ -1,4 +1,4 @@
-.Addemp {
+/* .Addemp {
 
     margin-top: 20px;
     width: 60%;
@@ -26,7 +26,7 @@
     to {
         right: 500px;
     }
-}
+} */
 
 /* < !-- HTML !--><button class="button-71" role="button">Button 71</button> */
 
@@ -122,5 +122,27 @@
 @media (min-width: 768px) {
     .button-72 {
         padding: 16px 48px;
+    }
+}
+
+
+
+input {
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    font-size: 18px;
+    letter-spacing: 2px;
+    animation: typing 2s forwards;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
     }
 }

@@ -255,9 +255,13 @@ function Addemp() {
         <Row>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Name</div></label>
+                  <label className=" mx-3 form-label">
+                    <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>
+                      Name
+                    </div>
+                  </label>
                   <div className="col-sm-7">
                     <input style={{ borderRadius: 40 }}
                       className="w-50 mx-4 form-control"
@@ -268,14 +272,17 @@ function Addemp() {
                       autoComplete="off"
                       onChange={e => { setName(e.target.value); validateName(e.target.value); }}
                     />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateName(name) ? <p>{validateName(name)}</p> : null}</div>
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>
+                      {validateName(name) ? <p>{validateName(name)}</p> : null}
+                    </div>
                   </div>
                 </div>
               </Col>
             </Form.Field>
             <br />
+            <br />
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>ID</div></label>
                   <div className="col-sm-7">
@@ -294,8 +301,9 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
+            <br />
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Mobile Number</div></label>
                   <div className="col-sm-7">
@@ -313,6 +321,7 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
+            <br />
             <br />
             <Form.Field>
               <Col sm={{ span: 6 }}>
@@ -332,7 +341,7 @@ function Addemp() {
               </Col>
             </Form.Field>
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div></label>
                   <div className="col-sm-7">
@@ -351,8 +360,9 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
+            <br />
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Email Id</div></label>
                   <div className="col-sm-7">
@@ -371,8 +381,9 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
+            <br />
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Joining</div></label>
                   <div className="col-sm-7">
@@ -391,8 +402,9 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
+            <br />
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Bank Account Number</div></label>
                   <div className="col-sm-7">
@@ -411,8 +423,9 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
+            <br />
             <Form.Field>
-              <Col sm={{ span: 12 }}>
+              <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div></label>
                   <div className="col-sm-7">
@@ -430,6 +443,7 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
+            <br />
             <br />
             <div className="mx-5 container" style={{ height: "250px", width: "300px", borderRadius: 40 }}>
               <Webcam style={{ height: "220px", width: "270px", borderRadius: 60 }} audio={false} ref={webcamRef} screenshotFormat="image/jpg" />

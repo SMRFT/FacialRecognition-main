@@ -1,26 +1,63 @@
 .chartdetails {
     position: relative;
-    margin-left: 900px;
     height: 150px;
     width: 150px;
-    margin-top: 300px;
     animation: fadeIn 4s;
-    /* animation: fadeOut 6s; */
+}
 
+@media only screen and (min-width: 768px) {
+
+    /* For tablets and desktops */
+    .chartdetails {
+        margin-left: 200px;
+        margin-top: 50px;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+
+    /* For desktops */
+    .chartdetails {
+        margin-left: 400px;
+        margin-top: 100px;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+
+    /* For large desktops */
+    .chartdetails {
+        margin-left: 900px;
+        margin-top: 300px;
+    }
 }
 
 @keyframes fadeIn {
-
-    100% {
-        opacity: 1;
-    }
-
     0% {
         opacity: 0;
     }
 
+    100% {
+        opacity: 1;
+    }
 }
 
+.donut-chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.donut-chart {
+    position: absolute;
+    left: 30%;
+    top: 130%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    max-width: 400px;
+}
 
 
 

@@ -5,13 +5,13 @@ body {
 
 .download-container {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    margin-top: 20px;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-top: 80px;
 }
 
 .download-container>* {
-    align-self: flex-end;
+    align-self: flex-start;
 }
 
 
@@ -46,13 +46,30 @@ body {
 }
 
 
+
+.download-button1 {
+    margin: 10px;
+    position: fixed;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 100px;
+    height: 50px;
+    font-size: 14px;
+    flex-direction: row;
+    justify-content: flex-end;
+    color: white;
+    background-color: rgb(234, 13, 13);
+    border: none;
+    cursor: pointer;
+}
+
 .page-heading {
     text-align: center;
     margin-bottom: -80px;
 }
 
 .page-heading h1 {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     color: #333;
     text-shadow: 2px 2px #ddd;
@@ -63,7 +80,7 @@ body {
 }
 
 .page-heading p {
-    font-size: 24px;
+    font-size: 18px;
     font-weight: bold;
     color: #666;
     margin-top: 10px;
@@ -72,4 +89,5 @@ body {
 
 .message {
     margin-bottom: -0.9rem;
+    margin-left: 1.5em;
 }

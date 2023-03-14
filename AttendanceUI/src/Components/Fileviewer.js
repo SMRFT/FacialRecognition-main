@@ -208,7 +208,7 @@ function DownloadButton(props) {
                 </button>
                 {isIframeVisible && (
                     <div>
-                        <button class="download-button" onClick={closeIframe}>
+                        <button class="download-button1" onClick={closeIframe}>
                             <i class="fas fa-times"></i>
                         </button>
                     </div>

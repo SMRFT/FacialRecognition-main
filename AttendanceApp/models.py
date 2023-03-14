@@ -88,6 +88,7 @@ class Admincalendarlogin(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     month = models.IntegerField()
+    leavetype = models.CharField(max_length=500)
     year = models.IntegerField()
     shift = models.CharField(max_length=500)
     date = models.DateField()
@@ -104,7 +105,7 @@ class Hour(models.Model):
     date = models.DateField()
     barColor = models.CharField(max_length=500)
     text = models.CharField(max_length=500)
-
+    leavetype = models.CharField(max_length=500)
 # Summary calendar model
 
 
@@ -132,7 +133,7 @@ class Employeeexport(models.Model):
     # shift = models.CharField(max_length=500)
     Breakhour = models.CharField(max_length=500)
     hour = models.CharField(max_length=500)
-
+    leavetype = models.CharField(max_length=500)
 # Employee calendar export model for all the employee
 
 
@@ -144,7 +145,7 @@ class Summaryexport(models.Model):
     workingdays = models.IntegerField()
     leavedays = models.IntegerField()
     overtime = models.IntegerField()
-
+   
 
 class Breakhours(models.Model):
     id = models.CharField(max_length=500)

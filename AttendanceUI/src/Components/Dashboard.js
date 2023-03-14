@@ -66,7 +66,11 @@ const Donut = () => {
                     className="chartdetails"
                     style={{ display: isShown ? "none" : "block" }}
                 >
-                    <Table style={{ backgroundColor: 'white' }}>
+                    <Table striped
+                        bordered="danger"
+                        borderColor="danger"
+                        hover
+                        variant="success">
                         <thead align="center">
                             <tr>
                                 <th>

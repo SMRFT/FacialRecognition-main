@@ -25,6 +25,13 @@
 .nav_link3.active,
 .nav_link4.active {
     color: forestgreen !important;
-    font-size: larger !important;
+    font-size: medium !important;
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+}
+
+.active {
+    color: #fff;
+    background-color: #30f173;
+    border-radius: 122px;
+    padding: 9px 10px;
 }

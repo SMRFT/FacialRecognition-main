@@ -5,6 +5,10 @@ from calendar import monthrange
 from time import time
 import base64
 import json
+from datetime import datetime
+
+from datetime import timedelta
+import calendar
 from unicodedata import name
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -106,7 +110,7 @@ class AdmincalendarloginView(APIView):
         # print(data)
         serializer = AdmincalendarSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print("calendar details", request.data)
+        # print("calendar details", request.data)
         serializer.save()
         data = 'calendardata has Been Added Successfully'
         return Response(data, status=status.HTTP_200_OK)
@@ -158,36 +162,48 @@ class RetriveEmpdesignationCount(APIView):
 # Retrieve Calendar data By Id
 
 
+# Retrieve Calendar data By Id (Calendar Events for working days)
+# This view retrieves the calendar login details of an employee with a specific ID and month and
+# calculates their work hours and overtime.
 class RetrieveCalendarDataById(APIView):
     @csrf_exempt
     def post(self, request):
         data = request.data
+        print("data:", data)
         employeelist = Admincalendarlogin.objects.filter(
-            id=data["id"], month=data["month"]).values()
+            id=data["id"], month=data["month"], year=data['year']).values()
         # Adding 1 to every id (103 as 1031,1032) to avoid duplicate id error in calendar
         i = 1
         for employee in employeelist:
             emp_id = f"{employee['id']}{i}"
             i += 1
-
             # Calculating worked hours of an employee
             start_time = employee['start']
             end_time = employee['end']
             hour = end_time - start_time
             employee['hour'] = hour
-            name = employee['name']
             # Getting 8 hr default by timedelta to calculate overtime
             t2 = timedelta(hours=8, minutes=0, seconds=0)
-
             # If the employee done overtime the barcolor should be red
             if hour > t2:
                 employee['barColor'] = 'red'
             else:
                 employee['barColor'] = 'blue'
-
-            employee['text'] = name
+            # Check if leavetype is null or not
+            if employee['leavetype'] is None:
+                employee['text'] = 'Event'
+            else:
+                # If leavetype is 'CL' or 'SL', set text accordingly
+                if employee['leavetype'] == 'CL':
+                    employee['text'] = 'CL'
+                    employee['barColor'] = 'green'
+                elif employee['leavetype'] == 'SL':
+                    employee['text'] = 'SL'
+                    employee['barColor'] = 'green'
+            # Add 'text' key to employee dictionary if it doesn't exist
+            if 'text' not in employee:
+                employee['text'] = 'Event'
             employee["id"] = emp_id
-
         serializers = HourcalendarSerializer(employeelist, many=True)
         return Response(serializers.data)
 
@@ -282,37 +298,54 @@ class RetriveEmployeeexport(APIView):
         emp_data = Admincalendarlogin.objects.filter(
             id=data["id"], month=data["month"], year=data["year"]).values()
         emp_details = []
-
         for employee in emp_data:
             id = employee["id"]
             name = employee["name"]
             date = employee["date"]
+            month = employee["month"]
             start_time = employee["start"]
             end_time = employee["end"]
-            hour = (end_time - start_time)
+            shift = employee["shift"]
+            leavetype = employee["leavetype"]
+            if start_time is None or end_time is None:
+                continue  # skip this employee if start_time or end_time is None
+            hour = end_time - start_time
+            print(hour)
             break_hours = Breakhours.objects.filter(
                 id=id, date=date).values("Breakhour")
-
             if break_hours:
                 break_hours = break_hours[0]["Breakhour"]
             else:
                 break_hours = 0
-
+            overtime_hours = timedelta(0)
+            t2 = timedelta(hours=8, minutes=0, seconds=0)
+            if hour > timedelta(hours=8):
+                overtime_hours = hour - t2
+                print(overtime_hours)
+            worked_hours = hour - overtime_hours
+            if leavetype is None or leavetype.lower() == "none":
+                leavetype = "Present"  # set leavetype to "Present" if it is None or "None"
+                worked_days = 1  # set worked_days to 1 if leavetype is "Present"
+            else:
+                worked_days = 0
             emp_details.append({
                 "id": id,
                 "name": name,
                 "date": date,
                 "start": employee["start"],
                 "end": employee["end"],
-                "hour": hour,
-                "Breakhour": break_hours,
+                "month": employee["month"],
+                "shift": employee["shift"],
+                "workeddays": worked_days,
+                "workedhours": str(worked_hours),
+                "Breakhour": str(break_hours),
+                "overtimehours": str(overtime_hours),
+                "hour": str(hour),
+                "leavetype": leavetype
             })
-
         # Serialize the employee details list and return the response
         serializer = EmployeeexportSerializer(emp_details, many=True)
         return Response(serializer.data)
-
-
 # Export Calendar Details
 
 
@@ -321,54 +354,54 @@ class RetriveSummaryExport(APIView):
         data = request.data
         month = data["month"]
         year = data["year"]
-
         # Get all employees who have logged in during the specified month and year
-        emp_data = Admincalendarlogin.objects.filter(
-            Q(month=month) & Q(year=year)).values()
-
+        emp_data = Admincalendarlogin.objects.filter(Q(month=month) & Q(year=year)).values()
         emp_ids = emp_data.values_list("name", flat=True).distinct()
-
         # Create a list to store the details for each employee
         emp_details = []
-
         for emp_id in emp_ids:
             # Split the name and id of the employee
             emp_id_split = emp_id.split("_")
             id = emp_id_split[1]
             name = emp_id_split[0]
-            # Get the number of working days for the employee during the specified month and year
-            working_days = emp_data.filter(name=emp_id).count()
-            # Get the number of days in the specified month and year
-            month_days = monthrange(year, month)[1]
-            # Calculate the number of leave days
-            leave_days = month_days - working_days
-
-            # Get the number of overtime hours for the employee during the specified month and year
+            # Initialize variables for calculating the different values
+            working_days = 0
+            present_days = 0
+            leave_days = 0
             overtime_hours = 0
+            # Loop through the queryset for the employee and calculate the values
             for employee in emp_data.filter(name=emp_id):
+                if employee["leavetype"] is None:
+                    working_days += 1
+                elif employee["leavetype"] == "Present":
+                    present_days += 1
+                else:
+                    leave_days += 1
                 start_time = employee["start"]
                 end_time = employee["end"]
                 hour = end_time - start_time
                 if hour > timedelta(hours=8):
-                    overtime_hours += (hour - timedelta(hours=8)
-                                       ).total_seconds() / 3600
-            print(overtime_hours)
+                    overtime_hours += (hour - timedelta(hours=8)).total_seconds() / 3600
+            # Get the number of days in the specified month and year
+            month_days = calendar.monthrange(year, month)[1]
+            today = datetime.now().date()
+            if month == today.month and year == today.year:
+                month_days = today.day
+            # Calculate the number of leave days
+            leave_days = month_days - working_days - present_days
             # Add the details for the employee to the list
             emp_details.append({
                 "id": id,
                 "name": name,
                 "month": month,
                 "year": year,
-                "workingdays": working_days,
+                "workingdays": working_days + present_days,
                 "leavedays": leave_days,
                 "overtime": overtime_hours,
-
             })
-
         # Serialize the employee details list and return the response
         serializer = SummaryexportSerializer(emp_details, many=True)
         return Response(serializer.data)
-
 
 class BreakhoursView(APIView):
     @ csrf_exempt

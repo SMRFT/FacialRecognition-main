@@ -165,14 +165,14 @@ const Home = () => {
           overlay={<Tooltip id="tooltip">Download payroll data</Tooltip>}
 
         > */}
-        <div class="Download3">
+        {/* <div class="Download3">
 
           <i><CSVLink style={{
-            float: "right", fontSize: "25px", width: "100px",
-            height: "50px", cursor: "pointer", color: "darkblue", marginTop: "25px", marginLeft: "10px"
+            float: "right", fontSize: "30px", width: "100px",
+            height: "50px", cursor: "pointer", color: "darkblue", marginTop: "200px", marginRight: "160px"
           }}
             className="fa fa-download" data={userdata} filename={"payroll"}></CSVLink></i>
-        </div>
+        </div> */}
         {/* </OverlayTrigger> */}
         <div class="date-picker" style={{ float: "right", cursor: "pointer" }}>
           <label>Year</label>
@@ -192,6 +192,13 @@ const Home = () => {
             dateFormat="MMMM"
             renderCustomHeader={({ date }) => <div></div>}
           />
+          <div class="Download3">
+
+            <i><CSVLink style={{
+              fontSize: "33px"
+            }}
+              className="fa fa-download" data={userdata} filename={"payroll"}></CSVLink></i>
+          </div>
         </div><br />
 
         <div className="input-group rounded" style={{ width: "250px", float: "left" }}>
@@ -204,9 +211,9 @@ const Home = () => {
             aria-label="Search"
             aria-describedby="search-addon"
           />
-          <span className="input-group-text border-0" id="search-addon">
-            <i class="fa fa-search" aria-hidden="true"></i>
-          </span>
+          {/* <span className="input-group-text border-0" id="search-addon">
+            <i aria-hidden="true"></i>
+          </span> */}
         </div>
         <br />
         <br />

@@ -55,3 +55,31 @@
 .year-picker .react-datepicker__navigation {
     display: none;
 }
+
+
+.Download3 {
+    position: relative;
+    font-size: 24px;
+
+}
+
+.Download3 i {
+    /* font-size: 26px; */
+    width: 100px;
+    height: 50px;
+    cursor: pointer;
+    color: darkblue;
+    position: absolute;
+    right: 200px;
+    margin-top: -11%;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    .Download3 i {
+        font-size: 20px;
+        width: 60px;
+        height: 30px;
+        right: 5px;
+    }
+}
