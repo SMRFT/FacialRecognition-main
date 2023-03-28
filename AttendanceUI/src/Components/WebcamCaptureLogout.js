@@ -1,6 +1,3 @@
-//This component is to render a camera which captures screenshot of an employee 
-//and matches to compreface and db and retrieves the details of an employee and 
-//stores the logout details of an employee to calculate the employee logout information
 import Webcam from "react-webcam";
 import React from "react";
 import moment from "moment";
@@ -84,6 +81,40 @@ const WebcamCaptureLogout = () => {
             // console.log(overtimehours)
             let date = log.format('YYYY-MM-DD')
 
+              let  shiftEndTime;
+              let shiftName;
+              let shift;
+
+            // / /Determine the shift based on the login time
+            if (logout >= Myconstants.shift1.start && logout < Myconstants.shift1.end) {
+              shift = 1;
+              shiftName = Myconstants.shift1Name;
+              shiftEndTime = Myconstants.shift1.end;
+            } else if (logout >= Myconstants.shift2.start && logout < Myconstants.shift2.end) {
+              shift = 2;
+              shiftName = Myconstants.shift2Name;
+              shiftEndTime = Myconstants.shift2.end;
+            } else {
+              shift = 3;
+              shiftName = Myconstants.shift3Name;
+              shiftEndTime = Myconstants.shift3.end;
+            }
+            
+            // Calculate the early logout time for the shift
+            const logoutTime = moment().set({'hour': logout.split(':')[0], 'minute': logout.split(':')[1]});
+            const shiftEndTimeDate = moment().set({'hour': shiftEndTime.split(':')[0], 'minute': shiftEndTime.split(':')[1]});
+            
+            const diffMs = shiftEndTimeDate.diff(logoutTime);
+            const diffDuration = moment.duration(diffMs);
+            
+            const hours = diffDuration.hours().toString().padStart(2, '0');
+            const minutes = diffDuration.minutes().toString().padStart(2, '0');
+            const seconds = diffDuration.seconds().toString().padStart(2, '0');
+            
+            const earlyLogout = `${hours}:${minutes}:${seconds}`;
+            console.log("earlyLogout", earlyLogout);
+                          
+
             //Updating logout information of employee to db using the above data
             const empLogoutResultSet = fetch("http://127.0.0.1:7000/attendance/admincalendarlogout", {
               method: "PUT",
@@ -92,7 +123,8 @@ const WebcamCaptureLogout = () => {
                 id: empId[1],
                 name: nameOfLoggedInEmp,
                 end: logouttime,
-                date: date
+                date: date,
+                earlyLogout:earlyLogout
               }),
             })
               .then((empLogoutResultSet) => {

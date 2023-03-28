@@ -1,5 +1,3 @@
-
-
 Login = 'Employee Login Successfully'
 Addemployee = 'Employee Added Sucessfully'
 Logout = 'Employee Logout Successfully'

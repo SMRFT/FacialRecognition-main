@@ -1,85 +1,87 @@
-.date-picker {
-    display: inline-block;
-    margin-left: 10px;
+.container-input {
+    position: relative;
 }
 
-.date-picker input {
-    width: 100px;
-    height: 30px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 14px;
+.input {
+    width: 150px;
+    padding: 10px 0px 10px 40px;
+    border-radius: 9999px;
+    border: solid 1px #333;
+    transition: all .2s ease-in-out;
+    outline: none;
+    opacity: 0.8;
 }
 
-.date-picker i {
+.container-input svg {
     position: absolute;
     top: 50%;
-    right: 5px;
-    transform: translateY(-50%);
-    font-size: 18px;
-    color: #ccc;
-    cursor: pointer;
+    left: 10px;
+    transform: translate(0, -50%);
 }
 
-.date-picker i:hover {
-    color: #333;
-}
-
-.year-picker .react-datepicker__year-read-view {
-    padding: 0;
-}
-
-.year-picker .react-datepicker__year-read-view:hover {
-    background-color: transparent;
-}
-
-.year-picker .react-datepicker__year-dropdown-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: auto;
-    margin: 0;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    z-index: 1;
-}
-
-.year-picker .react-datepicker__year-option {
-    margin: 0 5px;
-}
-
-.year-picker .react-datepicker__navigation {
-    display: none;
+.input:focus {
+    opacity: 1;
+    width: 250px;
 }
 
 
-.Download3 {
-    position: relative;
-    font-size: 24px;
-
+/* table {
+    margin-top: 1%;
+    border-collapse: collapse;
+    animation: fadeIn 2s ease-out;
 }
 
-.Download3 i {
-    /* font-size: 26px; */
-    width: 100px;
-    height: 50px;
-    cursor: pointer;
-    color: darkblue;
-    position: absolute;
-    right: 200px;
-    margin-top: -11%;
-    transform: translateY(-50%);
-}
-
-@media (max-width: 768px) {
-    .Download3 i {
-        font-size: 20px;
-        width: 60px;
-        height: 30px;
-        right: 5px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-}
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} */
+
+
+
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+   
+  }
+  
+  /* .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  } */
+  
+  .page-item {
+    margin: 0 5px;
+    color: #E0FFFF;
+    border: 1px solid #E0FFFF;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  /* .page-item:hover {
+    background-color: #007bff;
+    color: #fff;
+  } */
+  
+  /* .page-item.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+    */

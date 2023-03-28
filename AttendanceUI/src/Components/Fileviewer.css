@@ -3,6 +3,8 @@ body {
     background-color: lightblue;
 }
 
+
+
 .download-container {
     display: flex;
     flex-direction: row;
@@ -14,6 +16,21 @@ body {
     align-self: flex-start;
 }
 
+.download-button1 {
+    margin: 10px;
+    position: fixed;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 100px;
+    height: 50px;
+    font-size: 14px;
+    flex-direction: row;
+    justify-content: flex-end;
+    color: white;
+    background-color: rgb(234, 13, 13);
+    border: none;
+    cursor: pointer;
+}
 
 .download-button,
 .view-button {
@@ -36,7 +53,8 @@ body {
     }
 
     .download-button,
-    .view-button {
+    .view-button,
+    .download-button1 {
         margin: 5px;
         padding: 5px 10px;
         font-size: 12px;
@@ -47,21 +65,6 @@ body {
 
 
 
-.download-button1 {
-    margin: 10px;
-    position: fixed;
-    padding: 5px 10px;
-    border-radius: 5px;
-    width: 100px;
-    height: 50px;
-    font-size: 14px;
-    flex-direction: row;
-    justify-content: flex-end;
-    color: white;
-    background-color: rgb(234, 13, 13);
-    border: none;
-    cursor: pointer;
-}
 
 .page-heading {
     text-align: center;
@@ -90,4 +93,53 @@ body {
 .message {
     margin-bottom: -0.9rem;
     margin-left: 1.5em;
+}
+
+
+
+.button22 {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.button22 :hover {
+    background-color: #3e8e41;
+}
+
+.button22 :focus {
+    outline: none;
+}
+
+/* Button with "Hide Data" text */
+.button22 [data-active="true"]::before {
+    content: "Hide ";
+}
+
+/* Button with "Employee Data" text */
+.button22 [data-active="false"]::before {
+    content: "Employee ";
+}
+
+/* Icon for "Hide Data" button */
+.button22 [data-active="true"]::after {
+    content: "\2193";
+    /* Down arrow unicode character */
+    margin-left: 5px;
+}
+
+/* Icon for "Employee Data" button */
+.button22 [data-active="false"]::after {
+    content: "\2191";
+    /* Up arrow unicode character */
+    margin-left: 5px;
 }

@@ -23,7 +23,7 @@ from django.db.models import Count
 from .constants import Login, Logout
 from django.db.models.functions import TruncDate
 from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours
-from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer,EmployeeSerializer
+from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer,EmployeeSerializer,EmployeeHoursSerializer
 from django.db.models import Q
 import json
 import calendar
@@ -42,10 +42,20 @@ from bson import ObjectId
 class RetriveEmp(APIView):
     @csrf_exempt
     def get(self, request):
-        data = request.data
-        Empdetail = Employee.objects.all()
-        serializer = EmployeeShowSerializer(Empdetail, many=True)
-        return Response(serializer.data)
+        emp_id = request.query_params.get('id')
+        if emp_id:
+            try:
+                emp = Employee.objects.get(id=emp_id)
+                serializer = EmployeeShowSerializer(emp)
+                return Response(serializer.data)
+            except Employee.DoesNotExist:
+                return Response({'error': f'Employee with ID {emp_id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            emp_details = Employee.objects.all()
+            serializer = EmployeeShowSerializer(emp_details, many=True)
+            return Response(serializer.data)
+
+
 
 # Retrieve Employee By Id
 
@@ -122,11 +132,11 @@ class AdmincalendarlogoutView(APIView):
     @csrf_exempt
     def put(self, request, *args, **kwargs):
         data = request.data
-        user = (Admincalendarlogin.objects.get(
-            id=data["id"], date=data["date"]))
+        user = (Admincalendarlogin.objects.get(id=data["id"], date=data["date"]))
         user.name = data["name"]
         user.end = data["end"]
         user.date = data["date"]
+        user.earlyLogout = data["earlyLogout"]
         user.save()
         data = Logout
         return Response(data, status=status.HTTP_200_OK)
@@ -199,10 +209,10 @@ class RetrieveCalendarDataById(APIView):
                     employee['barColor'] = 'green'
                 elif employee['leavetype'] == 'SL':
                     employee['text'] = 'SL'
-                    employee['barColor'] = 'green'
+                    employee['barColor'] = 'yellow'
             # Add 'text' key to employee dictionary if it doesn't exist
             if 'text' not in employee:
-                employee['text'] = 'Event'
+                employee['text'] ="Event"
             employee["id"] = emp_id
         serializers = HourcalendarSerializer(employeelist, many=True)
         return Response(serializers.data)
@@ -354,51 +364,78 @@ class RetriveSummaryExport(APIView):
         data = request.data
         month = data["month"]
         year = data["year"]
+        selected_department = data.get("department", "") # get the selected department value
         # Get all employees who have logged in during the specified month and year
         emp_data = Admincalendarlogin.objects.filter(Q(month=month) & Q(year=year)).values()
         emp_ids = emp_data.values_list("name", flat=True).distinct()
+                # Define an empty queryset
+        queryset = Employee.objects.none()
+        if selected_department:
+            queryset = queryset.filter(department=selected_department)
+        emp_ids = emp_data.values_list("name", flat=True).distinct()
         # Create a list to store the details for each employee
+
         emp_details = []
         for emp_id in emp_ids:
             # Split the name and id of the employee
             emp_id_split = emp_id.split("_")
             id = emp_id_split[1]
             name = emp_id_split[0]
-            # Initialize variables for calculating the different values
+      # Initialize variables for calculating the different values
             working_days = 0
-            present_days = 0
             leave_days = 0
             overtime_hours = 0
+            total_weekoff = 0
+            weekoff_used = 0
             # Loop through the queryset for the employee and calculate the values
             for employee in emp_data.filter(name=emp_id):
-                if employee["leavetype"] is None:
-                    working_days += 1
-                elif employee["leavetype"] == "Present":
-                    present_days += 1
+                if employee["leavetype"] == "None":
+                    start_time = employee["start"]
+                    end_time = employee["end"]
+                    hour = end_time - start_time
+                    if hour > timedelta(hours=8):
+                        overtime_hours += (hour - timedelta(hours=8)).total_seconds() / 3600
+                    # Check if the event occurred on a Sunday
+                    if start_time.weekday() == 6:
+                        working_days += 1
+                        weekoff_used += 1# Increment weekoff_used since it's a working day on Sunday
+                    else:
+                        working_days += 1
                 else:
                     leave_days += 1
-                start_time = employee["start"]
-                end_time = employee["end"]
-                hour = end_time - start_time
-                if hour > timedelta(hours=8):
-                    overtime_hours += (hour - timedelta(hours=8)).total_seconds() / 3600
+            # Calculate the total number of Sundays in the month
+            month_calendar = calendar.monthcalendar(year, month)
+            total_sundays = sum(1 for week in month_calendar if week[6] != 0)
             # Get the number of days in the specified month and year
             month_days = calendar.monthrange(year, month)[1]
-            today = datetime.now().date()
+            today = datetime.date.today()
             if month == today.month and year == today.year:
                 month_days = today.day
             # Calculate the number of leave days
-            leave_days = month_days - working_days - present_days
+            leave_days = month_days - working_days
+            # # Update the total_weekoff and weekoff_used variables
+            total_weekoff += total_sundays
             # Add the details for the employee to the list
-            emp_details.append({
-                "id": id,
-                "name": name,
-                "month": month,
-                "year": year,
-                "workingdays": working_days + present_days,
-                "leavedays": leave_days,
-                "overtime": overtime_hours,
-            })
+            emp_data = Employee.objects.filter(id=id).values('designation','department')
+            department = emp_data[0]['department']
+            designation = emp_data[0]['designation']
+            if not selected_department or department == selected_department: # add the employee details only if they belong to the selected department
+                # Create a dictionary to store the details for the employee
+                emp_dict = {
+                    "id": id,
+                    "name": name,
+                    "month": month,
+                    "year": year,
+                    "department": department,
+                    "designation": designation,
+                    "workingdays": working_days,
+                    "leavedays": leave_days,
+                    "overtime": overtime_hours,
+                    "total_weekoff": total_weekoff,
+                    "weekoff_used": weekoff_used,
+                }
+                # Add the details for the employee to the list
+                emp_details.append(emp_dict)
         # Serialize the employee details list and return the response
         serializer = SummaryexportSerializer(emp_details, many=True)
         return Response(serializer.data)
@@ -430,7 +467,7 @@ class BreakhourslogoutView(APIView):
         end_datetime = datetime.datetime.strptime(
             user.lunchEnd, '%Y-%m-%d %I:%M %p')
         difference = end_datetime - start_datetime
-        print("Lunch break duration: ", difference)
+        # print("Lunch break duration: ", difference)
         user.Breakhour = difference
         user.save()
         data = Logout
@@ -452,14 +489,17 @@ class RetriveBreakhours(APIView):
 def send_email(request):
     data = json.loads(request.body)
     subject = data['subject']
-    # print("data", data)
     message = data['message']
     recipient = data['recipient']
+    cc_recipients = data.get('cc', '')  # get list of CC recipients from data or empty string if not provided
     from_email = 'parthibansmrft@gmail.com'
     signature = 'Contact Us, \n Shanmuga Hospital, \n 24, Saradha College Road,\n Salem-636007 Tamil Nadu,\n 8754033833,\n info@shanmugahospital.com,\n https://shanmugahospital.com/'
 
-    send_mail(subject,  message + '\n\n\n\n\n' +
-              signature, from_email, [recipient], fail_silently=False)
+    recipient_list = [recipient]  # start with primary recipient
+    if cc_recipients:
+        recipient_list += cc_recipients.split(',')  # add CC recipients to the list
+
+    send_mail(subject, message + '\n\n\n\n\n' + signature, from_email, recipient_list, fail_silently=False)
     return JsonResponse({'message': 'Email sent successfully'})
 
 #Whatsapp using Twilio 
@@ -515,12 +555,12 @@ def get_file(request):
     client = MongoClient('mongodb://localhost:27017/')
     db = client['data']
     fs = GridFS(db)
-    print("gridfs",fs)
+    # print("gridfs",fs)
     filename = request.GET.get('filename')
-    print("filename",filename)
+    # print("filename",filename)
     # file = fs.find_one({"filename": "parthiban.pdf"})
     file = fs.find_one({"filename": filename })
-    print("file",file)
+    # print("file",file)
     if file is not None:
         # Return the file contents as an HTTP response
         response = HttpResponse(file.read())
@@ -533,3 +573,44 @@ def get_file(request):
         # Return a 404 error if the file is not found
         return HttpResponse(status=404)
  
+
+class RetrieveEmployeehours(APIView):
+    def post(self, request):
+        data = request.data
+        day = data.get("day")
+        month = data.get("month")
+        year = data.get("year")
+        emp_id = data.get("id")
+        # Get all employees who have logged in during the specified month and year
+        emp_data = Admincalendarlogin.objects.filter(Q(day=day)&Q(month=month) & Q(year=year))
+        # Filter by employee ID if it is provided
+        if emp_id:
+            emp_data = emp_data.filter(id=emp_id)
+        emp_data = emp_data.values()
+        # Serialize the employee details list and return the response
+        serializer = EmployeeHoursSerializer(emp_data, many=True)
+        return Response(serializer.data)
+    
+
+
+    # Retrieve Break Hours
+# This view retrieves the break login and logout time for break details
+import datetime
+class RetrieveBreak(APIView):
+    @csrf_exempt
+    def get(self, request):
+        current_date = datetime.date.today()
+        emp_breaks = Breakhours.objects.filter(date=current_date)
+        print("emp_breaks: ", emp_breaks)
+        # Get the list of employee IDs that are currently on break
+        emp_ids_on_break = [emp.id for emp in emp_breaks]
+        print("emp_ids_on_break: ", emp_ids_on_break)
+        # Remove employees whose break duration has ended
+        for emp in emp_breaks:
+            if emp.Breakhour != "0":
+                emp_ids_on_break.remove(emp.id)
+        # Filter the employees based on whether they are on break or not
+        employees = Employee.objects.filter(id__in=emp_ids_on_break)
+        print("employees: ", employees)
+        serializer = EmployeeShowSerializer(employees, many=True)
+        return Response(serializer.data)

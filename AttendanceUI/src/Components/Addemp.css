@@ -1,3 +1,11 @@
+/* body {
+    background: rgb(3, 36, 0);
+    background: linear-gradient(90deg, rgba(3, 36, 0, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(255, 0, 241, 1) 100%);
+
+
+
+} */
+
 /* .Addemp {
 
     margin-top: 20px;
@@ -29,6 +37,19 @@
 } */
 
 /* < !-- HTML !--><button class="button-71" role="button">Button 71</button> */
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+.typing-animation {
+    animation: typing 1s steps(25) forwards;
+}
 
 /* CSS */
 .button-71 {
@@ -127,22 +148,92 @@
 
 
 
-input {
-    padding: 10px;
+
+
+table {
+    border-collapse: collapse;
+    width: 70%;
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #00A693;
+    color: white;
+}
+
+
+
+.button25 {
+    background-color: rgba(163, 225, 209, 0.818);
+    /* Green */
     border: none;
-    border-bottom: 2px solid #ccc;
-    width: 100%;
-    font-size: 18px;
-    letter-spacing: 2px;
-    animation: typing 2s forwards;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 4px;
 }
 
-@keyframes typing {
-    from {
-        width: 0;
-    }
-
-    to {
-        width: 100%;
-    }
+.button25 :hover {
+    background-color: rgba(163, 225, 209, 0.818);
 }
+
+.button25 :focus {
+    outline: none;
+}
+
+/* Button with "Hide Data" text */
+.button25 [data-active="true"]::before {
+    content: "Hide ";
+}
+
+/* Button with "Employee Data" text */
+.button25 [data-active="false"]::before {
+    content: "Employee ";
+}
+
+/* Icon for "Hide Data" button */
+.button25 [data-active="true"]::after {
+    content: "\2193";
+    /* Down arrow unicode character */
+    margin-left: 5px;
+}
+
+/* Icon for "Employee Data" button */
+.button25 [data-active="false"]::after {
+    content: "\2191";
+    /* Up arrow unicode character */
+    margin-left: 5px;
+}
+
+
+
+.input2 {
+    max-width: 200px;
+    min-height: 40px;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    outline: none;
+    background: #e8e8e8;
+    box-shadow: 5px 5px 17px #c8c8c8,
+               -5px -5px 17px #ffffff;
+    border: none;
+    border-radius: 10px;
+    transition: all .5s;
+  }
+  
+  .input2:focus {
+    background: #e8e8e8;
+    box-shadow: inset 5px 5px 17px #c8c8c8,
+              inset -5px -5px 17px #ffffff;
+  }

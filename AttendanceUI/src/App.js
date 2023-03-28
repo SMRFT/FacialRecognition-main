@@ -4,7 +4,7 @@ import "./App.css";
 import profile from "./images/smrft.png";
 import { useNavigate } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
-
+// import "./Logo.css";
 function App() {
   //Functions to navigate to different pages
   const navigate = useNavigate();
@@ -21,14 +21,18 @@ function App() {
     navigate("/Break");
   };
   return (
+
     <div className="row">
       <div className="col-lg-12">
         <style>{'body { background-color: rgb(255, 255, 255); }'}</style>
+        <header>
         <div className='main'></div>
         <div className='logo'>
           <img src={profile} className="smrft_logo" alt="logo" />
         </div>
+        </header>
       </div>
+     
       <br />
 
       <div body>

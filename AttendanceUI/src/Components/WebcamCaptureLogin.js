@@ -65,11 +65,14 @@ const WebcamCaptureLogin = () => {
           var nameEmp = data.result.map(function (recognizedEmp) {
             const nameOfLoggedInEmp = recognizedEmp.subjects[0].subject;
             const empId = nameOfLoggedInEmp.split("_");
+           
             //Post method to show the employee details using id
             const res = fetch("http://127.0.0.1:7000/attendance/showempById", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id: empId[1] }),
+              body: JSON.stringify({ 
+                id: empId[1] ,
+              }),
             })
               .then((res) => res.json())
               .then(
@@ -117,8 +120,16 @@ const WebcamCaptureLogin = () => {
             let login = log.format('HH:mm')
             setLogin(login)
             let date = log.format('YYYY-MM-DD')
+            console.log("date",date)
+            const day = moment(logintime).format('DD')
+            
+            console.log('day', day); // Output: "24"
+            
+            
             let month = moment(logintime).format('MM')
             let iddate = empId[1] + date
+            // sessionStorage.setItem("iddate", iddate.toString());
+            let leavetype="none";
 
             // let lunchStart = '0'
             // console.log(data.name)
@@ -130,19 +141,60 @@ const WebcamCaptureLogin = () => {
             Date: ${date},
             Shift Login time: ${logintime}`;
 
-            // const recipient = "parthipanmurugan335317@gmail.com";
-            // const recipient = email
-            // console.log(recipient)
-
+            
             let shift;
-            if (login >= Myconstants.shift1time && login < Myconstants.shift2time) {
-              shift = (Myconstants.shift1)
+            let shiftLoginTime;
+            let shiftName; 
+            let shiftStartTime;  
+            
+            // Determine the shift based on the login time
+            if (login >= Myconstants.shift1.start && login < Myconstants.shift1.end) {
+              shift = 1;
+              shiftName = Myconstants.shift1Name;
+              shiftStartTime = Myconstants.shift1.start;
+              
+            } else if (login >= Myconstants.shift2.start && login < Myconstants.shift2.end) {
+              shift = 2;
+              shiftName = Myconstants.shift2Name;
+              shiftStartTime = Myconstants.shift2.start;
+            } else {
+              shift = 3;
+              shiftName = Myconstants.shift3Name;
+              shiftStartTime = Myconstants.shift3.start;
             }
-            else if (login >= Myconstants.shift3time && login < Myconstants.shift4time) {
-              shift = (Myconstants.shift2)
+          
+            // / /Determine the shift based on the login time
+            if (login >= Myconstants.shift1.start && login < Myconstants.shift1.end) {
+              shift = 1;
+              shiftName = Myconstants.shift1Name;
+              shiftLoginTime = Myconstants.shift1.end;
+            } else if (login >= Myconstants.shift2.start && login < Myconstants.shift2.end) {
+              shift = 2;
+              shiftName = Myconstants.shift2Name;
+              shiftLoginTime = Myconstants.shift2.end;
+            } else {
+              shift = 3;
+              shiftName = Myconstants.shift3Name;
+              shiftLoginTime = Myconstants.shift3.end;
             }
-            else { shift = Myconstants.shift3 }
 
+            // Calculate the late login time for the shift
+              const loginTime = moment().set({'hour': login.split(':')[0], 'minute': login.split(':')[1]});
+              const shiftStartTimeDate = moment().set({'hour': shiftStartTime.split(':')[0], 'minute': shiftStartTime.split(':')[1]});
+
+              const diffMs = loginTime.diff(shiftStartTimeDate);
+              const diffDuration = moment.duration(diffMs);
+
+              const hours = diffDuration.hours().toString().padStart(2, '0');
+              const minutes = diffDuration.minutes().toString().padStart(2, '0');
+              const seconds = diffDuration.seconds().toString().padStart(2, '0');
+
+              const lateLogin = `${hours}:${minutes}:${seconds}`;
+              console.log("lateLogin",lateLogin)
+                          
+            
+           
+              let earlyLogout="00:00:00";       
             //Posting login information of employee to db using the above data
             const empLoginResultSet = fetch(
               "http://127.0.0.1:7000/attendance/admincalendarlogin",
@@ -157,11 +209,14 @@ const WebcamCaptureLogin = () => {
                   start: logintime,
                   end: logintime,
                   date: date,
-                  shift: shift,
+                  shift: shiftName,
                   iddate: iddate,
                   month: month,
-                  month: month,
-                  year: year
+                  year: year,
+                  day:day,
+                  latelogin:lateLogin,
+                  earlyLogout:earlyLogout,
+                  leavetype:leavetype
                 }),
               })
               .then((empLoginResultSet) => {
@@ -180,6 +235,7 @@ const WebcamCaptureLogin = () => {
     });
   }, [webcamRef, setImgSrc]);
 
+ 
   //Function for done icon to reload window 
   //after getting login information of an employee saved to db
   function refreshPage() {
@@ -255,15 +311,16 @@ const WebcamCaptureLogin = () => {
 
       <div className="empdetails" style={{ display: isShown ? "none" : "block" }}>
         <div>
-          <br />
+          <br/>
           {employee.id && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>ID: {employee.id}</p>}
           {employee.name && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Name: {employee.name}</p>}
           {employee.designation && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Designation: {employee.designation}</p>}
           {login && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>Logintime: {login}</p>}
-          <br />
+          {/* {latelogin && <p style={{ fontWeight: "bold", marginLeft: "30px" }}>latelogin: {latelogin}</p>} */}
+          <br/>
         </div>
         <div className="message" style={{ marginLeft: "30px", marginTop: "10px" }}>{message ? <p>{message}</p> : null}</div>
-        <div className="col-lg" style={{ marginLeft: "80px", marginTop: "10px" }}>
+          <div className="col-lg" style={{ marginLeft: "80px", marginTop: "10px" }}>
           <button className="btn btn-outline-success" onClick={() => { refreshPage(); }} variant="danger" type="submit" block>
             <i className="bi bi-check-circle"> Done</i>
           </button>

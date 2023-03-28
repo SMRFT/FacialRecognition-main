@@ -12,10 +12,12 @@ import WebcamCaptureLogin from "./Components/WebcamCaptureLogin";
 import Break from "./Components/Break";
 import Breakstart from "./Components/Breakstart";
 import Breakend from "./Components/Breakend";
+import Summary from "./Components/Summary";
 import Fileviewer from "./Components/Fileviewer";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import EmployeeHours from "./Components/EmployeeHours";
+import Breakdetails from "./Components/Breakdetails";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
@@ -30,6 +32,9 @@ root.render(
       <Route path="/Breakend/*" element={<Breakend />} />
       <Route path="/AdminCalendar/:name" element={<AdminCalendar />} />
       <Route path="/Fileviewer/:name" element={<Fileviewer />} />
+      <Route path="/EmployeeHours/*" element={<EmployeeHours />} />
+      <Route path="/Breakdetails/*" element={<Breakdetails/>} />
+      {/* <Route path="/Summary/*" element={<Summary />} /> */}
     </Routes>
   </BrowserRouter>
 );

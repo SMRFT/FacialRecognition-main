@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Form, Label } from 'semantic-ui-react';
 import { useForm } from "react-hook-form";
-import { Col, Row } from "react-bootstrap";
+import { Col, FormControl, Row } from "react-bootstrap";
 import "./Addemp.css";
 import Myconstants from "../Components/Myconstants";
-
+import { Radio, Checkbox } from 'semantic-ui-react';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 function Addemp() {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");
@@ -16,6 +18,7 @@ function Addemp() {
   const [imgSrcname, setImgSrcname] = useState("");
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
+  
   const [id, setId] = useState("");
   const [mobile, setMobile] = useState("");
   const [shift, setshift] = useState("");
@@ -25,60 +28,159 @@ function Addemp() {
   const [bankaccnum, setBankAccNum] = useState("");
   const [address, setAddress] = useState("");
   const [proof, setProof] = useState(null);
+  const [proof_url, setProofUrl] = useState("");
+  const [certificates_url, setCertificateUrl] = useState("");
   const [certificates, setCertificate] = useState(null);
   const [message, setMessage] = useState("");
   const [isShown, setIsShown] = useState(true);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const departments = ["IT", "HR", "LAB", "RT TECH", "PHARMACY", "TELECALLER", "FRONT OFFICE", "SECURITY", "ELECTRICIAN", "ACCOUNTS", "NURSING", "HOUSE KEEPING", "DENSIST CONSULTANT", "COOK"];
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  //Functions to show and hide employee details added to db
-  const handleClick = (event) => {
-    setIsShown((current) => !current);
+  const [RNRNO, setRNRNO] = useState("");
+  const [TNMCNO, setTNMCNO] = useState("");
+  const [ValidlityDate, setValidlityDate] = useState("");
+  const [Gender, setGender] = useState("");
+  const [Maritalstatus, setMaritalstatus] = useState("");
+  const [Aadhaarno, setAadhaarno] = useState("");
+  const [PanNo, setPanNo] = useState("");
+  const [IdentificationMark, setIdentificationMark] = useState("");
+  const [BloodGroup, setBloodGroup] = useState("");
+  const [educationData, setEducationData] = useState([
+    { SlNo: 1, degree: "SSLC", major: "", institution: "", marks: "", division: "", year: "" },
+    { SlNo: 2, degree: "HSC", major: "", institution: "", marks: "", division: "", year: "" },
+    { SlNo: 3, degree: "DIPLOMA", major: "", institution: "", marks: "", division: "", year: "" },
+    { SlNo: 4, degree: "UG", major: "", institution: "", marks: "", division: "", year: "" },
+    { SlNo: 5, degree: "PG", major: "", institution: "", marks: "", division: "", year: "" },
+    { SlNo: 6, degree: "OTHER", major: "", institution: "", marks: "", division: "", year: "" },
+  ]);
+  const [experienceData, setExperienceData] = useState([
+    { SlNo: 1, Organization: "", designation: "", lastdrawnsalary: "", location: "", experience: "" },
+  ]);
+
+  const addRow = () => {
+    setExperienceData([...experienceData, { SlNo: experienceData.length + 1, Organization: "", designation: "", lastdrawnsalary: "", location: "", experience: "" }]);
   };
+
+  const [referenceData, setReferenceData] = useState([
+    { SlNo: 1, references: "", Organization: "", designation: "", ContactNo: "" },
+
+  ]);
+
+  const handleAddRow = () => {
+    const newRow = { SlNo: referenceData.length + 1, references: "", Organization: "", designation: "", ContactNo: "" };
+    setReferenceData([...referenceData, newRow]);
+  };
+  const departments = ["IT", "DOCTOR", "NURSE", "HR", "LAB", "RT TECH", "PHARMACY", "TELECALLER", "FRONT OFFICE", "SECURITY", "ELECTRICIAN", "ACCOUNTS", "NURSING", "HOUSE KEEPING", "DENSIST CONSULTANT", "COOK"];
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+
+  const handleLanguageChange = (e) => {
+    const value = e.target.value;
+
+    if (e.target.checked) {
+      setSelectedLanguages([...selectedLanguages, value]);
+    } else {
+      setSelectedLanguages(selectedLanguages.filter((lang) => lang !== value));
+    }
+  };
+
+  const handleOtherLanguageChange = (e) => {
+    const value = e.target.value;
+
+    setSelectedLanguages((prevLanguages) => {
+      const otherLangIndex = prevLanguages.findIndex((lang) => lang === "Other");
+      const newLanguages = [...prevLanguages];
+
+      if (otherLangIndex === -1) {
+        newLanguages.push("Other");
+      }
+
+      newLanguages[otherLangIndex + 1] = value;
+
+      return newLanguages;
+    });
+  };
+
 
   //Functions for selecting department using dropdown
   function handleChange(e) {
     setSelectedDepartment(e.target.value);
+    if (e.target.value === "DOCTOR") {
+      setTNMCNO("");
+
+    } else if (e.target.value === "NURSE") {
+      setRNRNO("");
+      setValidlityDate("");
+    }
   }
 
-  //Function for image ,Proof and certificates upload
-  //Image upload using file upload icon
+  const handleOnChange = (e, rowIndex, field) => {
+    const updatedData = [...educationData];
+    updatedData[rowIndex][field] = e.target.value;
+    setEducationData(updatedData);
+  }
+
+  const handleChangeexp = (e, index, key) => {
+    const { value } = e.target;
+    const newData = [...experienceData];
+    newData[index][key] = value;
+    setExperienceData(newData);
+  };
+
+  const handleChangeref = (event, index, key) => {
+    const newData = [...referenceData];
+    newData[index][key] = event.target.value;
+    setReferenceData(newData);
+  };
+
+  const handleClick = (event) => {
+    setIsShown((current) => !current);
+  };
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const handleImageSelect = (event) => {
     setImgSrc(event.target.files[0]);
   };
-  //Image upload using camera
+  const handleRemoveImage = () => {
+    setImgSrc(null);
+    document.getElementById("selectImage").value = "";
+  };
+  const handleFileSelect = (e) => {
+    setProof(e.target.files[0]);
+  };
+
+  const handleRemoveFile = () => {
+    setProof(null);
+    document.getElementById("selectFile").value = "";
+  };
+
+  const handleCertificateSelect = (e) => {
+    setCertificate(e.target.files[0]);
+  };
+
+  const handleRemoveCertificate = () => {
+    setCertificate(null);
+    document.getElementById("selectCertificate").value = "";
+  };
+  const [dob, setDob] = useState(null); // Initialize the DOB state with current date
+  const [age, setAge] = useState(0); // Initialize the age state with 0
+  const handleDobChange = (date) => {
+      setDob(date);
+      setAge(getAge(date));
+    };
+    const getAge = (dob) => {
+      if (!dob) {
+        return '';
+      }
+      const diffMs = Date.now() - dob.getTime();
+      const ageDt = new Date(diffMs);
+      return Math.abs(ageDt.getUTCFullYear() - 1970);
+    };
   useEffect(() => {
     if (imgSrc) {
       setImage(URL.createObjectURL(imgSrc));
     }
   }, [imgSrc]);
-  const handleFileSelect = (e) => {
-    setProof(e.target.files[0]);
-  };
-  const handleCertificateSelect = (e) => {
-    setCertificate(e.target.files[0]);
-  };
-
-  //Function for image ,Proof and certificates remove and reupload when selected wrong
-  const handleRemoveImage = () => {
-    setImgSrc(null);
-    document.getElementById("selectImage").value = "";
-  };
-  const handleRemoveFile = () => {
-    setProof(null);
-    document.getElementById("selectFile").value = "";
-  };
-  const handleRemoveCertificate = () => {
-    setCertificate(null);
-    document.getElementById("selectCertificate").value = "";
-  };
-
   const Capture = React.useCallback(() => {
-    //Function to get camera screenshot image of an employee and changing it as dataurl
     const imageSrc = webcamRef.current.getScreenshot();
     toDataURL(imageSrc).then((dataUrl) => {
       var fileData = dataURLtoFile(dataUrl, "image.jpg");
-      //Appending the image to formdata as dataurl format
       let formData = new FormData();
       formData.append("file", fileData);
       formData.append("file", imageSrc);
@@ -87,22 +189,36 @@ function Addemp() {
     });
   }, [webcamRef, setImgSrc]);
   const onSubmit = async (details) => {
-    //Appending all the information given by the user to data and posting it to db
     const data = new FormData();
     const comprefaceImage = new FormData();
     data.append("name", name);
+    data.append("id", id);
+    data.append("Gender", Gender);
     data.append("mobile", mobile);
+    data.append("dob", dob.toISOString().split('T')[0]);
+    data.append("age",age);
     data.append("department", selectedDepartment);
+    data.append("RNRNO", RNRNO);
+    data.append("TNMCNO", TNMCNO);
+    data.append("ValidlityDate", ValidlityDate);
     data.append("designation", designation);
     data.append("email", email);
     data.append("dateofjoining", dateofjoining);
     data.append("bankaccnum", bankaccnum);
     data.append("address", address);
+    data.append("Maritalstatus", Maritalstatus);
+    data.append("Aadhaarno", Aadhaarno);
+    data.append("PanNo", PanNo);
     data.append("proof", proof);
     data.append("certificates", certificates);
     data.append("shift", shift);
-    data.append("id", id);
+    data.append("IdentificationMark", IdentificationMark);
+    data.append("BloodGroup", BloodGroup);
+    data.append("educationData", JSON.stringify(educationData));
+    data.append("experienceData", JSON.stringify(experienceData));
+    data.append("referenceData", JSON.stringify(referenceData));
     data.append("imgSrc", imgSrc);
+    data.append("", imgSrc);
     data.append("imgSrcname", imgSrc.name);
     comprefaceImage.append("file", imgSrc);
     let formDataNew = new FormData();
@@ -119,7 +235,6 @@ function Addemp() {
         },
         data: data,
       });
-      //Posting image to compreface
       const res2 = await axios
         ({
           method: "POST",
@@ -130,7 +245,6 @@ function Addemp() {
           data: comprefaceImage,
         });
       if (res.status === 200 && res2.status === 201) {
-        //Employee added successfull message from constant file
         setMessage(Myconstants.AddEmp);
       } else {
         setMessage(Myconstants.AddEmpError);
@@ -140,15 +254,12 @@ function Addemp() {
     }
   };
 
-  //Function for done icon to reload window 
-  //after getting information of an employee saved to db
+  // Refresh function
   function refreshPage() {
     {
       window.location.reload();
     }
   }
-
-  //converting "image source" (url) to "Base64"
   const toDataURL = (url) =>
     fetch(url)
       .then((response) => response.blob())
@@ -161,6 +272,7 @@ function Addemp() {
             reader.readAsDataURL(blob);
           })
       );
+
   //converting "Base64" to javascript "File Object"
   function dataURLtoFile(dataurl, filename) {
     var arr = dataurl.split(","),
@@ -175,7 +287,6 @@ function Addemp() {
   }
 
   // Validation for forms
-  // Validation for name
   function validateName(name) {
     let error = "";
     if (!name.match(/^[a-zA-Z]*$/)) {
@@ -183,7 +294,6 @@ function Addemp() {
     }
     return error;
   }
-  // Validation for id
   function validateId(id) {
     let error = "";
     if (!id.match(/^[0-9]*$/)) {
@@ -191,7 +301,6 @@ function Addemp() {
     }
     return error;
   }
-  // Validation for mobile
   function validateMobile(mobile) {
     let error = "";
     if (mobile !== "" && !/^[0-9]{10}$/.test(mobile)) {
@@ -199,7 +308,7 @@ function Addemp() {
     }
     return error;
   }
-  // Validation for designation
+
   function validateDesignation(designation) {
     let error = "";
     if (!designation.match(/^[a-zA-Z]*$/)) {
@@ -207,7 +316,22 @@ function Addemp() {
     }
     return error;
   }
-  // Validation for email
+  function validatePanNo(PanNo) {
+    let error = "";
+    if (PanNo !== "" && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(PanNo)) {
+      error = "*Invalid PAN Card Number";
+    }
+    return error;
+  }
+  function validateAadhaarNo(AadhaarNo) {
+    let error = "";
+    if (AadhaarNo !== "" && !/^\d{12}$/.test(AadhaarNo)) {
+      error = "*Invalid Aadhaar Number Aadhaar should be 12 Digits";
+    }
+    return error;
+  }
+  
+  
   function validateEmail(email) {
     let error = "";
     if (email !== "" && !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email)) {
@@ -215,22 +339,13 @@ function Addemp() {
     }
     return error;
   }
-  // Validation for Date Of Joining
   function validateDateOfJoining(dateofjoining) {
     let error = "";
     if (dateofjoining !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(dateofjoining)) {
       error = "*Invalid date format. Please use YYYY-MM-DD";
-    } else if (dateofjoining !== "") {
-      const parts = dateofjoining.split('-');
-      const month = parseInt(parts[1], 10);
-      if (month < 1 || month > 12) {
-
-        error = "*Invalid month. Please use a value between 1 and 12";
-      }
     }
     return error;
   }
-  // Validation for Bank Account Number
   function validateBankAccNum(bankaccnum) {
     let error = "";
     if (bankaccnum !== "" && !/^[0-9]{9,18}$/.test(bankaccnum)) {
@@ -238,7 +353,6 @@ function Addemp() {
     }
     return error;
   }
-  // Validation for Address
   function validateAddress(address) {
     let error = "";
     if (!address.match(/^[0-9/,a-zA-Z- 0-9.]*$/)) {
@@ -246,7 +360,6 @@ function Addemp() {
     }
     return error;
   }
-
   return (
     <body>
       <div>
@@ -257,11 +370,7 @@ function Addemp() {
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
-                  <label className=" mx-3 form-label">
-                    <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>
-                      Name
-                    </div>
-                  </label>
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Name</div></label>
                   <div className="col-sm-7">
                     <input style={{ borderRadius: 40 }}
                       className="w-50 mx-4 form-control"
@@ -272,14 +381,11 @@ function Addemp() {
                       autoComplete="off"
                       onChange={e => { setName(e.target.value); validateName(e.target.value); }}
                     />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>
-                      {validateName(name) ? <p>{validateName(name)}</p> : null}
-                    </div>
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateName(name) ? <p>{validateName(name)}</p> : null}</div>
                   </div>
                 </div>
               </Col>
             </Form.Field>
-            <br />
             <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
@@ -301,7 +407,93 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
-            <br />
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label">
+                    <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Gender</div>
+                  </label>
+                  <div>
+                    <Radio className="mx-5"
+                      label=' Male'
+                      name='gender'
+                      value='male'
+                      checked={Gender === 'male'}
+                      onChange={e => { setGender(e.target.value); }}
+                    />
+                    <Radio className="mx-5"
+                      label=' Female'
+                      name='gender'
+                      value='female'
+                      checked={Gender === 'female'}
+                      onChange={e => { setGender(e.target.value); }}
+                    ></Radio>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            <br/>
+            <Form.Field>
+    <Col sm={{ span: 12 }}>
+          <div className="mb-3">
+          <label className=" mx-3 form-label">
+          <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Birth:</div>
+        </label>
+            <div className="mx-5">
+              <input
+                type="text"
+                placeholder="Select Date"
+                readOnly
+                onClick={() => document.getElementById('dob-picker').click()}
+                value={dob ? dob.toDateString() : ''}
+              />
+              <DatePicker
+              id="dob-picker"
+              selected={dob}
+              onChange={handleDobChange}
+              dateFormat="yyyy-MM-dd"
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              className="d-none"
+            />
+            <label className=" mb-3">
+            <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Age:</div>
+           </label>
+              </div>
+              <div className="col-sm-7">
+                <input
+                type="text"
+                className="mx-5"
+                value={age}
+                readOnly
+              /></div>
+          </div>
+        </Col>
+        </Form.Field>
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}> BloodGroup:</div></label>
+                  <div className="mx-5">
+                    <label>
+                      <select value={BloodGroup} onChange={e => { setBloodGroup(e.target.value); }}>
+                        <option value="">Select</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O-</option>
+                        <option value="O-">O-</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
@@ -321,45 +513,6 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
-            <br />
-            <Form.Field>
-              <Col sm={{ span: 6 }}>
-                <div className="mb-3">
-                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div></label>
-                  <div className="col-sm-7">
-                    <select className="w-50 mx-4" form-control style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
-                      <option style={{ textAlign: "center" }} value="" disabled>Select department</option>
-                      {departments.map((department, index) => (
-                        <option style={{ textAlign: "center" }} key={index} value={department}>
-                          {department}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div></label>
-                  <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
-                      type="text"
-                      placeholder="Enter your designation"
-                      ref={register("designation", { pattern: /^[a-zA-Z]*$/ })}
-                      required
-                      autoComplete="off"
-                      onChange={e => { setDesignation(e.target.value); validateDesignation(e.target.value); }}
-                    />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateDesignation(designation) ? <p>{validateDesignation(designation)}</p> : null}</div>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
-            <br />
             <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
@@ -381,27 +534,138 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
-            <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
-                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Joining</div></label>
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div></label>
                   <div className="col-sm-7">
                     <input style={{ borderRadius: 40 }}
                       className="w-50 mx-4 form-control"
                       type="text"
-                      placeholder="Enter your Date Of Joining"
-                      ref={register("dateofjoining", { pattern: /^\d{4}-\d{2}-\d{2}$/ })}
+                      placeholder="Enter your address"
+                      ref={register("address", { pattern: /^[0-9/,a-zA-Z- 0-9.]*$/ })}
                       required
                       autoComplete="off"
-                      onChange={e => { setDateOfJoining(e.target.value); validateDateOfJoining(e.target.value); }}
+                      onChange={e => { setAddress(e.target.value); validateAddress(e.target.value); }}
                     />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateDateOfJoining(dateofjoining) ? validateDateOfJoining(dateofjoining) : null}</div>
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateAddress(address) ? <p>{validateAddress(address)}</p> : null}</div>
                   </div>
                 </div>
               </Col>
             </Form.Field>
             <br />
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}> Marital Status:</div></label>
+                  <div className="mx-5">
+                    <label>
+                      <select value={Maritalstatus} onChange={e => { setMaritalstatus(e.target.value); }}>
+                        <option value="">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div></label>
+                  <div className="col-sm-7">
+                    <select className="w-50 mx-4" form-control style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
+                      <option style={{ textAlign: "center" }} value="" disabled>Select department</option>
+                      {departments.map((department, index) => (
+                        <option style={{ textAlign: "center" }} key={index} value={department}>
+                          {department}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            {selectedDepartment === "DOCTOR" && (
+              <Form.Field>
+                <Col sm={{ span: 12 }}>
+                  <div className="mb-3">
+                    <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>TnmcNo</div></label>
+                    <div className="col-sm-7">
+                      <input style={{ borderRadius: 40 }}
+                        className="w-50 mx-4 form-control"
+                        type="text"
+                        placeholder="Enter your TnmcNo"
+                        ref={register("TNMCNO")}
+                        required
+                        autoComplete="off"
+                        onChange={e => { setTNMCNO(e.target.value); }}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Form.Field>
+            )}
+            {selectedDepartment === "NURSE" && (
+              <Form.Field>
+                <Col sm={{ span: 8 }}>
+                  <div className="mb-3">
+                    <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>RnrNo</div></label>
+                    <div className="col-sm-7">
+                      <input style={{ borderRadius: 40 }}
+                        className="w-50 mx-4 form-control"
+                        type="text"
+                        placeholder="Enter your RnrNo"
+                        ref={register("RNRNO")}
+                        required
+                        autoComplete="off"
+                        onChange={e => { setRNRNO(e.target.value); }}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Form.Field>
+            )}
+            {selectedDepartment === "NURSE" && (
+              <Form.Field>
+                <Col sm={{ span: 8 }}>
+                  <div className="mb-3">
+                    <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>ValidlityDate</div></label>
+                    <div className="col-sm-7">
+                      <input style={{ borderRadius: 40 }}
+                        className="w-50 mx-4 form-control"
+                        type="text"
+                        placeholder="Enter your ValidlityDate"
+                        ref={register("ValidlityDate")}
+                        required
+                        autoComplete="off"
+                        onChange={e => { setValidlityDate(e.target.value); }}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Form.Field>
+            )}
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div></label>
+                  <div className="col-sm-7">
+                    <input style={{ borderRadius: 40 }}
+                      className="w-50 mx-4 form-control"
+                      type="text"
+                      placeholder="Enter your designation"
+                      ref={register("designation", { pattern: /^[a-zA-Z]*$/ })}
+                      required
+                      autoComplete="off"
+                      onChange={e => { setDesignation(e.target.value); validateDesignation(e.target.value); }}
+                    />
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateDesignation(designation) ? <p>{validateDesignation(designation)}</p> : null}</div>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
             <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
@@ -423,32 +687,128 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
-            <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div></label>
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Aadhaarno</div></label>
                   <div className="col-sm-7">
                     <input style={{ borderRadius: 40 }}
                       className="w-50 mx-4 form-control"
                       type="text"
-                      placeholder="Enter your address"
-                      ref={register("address", { pattern: /^[0-9/,a-zA-Z- 0-9.]*$/ })}
+                      placeholder="Enter your Aadhaarno"
+                      ref={register("Aadhaarno")}
                       required
                       autoComplete="off"
-                      onChange={e => { setAddress(e.target.value); validateAddress(e.target.value); }}
+                      onChange={e => { setAadhaarno(e.target.value);validateAadhaarNo(e.target.value);}}
                     />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateAddress(address) ? <p>{validateAddress(address)}</p> : null}</div>
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateAadhaarNo(Aadhaarno) ? <p>{validateAadhaarNo(Aadhaarno)}</p> : null}</div>
                   </div>
                 </div>
               </Col>
             </Form.Field>
             <br />
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>PAN No:</div></label>
+                  <div className="col-sm-7">
+                    <input style={{ borderRadius: 40 }}
+                      className="w-50 mx-4 form-control"
+                      type="text"
+                      placeholder="Enter your PAN No"
+                      ref={register("PanNo", { pattern: /^[A-Z0-9]*$/ })}
+                      required
+                      autoComplete="off"
+                      onChange={e => { setPanNo(e.target.value);validatePanNo(e.target.value);  }}
+                    />
+                     <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validatePanNo(PanNo) ? <p>{validatePanNo(PanNo)}</p> : null}</div>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            <br/>
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Joining</div></label>
+                  <div className="col-sm-7">
+                    <input style={{ borderRadius: 40 }}
+                      className="w-50 mx-4 form-control"
+                      type="text"
+                      placeholder="Enter your Date Of Joining"
+                      ref={register("dateofjoining", { pattern: /^\d{4}-\d{2}-\d{2}$/ })}
+                      required
+                      autoComplete="off"
+                      onChange={e => { setDateOfJoining(e.target.value); validateDateOfJoining(e.target.value); }}
+                    />
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateDateOfJoining(dateofjoining) ? validateDateOfJoining(dateofjoining) : null}</div>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
             <br />
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"  >
+                    <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Identification Mark</div>
+                  </label>
+                  <div className="mx-5">
+                    <textarea
+                      rows="4"
+                      cols="50"
+                      name="comment"
+                      form="usrform"
+                      onChange={e => setIdentificationMark(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            <Form.Field>
+              <Col sm={{ span: 8 }}>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"  >
+                    <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Languages</div>
+                  </label>
+                  <Form.Checkbox className="mx-5"
+                    type="checkbox"
+                    label="Tamil"
+                    value="Tamil"
+                    onChange={handleLanguageChange}
+                  />
+                  <Form.Checkbox className="mx-5"
+                    type="checkbox"
+                    label="English"
+                    value="English"
+                    onChange={handleLanguageChange}
+                  />
+                  <Form.Checkbox className="mx-5"
+                    type="checkbox"
+                    label="Other"
+                    value="Other"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedLanguages([...selectedLanguages, "Other"]);
+                      } else {
+                        setSelectedLanguages(selectedLanguages.filter((lang) => lang !== "Other"));
+                      }
+                    }}
+                  />
+                  {selectedLanguages.includes("Other") && (
+                    <FormControl className="w-50 mx-4 form-control"
+                      type="text"
+                      placeholder="Enter other language"
+                      onChange={handleOtherLanguageChange}
+                    />
+                  )}
+                </div>
+              </Col>
+            </Form.Field>
             <div className="mx-5 container" style={{ height: "250px", width: "300px", borderRadius: 40 }}>
               <Webcam style={{ height: "220px", width: "270px", borderRadius: 60 }} audio={false} ref={webcamRef} screenshotFormat="image/jpg" />
             </div>
-            <button style={{ marginLeft: "160px", marginTop: "-100px", borderColor: "#B9ADAD" }} className="Click" onClick={Capture}>
+            <button style={{ marginLeft: "170px", marginTop: "-100px", borderColor: "#B9ADAD" }} className="Click" onClick={Capture}>
               <i className="fa fa-2x fa-camera" aria-hidden="true"></i>
             </button><br /><br />
             <div style={{ marginLeft: "170px" }}><b>(or)</b></div>
@@ -493,37 +853,133 @@ function Addemp() {
                 )}
               </div>
               <br />
+              <div><b>EDUCATIONAL QUALIFICATIONS:</b></div><br />
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sl.No</th>
+                    <th>Degree</th>
+                    <th>Major</th>
+                    <th>Institution &amp; University</th>
+                    <th>% of Marks</th>
+                    <th>Class/Division</th>
+                    <th>Year of Passing</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {educationData.map((data, index) => (
+                    <tr key={index}>
+                      <td>{data.SlNo}</td>
+                      <td>{data.degree}</td>
+                      <td>
+                        <input type="text" value={data.major} onChange={(e) => handleOnChange(e, index, "major")} />
+                      </td>
+                      <td>
+                        <input type="text" value={data.institution} onChange={(e) => handleOnChange(e, index, "institution")} />
+                      </td>
+                      <td>
+                        <input type="text" value={data.marks} onChange={(e) => handleOnChange(e, index, "marks")} />
+                      </td>
+                      <td>
+                        <input type="text" value={data.division} onChange={(e) => handleOnChange(e, index, "division")} />
+                      </td>
+                      <td>
+                        <input type="text" value={data.year} onChange={(e) => handleOnChange(e, index, "year")} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
               <br />
+
+              <div><b>EXPERIENCE DETAILS:</b></div><br />
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Sl.No</th>
+                      <th>Name of the Hospital/Organization</th>
+                      <th>Designation</th>
+                      <th>Last Drawn Salary</th>
+                      <th>Location</th>
+                      <th>Experience From/To</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {experienceData.map((data, index) => (
+                      <tr key={index}>
+                        <td>{data.SlNo}</td>
+                        <td>
+                          <input type="text" value={data.Organization} onChange={(e) => handleChangeexp(e, index, "Organization")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.designation} onChange={(e) => handleChangeexp(e, index, "designation")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.lastdrawnsalary} onChange={(e) => handleChangeexp(e, index, "lastdrawnsalary")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.location} onChange={(e) => handleChangeexp(e, index, "location")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.experience} onChange={(e) => handleChangeexp(e, index, "experience")} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button class="button25 " onClick={addRow}>Add Row</button>
+              </div>
+              <br />
+
+
+
+              <div><b>REFERENCE OF PREVIOUS COMPANY:</b></div><br />
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Sl.No</th>
+                      <th>References:Name</th>
+                      <th>Organization</th>
+                      <th>Designation</th>
+                      <th>Contact No/Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referenceData.map((data, index) => (
+                      <tr key={index}>
+                        <td>{data.SlNo}</td>
+
+                        <td>
+                          <input type="text" value={data.references} onChange={(eve) => handleChangeref(eve, index, "references")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.Organization} onChange={(eve) => handleChangeref(eve, index, "Organization")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.designation} onChange={(eve) => handleChangeref(eve, index, "designation")} />
+                        </td>
+                        <td>
+                          <input type="text" value={data.ContactNo} onChange={(eve) => handleChangeref(eve, index, "ContactNo")} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button class="button25 " onClick={handleAddRow}>Add Row</button>
+              </div>
+              <br />
+
+
               <button className="button-71" role="button" type="submit" onClick={() => { handleClick() }}>ADD EMPLOYEE</button>
             </Col>
             <br />
           </Form>
         </Row>
-        <br />
-        <div id="slide"
-          style={{ display: isShown ? "none" : "block" }}
-        >
-          {image && imgSrc && (
-            <img
-              className="rounded-circle"
-              for="slide"
-              style={{ height: "200px", width: "200px", marginLeft: "800px", marginTop: "-2600px" }}
-              src={image}
-              alt={imgSrc.name} />
-          )}
-          <div style={{ marginLeft: "800px", marginTop: "-1150px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "25px" }}>
-            <div><b>Name : </b>{name}</div>
-            <div><b>Mobile : </b>{mobile}</div>
-            <div><b>Designation : </b>{designation}</div>
-            <div><b>Address : </b>{address}</div><br />
-            <br />
-            <i className="bi bi-check-circle" onClick={() => { refreshPage(); }} style={{ fontSize: "40px", color: "green", marginLeft: "100px", cursor: "pointer" }}> </i>
-          </div>
-          <br />
-          <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>
-        </div>
+        <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>
       </div>
-    </body>
+    </body >
   );
 }
 export default Addemp;

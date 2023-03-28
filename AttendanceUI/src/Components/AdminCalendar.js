@@ -15,7 +15,7 @@ import Viewemp from "./Viewemp";
 import "../Components/AdminCalendar.css";
 import { DayPilot, DayPilotScheduler } from "daypilot-pro-react";
 import Fade from '@material-ui/core/Fade';
-
+import "./NavbarComp.css";
 function Admincalendar() {
 
   //Getting id and name from another file using params
@@ -41,6 +41,9 @@ function Admincalendar() {
   let [workedhours, setWorkedhours] = useState([]);
   let [leavedates, setLeaveDates] = useState("");
   const [userdata, setUserdata] = useState([]);
+  let [calendarData, setCalendarData] = useState([]);
+  let [eventDates, setEventDates] = useState([]);
+  let [sundayDates, setSundayDates] = useState([]);
 
   //Onclick functions for summary modal
   const handleOpen = () => {
@@ -64,15 +67,20 @@ function Admincalendar() {
   //Calendar inbuilt parameters and should be mentioned in the Daypilot component to perform this actions
   let events = {
     locale: "en-us",
-    onBeforeEventRender: (args) => {
-      if (!args.data.barColor) {
-        args.data.barColor = "red";
-      }
-      args.data.borderColor = "darker";
-      args.data.fontColor = "black";
-    },
     onBeforeRowHeaderRender: (args) => {
       args.row.horizontalAlignment = "center";
+    },
+    onBeforeCellRender: (args) => {
+      if (args.cell.start.getDayOfWeek() === 0) { // Sunday
+        if (eventDates.includes(args.cell.start.toString("yyyy-MM-dd"))) {
+          args.cell.disabled = false;
+          args.cell.cssClass = ""; // remove the "disabled-cell" class
+        } else {
+          args.cell.disabled = true;
+          args.cell.cssClass = "disabled-cell";
+          sundayDates.push(args.cell.start.toString("yyyy-MM-dd"));
+        }
+      }
     },
     onTimeRangeSelected: async (args) => {
       const dp = args.control;
@@ -81,21 +89,21 @@ function Admincalendar() {
       ];
       const modal = await DayPilot.Modal.form(form);
       const leaveType = { leavetype: String(Object.values(modal.result)) };
-      console.log("date1", args.end.value)
-      console.log("starttime:", args.start)
-      console.log("endtime:", args.end)
+      console.log("date1",args.end.value)
+      console.log("starttime:",args.start)
+      console.log("endtime:",args.end)
       let datetime = args.end.value;
       let dateObj = new Date(datetime);
       let year = dateObj.getFullYear();
-      console.log("year:", year);
+      console.log("year:",year);
       const [date, time] = datetime.split('T');
-      console.log("date", date);
+      console.log("date",date);
       let iddate = id + date;
-      let start = args.start;
-      let end = args.end;
+      let start =args.start;
+      let end =args.end;
       const today = DayPilot.Date.today()
-      const month = today.getMonth() + 1;
-      let shift = "None";
+      const month = today.getMonth()+1;
+      let shift="None";
       dp.events.add({
         start: args.start,
         end: args.end,
@@ -109,7 +117,7 @@ function Admincalendar() {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ ...leaveType, id: id, date: date, name: name, month: month, year: year, start: start, end: end, iddate: iddate, shift: shift })
+          body: JSON.stringify({ ...leaveType,id:id,date:date,name:name1 + '_' + id,month:month,year:year,start:start,end:end,iddate:iddate,shift:shift})
         });
         const data = await response.json();
         console.log(data);
@@ -132,32 +140,33 @@ function Admincalendar() {
     allowAllEvent: true,
     timeRangeSelectedHandling: "Enabled",
   }
-
-  // Function to fetch the event data (working days) for the current month (as displayed on the timesheet calendar)
-  async function fetchCalendarData() {
-    const today = DayPilot.Date.today();
-    const month = today.getMonth() + 1;
-    const year = today.getYear();
-    const currentMonthPayload = {
-      id: id,
-      month: month,
-      year: year
-    };
-    const { data: calendarData } = await DayPilot.Http.post("http://127.0.0.1:7000/attendance/EmpcalendarId", currentMonthPayload);
-    // Update the timesheet calendar with the fetched data
-    timesheet().update({
-      startDate: today.firstDayOfMonth(),
-      days: today.daysInMonth(),
-      events: calendarData
-    });
-    // Fetch the user data for the current month
-    getuserdata(month, year);
-  }
-
-  // Call fetchCalendarData when the component mounts
-  useEffect(() => {
-    fetchCalendarData();
-  }, []);
+// Function to fetch the event data (working days) for the current month (as displayed on the timesheet calendar)
+async function fetchCalendarData() {
+  const today = DayPilot.Date.today();
+  const month = today.getMonth() + 1;
+  const year = today.getYear();
+  const currentMonthPayload = {
+    id: id,
+    month: month,
+    year: year
+  };
+  const { data: calendarData } = await DayPilot.Http.post("http://127.0.0.1:7000/attendance/EmpcalendarId", currentMonthPayload);
+  const eventDatesArr = calendarData.map(item => item.date);
+  setEventDates(eventDatesArr);
+  setCalendarData(calendarData);
+  // Update the timesheet calendar with the fetched data
+  timesheet().update({
+    startDate: today.firstDayOfMonth(),
+    days: today.daysInMonth(),
+    events: calendarData
+  });
+  // Fetch the user data for the current month
+  getuserdata(month, year);
+}
+// Call fetchCalendarData when the component mounts
+useEffect(() => {
+  fetchCalendarData();
+}, []);
 
 
   // Function to get the user data (export details) for a specific month and year
@@ -236,6 +245,7 @@ function Admincalendar() {
           <img src={profile} className="smrft_logo" alt="logo" />
         </div>
       </div>
+      
       <Navbar style={{ width: '500px', marginLeft: '250px', marginTop: '-90px' }}>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
@@ -243,12 +253,12 @@ function Admincalendar() {
             className="mr-auto my-2 my-lg"
             style={{ marginLeft: '100px' }}
             navbarScroll>
-            <Nav.Link as={Link} to="/" >
-              <div style={{ color: "green", fontFamily: "cursive", ':hover': { background: "blue" } }}>Home</div></Nav.Link>
+            <Nav.Link as={Link}  to="/" >
+              <div className="nav_link1" style={{ color: "green", fontFamily: "cursive", ':hover': { background: "blue" } }}>Home</div></Nav.Link>
 
 
             <Nav.Link as={Link} to="/Admin/Viewemp">
-              <div style={{ color: "green", fontFamily: "cursive" }}>Employee Details</div>
+              <div  className="nav_link2"style={{ color: "green", fontFamily: "cursive" }}>Employee Details</div>
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
@@ -277,9 +287,11 @@ function Admincalendar() {
             class="fa fa-download"
             data={userdata}
             filename={name}
+            title="Download CSV"
           ></CSVLink>
         </i>
       </div>
+
 
 
       {/* <i style={{ color: "green", fontSize: "35px", marginBottom: "200px", marginLeft: "1850px" }} onClick={() => setShow(true)} data-toggle="modal" className="bi bi-journal-text" /> */}

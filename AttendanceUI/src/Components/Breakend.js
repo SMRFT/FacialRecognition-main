@@ -13,7 +13,7 @@ import NavbarComp from "../Components/NavbarComp";
 import { Navbar, Nav } from "react-bootstrap";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { render } from "react-dom";
-import "../Logo.css";
+// import "../Logo.css";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { LocalGroceryStore } from "@material-ui/icons";
 const WebcamCaptureLogout = () => {

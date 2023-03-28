@@ -4,17 +4,14 @@ import { Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import EditForm from "./EditForm";
 import { useNavigate } from "react-router-dom";
-import { Search } from "@material-ui/icons";
-// import SummarizeIcon from '@mui/icons-material/Summarize';
-//import bootstrap from 'bootstrap';
 import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
-import AdminCalendar from "./AdminCalendar";
-import { CSVLink } from 'react-csv';
-import DatePicker from "react-datepicker";
-import moment from "moment";
-import axios from 'axios';
-import "../Logo.css";
+import BootstrapTable from 'react-bootstrap-table-next';
+import Pagination from "react-js-pagination";
+import { useMemo } from "react";
+// import "../Logo.css";
+
 import "./Viewemp.css";
+import { Cursor } from "mongoose";
 ///view employee
 const Home = () => {
   const [error, setError] = useState(null);
@@ -68,90 +65,61 @@ const Home = () => {
     window.location.reload(true);
   };
 
-  //Export details
-  const params = useParams();
-  const name = params.name;
-  let newDate = new Date()
-  const [userdata, setUserdata] = useState([]);
-  const [myMonth, setMyMonth] = useState(new Date());
-  const [myYear, setMyYear] = useState(new Date());
-  const [myDay, setMyDay] = useState(newDate);
-  const minDate = new Date(myYear.getFullYear(), myMonth.getMonth(), 1);
-  const maxDate = new Date(myYear.getFullYear(), myMonth.getMonth() + 1, 0);
-
-  useEffect(() => {
-    const getuserdata = async () => {
-      fetch("http://127.0.0.1:7000/attendance/EmployeeSummaryExport", {
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          month: myMonth.getMonth() + 1,
-          year: myYear.getFullYear(),
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setUserdata(data);
-        });
-    };
-    getuserdata();
-  }, [myMonth, myYear]);
-
-  useEffect(() => {
-    setMyDay(new Date(myYear.getFullYear(), myMonth.getMonth(), 1));
-  }, [myMonth, myYear, setMyDay]);
-
-  const renderDayContents = (day, date) => {
-    if (date < minDate || date > maxDate) {
-      return <span></span>;
-    }
-    return <span>{date.getDate()}</span>;
-  };
 
   ///search employee
   const [searchString, setSearchString] = useState("");
-  const filteredResults = users.blogs.filter((singleEmpObject) => {
+  const filteredResults = users.blogs && users.blogs.filter((singleEmpObject) => {
     return Object.values(singleEmpObject).some((val) =>
-      val
-        .toString()
-        .toLowerCase()
-        .includes(searchString.toString().toLowerCase())
+      val && val.toString().toLowerCase().includes(searchString.toString().toLowerCase())
     );
   });
-  const [isLoading, setIsLoading] = useState(false);
+// State to keep track of the current page
+const [activePage, setActivePage] = useState(1);
+// Function to handle page change
+const handlePageChange = (pageNumber) => {
+  setActivePage(pageNumber);
+};
+// Number of items to show per page
+const ITEMS_PER_PAGE = 3;
+// Get the index of the first and last items to show on the current page
+const indexOfLastItem = activePage * ITEMS_PER_PAGE;
+const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+// Slice the filtered results to show only the items for the current page
+const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem);
+const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+const requestSort = (key) => {
+  let direction = "ascending";
+  if (
+    sortConfig &&
+    sortConfig.key === key &&
+    sortConfig.direction === "ascending"
+  ) {
+    direction = "descending";
+  }
+  setSortConfig({ key, direction });
+};
 
-  const [isIframeVisible, setIsIframeVisible] = useState(false);
-  const [message, setMessage] = useState("");
-  const viewFile = () => {
-    setIsLoading(true);
-    const queryParams = new URLSearchParams();
+const sortedData = useMemo(() => {
+  let sortedData = [...paginatedResults];
+  if (sortConfig !== null) {
+    sortedData.sort((a, b) => {
+      const nameA = (a[sortConfig.key] || '').toString().toLowerCase();
+      const nameB = (b[sortConfig.key] || '').toString().toLowerCase();
+      if (nameA < nameB) {
+        return sortConfig.direction === "ascending" ? -1 : 1;
+      }
+      if (nameA > nameB) {
+        return sortConfig.direction === "ascending" ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+  return sortedData;
+}, [paginatedResults, sortConfig]);
 
-    axios.post(`http://localhost:7000/attendance/get_file?filename=${filteredResults.name}.pdf`, {
-      filename: `${filteredResults.name}.pdf`,
-    }, {
-      responseType: "blob"
-    })
-      .then(response => {
-        const file = new Blob([response.data], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        const iframe = document.createElement('iframe');
-        iframe.src = fileURL;
-        iframe.style.width = '100%';
-        iframe.style.height = `${window.innerHeight}px`;
-        document.body.appendChild(iframe);
-        setIsLoading(false);
-        setIsIframeVisible(true);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsLoading(false);
-        setMessage(
-          error.response && error.response.status === 404
-            ? "File not found."
-            : "An error occurred while retrieving the file."
-        );
-      });
-  };
+
+
+
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
@@ -160,112 +128,72 @@ const Home = () => {
     return (
       <body>
         <br />
-        <br />
-        {/* <OverlayTrigger
-          overlay={<Tooltip id="tooltip">Download payroll data</Tooltip>}
-
-        > */}
-        {/* <div class="Download3">
-
-          <i><CSVLink style={{
-            float: "right", fontSize: "30px", width: "100px",
-            height: "50px", cursor: "pointer", color: "darkblue", marginTop: "200px", marginRight: "160px"
-          }}
-            className="fa fa-download" data={userdata} filename={"payroll"}></CSVLink></i>
-        </div> */}
-        {/* </OverlayTrigger> */}
-        <div class="date-picker" style={{ float: "right", cursor: "pointer" }}>
-          <label>Year</label>
-          <DatePicker style={{ textAlign: "center" }}
-            selected={myYear}
-            onChange={(date) => setMyYear(date)}
-            showYearPicker
-            dateFormat="yyyy"
-          />
-        </div>
-        <div class="date-picker" style={{ float: "right", cursor: "pointer" }}>
-          <label>Month</label>
-          <DatePicker
-            selected={myMonth}
-            onChange={(date) => setMyMonth(date)}
-            showMonthYearPicker
-            dateFormat="MMMM"
-            renderCustomHeader={({ date }) => <div></div>}
-          />
-          <div class="Download3">
-
-            <i><CSVLink style={{
-              fontSize: "33px"
-            }}
-              className="fa fa-download" data={userdata} filename={"payroll"}></CSVLink></i>
-          </div>
-        </div><br />
-
-        <div className="input-group rounded" style={{ width: "250px", float: "left" }}>
+        <div class="container-input" style={{ width: "200px", float: "left", marginTop: "2%", height: "50px" }}>
           <input
             type="search"
-            className="form-control rounded"
+            class="input"
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
             placeholder="Search here !!!"
             aria-label="Search"
             aria-describedby="search-addon"
           />
-          {/* <span className="input-group-text border-0" id="search-addon">
-            <i aria-hidden="true"></i>
-          </span> */}
+          <svg fill="#000000" width="20px" height="20px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+            <path d="M790.588 1468.235c-373.722 0-677.647-303.924-677.647-677.647 0-373.722 303.925-677.647 677.647-677.647 373.723 0 677.647 303.925 677.647 677.647 0 373.723-303.924 677.647-677.647 677.647Zm596.781-160.715c120.396-138.692 193.807-319.285 193.807-516.932C1581.176 354.748 1226.428 0 790.588 0S0 354.748 0 790.588s354.748 790.588 790.588 790.588c197.647 0 378.24-73.411 516.932-193.807l516.028 516.142 79.963-79.963-516.142-516.028Z" fill-rule="evenodd"></path>
+          </svg>
         </div>
         <br />
         <br />
-        <div className="table">
+
+        <div className="table-wrapper">
+        {/* {filteredResults.length === 0 ? (
+        <p>No data available</p>
+      ) : ( */}
           <ReactBootStrap.Table
-            striped
-            bordered="danger"
-            borderColor="danger"
-            hover
-            variant="success"
+            striped borderless hover 
           >
             <thead align="center">
-              <tr>
-                <th>
+              <tr style={{backgroundColor: "#E0FFFF"}}>
+                <th onClick={() => requestSort("id")}>
                   <div
-                    style={{
-                      color: "seagreen",
-                      fontFamily: "-moz-initial",
-                      fontSize: "18px",
-                    }}
+                   style={{ color: 'seagreen', fontFamily: 'Helvetica', fontSize: '16px',cursor: "pointer"}}
                   >
                     <b>Employee Id</b>
                   </div>
                 </th>
-                <th>
+                <th  onClick={() => requestSort("name")}>
                   <div
                     style={{
                       color: "seagreen",
                       fontFamily: "-moz-initial",
-                      fontSize: "18px",
+                      fontSize: '16px',
+                      textAlign: 'center',
+                      cursor: "pointer"
                     }}
                   >
                     <b>Name</b>
                   </div>
                 </th>
-                <th>
+                <th onClick={() => requestSort("department")}>
                   <div
                     style={{
                       color: "seagreen",
                       fontFamily: "-moz-initial",
-                      fontSize: "18px",
+                      fontSize: '16px',
+                      textAlign: 'center',cursor: "pointer"
                     }}
                   >
                     <b>Department</b>
                   </div>
                 </th>
-                <th>
+                <th onClick={() => requestSort("designation")}>
                   <div
                     style={{
                       color: "seagreen",
                       fontFamily: "-moz-initial",
-                      fontSize: "18px",
+                      fontSize: '16px',
+                      textAlign: 'center',cursor: "pointer"
+                      
                     }}
                   >
                     <b>Designation</b>
@@ -276,7 +204,8 @@ const Home = () => {
                     style={{
                       color: "seagreen",
                       fontFamily: "-moz-initial",
-                      fontSize: "18px",
+                      fontSize: '16px',
+                      textAlign: 'center'
                     }}
                   >
                     <b>Mobileno</b>
@@ -287,7 +216,8 @@ const Home = () => {
                     style={{
                       color: "seagreen",
                       fontFamily: "-moz-initial",
-                      fontSize: "18px",
+                      fontSize: '16px',
+                      textAlign: 'center'
                     }}
                   >
                     <b>Address</b>
@@ -298,7 +228,8 @@ const Home = () => {
                     style={{
                       color: "seagreen",
                       fontFamily: "-moz-initial",
-                      fontSize: "18px",
+                      fontSize: '16px',
+                      textAlign: 'center'
                     }}
                   >
                     <b>Actions</b>
@@ -307,8 +238,8 @@ const Home = () => {
               </tr>
             </thead>
             <tbody align="center">
-              {filteredResults.map((user) => (
-                <tr key={user.id}>
+              {sortedData.map((user) => (
+                <tr style={{backgroundColor: "#E0FFFF",borderColor:"#E0FFFF"}} key={user.id}>
                   <td>{user.id}</td>
                   <td><div style={{ display: "flex", alignItems: "center" }}><img src={`http://localhost:7000${user.imgSrc}`} width="80" height="80" className="rounded-circle" />
                     <div style={{ marginLeft: "20px" }}>{user.name}</div>
@@ -343,6 +274,7 @@ const Home = () => {
                       >
                         <i className="bi bi-trash-fill"></i>
                       </button>
+                  
                     </OverlayTrigger>
 
                     <OverlayTrigger
@@ -391,11 +323,26 @@ const Home = () => {
                     </Modal.Body>
                     <Modal.Footer></Modal.Footer>
                   </Modal>
+                  
                 </tr>
-
+     
               ))}
             </tbody>
           </ReactBootStrap.Table>
+          {/* )} */}
+          <div className="pagination-container">
+          <Pagination
+                activePage={activePage}
+                itemsCountPerPage={ITEMS_PER_PAGE}
+                totalItemsCount={filteredResults.length}
+                pageRangeDisplayed={3}
+                onChange={handlePageChange}
+                itemClass="page-item"
+                linkClass="page-link"
+                prevPageText="Prev"
+                nextPageText="Next"
+              />
+          </div>
         </div >
       </body >
     );

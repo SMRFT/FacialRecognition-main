@@ -17,6 +17,10 @@
     border-radius: 3px;
 }
 
+.disabled-cell {
+    background-color: darkgray !important;
+  }
+
 @media (max-width: 768px) {
     .AdminCalendar {
         font-size: 14px;
@@ -115,7 +119,7 @@
     display: inline-block;
     position: absolute;
     padding: 20px 25px;
-    margin-left: 1730px;
+    margin-left: 1530px;
     margin-top: 200px;
     color: rgba(188, 242, 11, 0.787);
     font-family: Arial, sans-serif;

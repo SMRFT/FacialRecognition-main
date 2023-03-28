@@ -1,4 +1,4 @@
-import './Admin.css';
+// import './Admin.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavbarComp from './Components/NavbarComp';
 import profile from "./images/smrft.png";
@@ -12,6 +12,7 @@ function Admin() {
             </div>
             <NavbarComp />
         </div>
+        
     );
 }
 export default Admin;

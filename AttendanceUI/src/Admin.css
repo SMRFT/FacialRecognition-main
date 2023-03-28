@@ -24,7 +24,7 @@
   height: 50%;
   border-radius: 8px;
   border-radius: 50%;
-  border: 0px solid rgb(14, 115, 76);
+  border: 0px solid rgb(14, 75, 115);
   padding: 10px;
   margin-top: -140px;
   margin-left: 180px;
@@ -259,3 +259,28 @@ button {
   border-radius: 30px;
   margin-left: 30px;
 }
+
+
+
+
+.form-input{
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    width: 100%;
+    font-size: 18px;
+    letter-spacing: 2px;
+    animation: typing 2s forwards;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+

@@ -35,18 +35,32 @@ def image_directory_path(instance, filename):
 class Employee(models.Model):
     id = models.CharField(primary_key=True, max_length=500)
     name = models.CharField(max_length=500)
+    Gender = models.CharField(max_length=10)
+    dob = models.CharField(max_length=500)
+    Maritalstatus= models.CharField(max_length=10)
     mobile = models.CharField(max_length=500)
     department = models.CharField(max_length=500)
+    RNRNO = models.IntegerField(blank=True, null=True)
+    TNMCNO = models.CharField(max_length=500, blank=True, null=True)
+    ValidlityDate = models.DateField(blank=True, null=True)
     email = models.CharField(max_length=500)
     dateofjoining = models.DateField()
     bankaccnum = models.IntegerField()
     proof = models.FileField(storage=GridFSStorage())
     certificates = models.FileField(storage=GridFSStorage())
     designation = models.CharField(max_length=500)
+    Aadhaarno= models.CharField(max_length=500)
+    PanNo=models.CharField(max_length=500)
+    IdentificationMark=models.CharField(max_length=500)
+    BloodGroup=models.CharField(max_length=500)
     address = models.CharField(max_length=500)
     imgSrc = models.ImageField(
         upload_to=image_directory_path, storage=image_storage) 
     imgSrcname = models.CharField(max_length=500)
+    educationData = models.CharField(max_length=1200)
+    experienceData = models.CharField(max_length=1200)
+    referenceData = models.CharField(max_length=1200)
+    selectedLanguages = models.CharField(max_length=500, blank=True)
 
 
 
@@ -88,10 +102,13 @@ class Admincalendarlogin(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     month = models.IntegerField()
-    leavetype = models.CharField(max_length=500)
     year = models.IntegerField()
     shift = models.CharField(max_length=500)
     date = models.DateField()
+    day = models.IntegerField()
+    leavetype = models.CharField(max_length=500)
+    latelogin=models.TimeField()
+    earlyLogout=models.TimeField()
 
 # Event calendar model
 
@@ -145,6 +162,7 @@ class Summaryexport(models.Model):
     workingdays = models.IntegerField()
     leavedays = models.IntegerField()
     overtime = models.IntegerField()
+    department = models.CharField(max_length=500)
    
 
 class Breakhours(models.Model):
@@ -155,3 +173,17 @@ class Breakhours(models.Model):
     lunchEnd = models.CharField(max_length=500)
     date = models.DateField()
     Breakhour = models.CharField(max_length=500)
+
+
+    
+class EmployeeHours(models.Model):
+    id = models.CharField(max_length=500,primary_key=True)
+    name = models.CharField(max_length=500)
+    month = models.IntegerField()
+    year = models.IntegerField()
+    date = models.DateField()
+    day = models.IntegerField()
+    latelogin=models.TimeField()
+    earlyLogout=models.TimeField()
+    # department = models.CharField(max_length=500)
+    # designation = models.CharField(max_length=500)
