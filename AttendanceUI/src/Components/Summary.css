@@ -76,8 +76,8 @@
 .download-csv1 {
     display: flex;
     align-items: center;
-    margin-left: 45%;
-    margin-top: 5%;
+    margin-left: 46%;
+    margin-top: 3%;
 }
 
 .button {
@@ -189,3 +189,36 @@
 .button:hover:before {
     bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
 }
+
+
+.datepicker-container {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 850px;
+  }
+  
+  .datepicker-container label {
+    display: block;
+    text-align: right;
+    margin-right: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .datepicker-container {
+      display: block;
+      margin: 20px auto;
+      text-align: center;
+    }
+  
+    .datepicker-container label {
+      display: inline-block;
+      margin-right: 0;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+  }
+
+
+
+  

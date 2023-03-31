@@ -1,6 +1,7 @@
 import React, { useState, useEffect,useCallback } from "react";
 import * as ReactBootStrap from "react-bootstrap";
 import Pagination from "react-js-pagination";
+import Footer from './Footer';
 const Breakdetails = () => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -55,11 +56,10 @@ const Breakdetails = () => {
             striped
             bordered="danger"
             borderColor="danger"
-            hover
-            variant="success"
+            borderless hover 
           >
             <thead align="center">
-              <tr>
+              <tr style={{backgroundColor: "#E0FFFF"}}>
                 <th>
                   <div
                     style={{
@@ -108,7 +108,7 @@ const Breakdetails = () => {
             </thead>
             <tbody align="center">
             {paginatedResults.map((user, index) => (
-                <tr key={user.id}>
+                <tr style={{backgroundColor: "#E0FFFF"}}key={user.id}>
                   <td>{user.id}</td>
                   <td><div style={{ display: "flex", alignItems: "center" }}><img src={`http://localhost:7000${user.imgSrc}`} width="80" height="80" className="rounded-circle" />
                     <div style={{ marginLeft: "20px" }}>{user.name}</div>
@@ -134,6 +134,7 @@ const Breakdetails = () => {
               />
           </div>
       </div>
+      <Footer />
     </body>
   );
 };

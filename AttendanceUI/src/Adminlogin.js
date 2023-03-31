@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import NavbarComp from './Components/NavbarComp';
 import profile from "./images/smrft.png";
 import logo from "./images/smrft_logo.png";
-
+import Footer from './Components/Footer';
 import { lightGreen, red } from '@material-ui/core/colors';
 function Adminlogin() {
     const [email, setEmail] = useState("");
@@ -87,7 +87,9 @@ function Adminlogin() {
 
                 </form>
             </div>
+            <Footer />
         </div>
+         
     );
 }
 export default Adminlogin;

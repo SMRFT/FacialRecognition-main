@@ -9,7 +9,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Pagination from "react-js-pagination";
 import { useMemo } from "react";
 // import "../Logo.css";
-
+import Footer from "./Footer"
 import "./Viewemp.css";
 import { Cursor } from "mongoose";
 ///view employee
@@ -80,7 +80,7 @@ const handlePageChange = (pageNumber) => {
   setActivePage(pageNumber);
 };
 // Number of items to show per page
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 20;
 // Get the index of the first and last items to show on the current page
 const indexOfLastItem = activePage * ITEMS_PER_PAGE;
 const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
@@ -335,7 +335,7 @@ const sortedData = useMemo(() => {
                 activePage={activePage}
                 itemsCountPerPage={ITEMS_PER_PAGE}
                 totalItemsCount={filteredResults.length}
-                pageRangeDisplayed={3}
+                pageRangeDisplayed={20}
                 onChange={handlePageChange}
                 itemClass="page-item"
                 linkClass="page-link"
@@ -344,6 +344,9 @@ const sortedData = useMemo(() => {
               />
           </div>
         </div >
+        <footer>
+        <Footer/>
+      </footer>
       </body >
     );
   }

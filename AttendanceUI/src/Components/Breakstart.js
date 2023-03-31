@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-r
 import { render } from "react-dom";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { FilterTiltShift } from "@material-ui/icons";
+import Footer from './Footer';
 // import "../Logo.css";
 const WebcamCaptureLogin = () => {
     const webcamRef = React.useRef(null);
@@ -222,6 +223,7 @@ const WebcamCaptureLogin = () => {
                 </div>
             </div>
 
+            <Footer />
         </React.Fragment >
     );
 };

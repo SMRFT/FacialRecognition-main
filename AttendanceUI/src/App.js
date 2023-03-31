@@ -4,6 +4,7 @@ import "./App.css";
 import profile from "./images/smrft.png";
 import { useNavigate } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
+import profile1 from "./images/smrft(1).png";
 // import "./Logo.css";
 function App() {
   //Functions to navigate to different pages

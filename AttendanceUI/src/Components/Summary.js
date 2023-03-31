@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "./Summary.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Container } from 'react-bootstrap'
+import Footer from './Footer';
 function MyComponent() {
     const [userdata, setUserdata] = useState([]);
     const [myMonth, setMyMonth] = useState(new Date());
@@ -51,9 +52,11 @@ function MyComponent() {
     return (
         // <div class="card">
         <div>
+            <main>
             <div >
-                <div style={{ textAlign: "center", marginTop: '150px', fontSize: "150px" }}>
-                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", color: "red", marginTop: "180px" }}>
+                
+                <div style={{ textAlign: "center", marginTop: '30px', fontSize: "150px" }}>
+                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", color: "red", marginTop: "200px" }}>
                         <label>Year</label>
                         <DatePicker
                             style={{ textAlign: "center" }}
@@ -93,7 +96,7 @@ function MyComponent() {
                 </div>
             </div>
             <div className="mb-3">
-                <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div></label>
+                <label className="mx-4 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div></label>
                 <div className="col-sm-7">
                   <select className="w-50 mx-4" form-control style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
                   <option style={{textAlign:"center"}} value="" disabled>Select department</option>
@@ -104,7 +107,10 @@ function MyComponent() {
                   ))}
                 </select>
             </div>
+        
           </div>
+          </main>
+          <Footer />
         </div>
     );
 }

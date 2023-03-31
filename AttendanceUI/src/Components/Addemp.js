@@ -11,6 +11,7 @@ import Myconstants from "../Components/Myconstants";
 import { Radio, Checkbox } from 'semantic-ui-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+// import Footer from "./Footer"
 function Addemp() {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");
@@ -363,8 +364,10 @@ function Addemp() {
   return (
     <body>
       <div>
+      <main>
         <br />
         <br />
+        
         <Row>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Field>
@@ -977,8 +980,15 @@ function Addemp() {
             <br />
           </Form>
         </Row>
+        
+       
         <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>
+     </main>
       </div>
+      <footer >
+      <div class="footer2">&copy;<span id="year"> </span><span> www.shanmugahospital.com. All rights reserved.|24, Saradha College Road,
+        Salem-636007. Tamilnadu.</span></div>
+      </footer>
     </body >
   );
 }

@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./Summary.css";
+import Footer from './Footer';
 import { CSVLink } from 'react-csv';
 function App() {
   const [Userdata,setUserdata]=useState([]);
@@ -41,26 +43,29 @@ function App() {
   }, [day,month,year,empId]);
   return (
     <div>
-      <div>
-      <label htmlFor="empId">EmpId:</label>
-<input type="text" id="empId" value={empId} onChange={handleEmpIdChange} />
-<br />
-<br />
-        <div>
-          Select Date
-        <DatePicker
-          selected={selectedDate}
-          onChange={handleDateChange}
-          dateFormat="dd/MM/yyyy"
-        />
-        <br />
-        <br />
-        <div>Day: {day}</div>
-        <div>Month: {month}</div>
-        <div>Year: {year}</div>
-        <br />
-      </div>
-      <div className="download-csv1">
+      
+    <div className="datepicker-container" style={{ textAlign: "center", marginTop: '110px', fontSize: "20px" ,color:"red"}}>
+      <div>EmpId:</div>
+      <div><input type="text" id="empId" value={empId} onChange={handleEmpIdChange} /></div>
+    </div>
+    <div className="datepicker-container">
+      <div  style={{ textAlign: "center",color:"red" }}>Select Date:</div>
+      <DatePicker
+        style={{ textAlign: "center" }}
+        selected={selectedDate}
+        onChange={handleDateChange}
+        dateFormat="dd/MM/yyyy"
+      />
+      <br/>
+      <br/>
+      {day && <p style={{ fontWeight: "bold", marginLeft: "30px" ,color:"Green" }}>Day: {day}</p>}
+      {month && <p style={{ fontWeight: "bold", marginLeft: "30px",color:"Green"  }}>Month: {month}</p>}
+      {year && <p style={{ fontWeight: "bold", marginLeft: "30px",color:"Green"  }}>year: {year}</p>}
+    </div>
+ 
+  
+
+      <div style={{marginLeft: "47%"}}className="download-csv1">
         <div class="button">
           <div class="button-wrapper">
             <CSVLink data={Userdata} filename={"latelogindetails"} title="Download CSV">
@@ -71,9 +76,10 @@ function App() {
               </span>
             </CSVLink>
             </div>
-          </div>
+           
         </div>
       </div>
+      <Footer />
       </div>
   );
 }

@@ -1,6 +1,7 @@
 .logo {
   max-width: 100%;
   max-height: 100%;
+  
 }
 
 .smrft_logo {
@@ -51,9 +52,10 @@
   background: #f1f7fe;
   padding: 2em;
   display: flex;
-  margin: 200px auto;
+  margin: 220px auto;
   height: 350px;
   width: 550px;
+  margin-top: 7%;
   flex-direction: column;
   border-radius: 40px;
   box-shadow: 0 0 1em #e6e9f9;

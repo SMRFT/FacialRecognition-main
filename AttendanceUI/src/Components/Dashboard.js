@@ -3,6 +3,7 @@ import * as ReactBootStrap from "react-bootstrap";
 import React, { useState, useEffect, useCallback } from "react";
 import { Item } from 'semantic-ui-react';
 import './Dashboard.css'
+import Footer from "./Footer"
 // import "../Logo.css";
 import { Table } from 'react-bootstrap'
 const Donut = () => {
@@ -48,7 +49,9 @@ const Donut = () => {
     useEffect(() => {
     }, [chart]);
     return (
+        <body>
         <div>
+
             <div style={{ height: '200px', position: 'absolute', width: '100%', top: '50%', left: '-20%', textAlign: 'center', marginTop: '-150px', lineHeight: '20px' }}>
                 <DonutChart
                     width={600}
@@ -133,6 +136,11 @@ const Donut = () => {
                 </div>
             </div>
         </div>
+        <footer>
+        <Footer/>
+      </footer>
+      </body>
+      
     )
 }
 export default Donut;

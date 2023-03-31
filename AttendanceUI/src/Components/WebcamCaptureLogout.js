@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { render } from "react-dom";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { LocalGroceryStore } from "@material-ui/icons";
+import Footer from './Footer';
 const WebcamCaptureLogout = () => {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState(null);
@@ -230,6 +231,7 @@ const WebcamCaptureLogout = () => {
           </button>
         </div>
       </div>
+      <Footer />
     </React.Fragment>
   );
 };

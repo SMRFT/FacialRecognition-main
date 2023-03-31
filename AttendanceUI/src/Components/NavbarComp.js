@@ -8,7 +8,7 @@ import Summary from './Summary';
 import "./NavbarComp.css";
 import EmployeeHours from "./EmployeeHours"
 import Breakdetails from './Breakdetails';
-import Footer from './Footer';
+// import Footer from './Footer';
 export default class NavbarComp extends Component {
     //Active link function to keep the navlink active when clicked
     state = {
@@ -26,7 +26,7 @@ export default class NavbarComp extends Component {
                     <Navbar
                         collapseOnSelect
                         expand="lg"
-                        style={{ width: '800px', marginLeft: '350px', marginTop: '-90px' }}
+                        style={{ width: '800px', marginLeft: '250px', marginTop: '-50px' }}
                     >
                         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                         <Navbar.Collapse id="responsive-navbar-nav">
@@ -106,7 +106,7 @@ export default class NavbarComp extends Component {
                     </Routes>
                     </main>
                 </div>
-                <Footer />
+              
             </body>
           
         )

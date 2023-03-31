@@ -19,7 +19,7 @@ import { FilterTiltShift } from "@material-ui/icons";
 import axios from 'axios';
 import ReactWhatsapp from 'react-whatsapp';
 // import { Twilio } from 'twilio';
-
+import Footer from './Footer';
 const WebcamCaptureLogin = () => {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState(null);
@@ -326,7 +326,7 @@ const WebcamCaptureLogin = () => {
           </button>
         </div>
       </div>
-
+      <Footer />
     </React.Fragment >
   );
 };

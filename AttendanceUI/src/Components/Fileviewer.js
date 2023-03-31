@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useEffect } from "react";
 import "./Fileviewer.css";
 import "./NavbarComp.css";
+import Footer from './Footer';
 // import "../Logo.css";
 // import React, { useState, useEffect } from "react";
 import Table from 'react-bootstrap/Table';
@@ -296,6 +297,7 @@ function DownloadButton(props) {
                     </>
                 )}
             </div>
+            <Footer />
         </React.Fragment >
     );
 }
