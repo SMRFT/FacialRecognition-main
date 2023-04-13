@@ -290,7 +290,8 @@ function Addemp() {
   // Validation for forms
   function validateName(name) {
     let error = "";
-    if (!name.match(/^[a-zA-Z]*$/)) {
+    const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
+    if (!capitalized.match(/^[a-zA-Z]*$/)) {
       error = "*Name should only contain letters";
     }
     return error;
@@ -360,6 +361,152 @@ function Addemp() {
       error = "*Address should only contain numbers, letters, commas, dots, slashes, and spaces";
     }
     return error;
+  }
+  const handleOnChangeeducation = (e, index, field) => {
+    const { value } = e.target;
+    setEducationData((prevState) =>
+      prevState.map((data, i) => (i === index ? { ...data, [field]: value } : data))
+    );
+  };
+  const validateMajor = (major) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!major) {
+      return " ";
+    } else if (!regex.test(major)) {
+      return "Only alphabets with spaces allowed in Major field";
+    } else {
+      return null;
+    }
+  };
+  const validateInstitution = (institution) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!institution) {
+      return " ";
+    } else if (!regex.test(institution)) {
+      return "Only alphabets with spaces allowed in Institution field";
+    } else {
+      return null;
+    }
+  };
+  const validateMarks = (marks) => {
+    const regex = /^[0-9]*$/;
+    if (!marks) {
+      return " ";
+    } else if (!regex.test(marks)) {
+      return "Only numbers allowed in Marks field";
+    } else {
+      return null;
+    }
+  };
+  const validateDivision = (division) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    const romanRegex = /^(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i;
+    if (!division) {
+      return " ";
+    } else if (!regex.test(division) && !romanRegex.test(division)) {
+      return "Only alphabets with spaces and roman letters allowed in Division field";
+    } else {
+      return null;
+    }
+  };
+  const validateYear = (year) => {
+    const regex = /^(19|20)\d{2}$/;
+    if (!year) {
+      return " ";
+    } else if (!regex.test(year)) {
+      return "Only valid years allowed in Year of Passing field";
+    } else {
+      return null;
+    }
+  };
+  const handleOnChangeexperience = (e, index, field) => {
+    const { value } = e.target;
+    setExperienceData((prevState) =>
+      prevState.map((data, i) => (i === index ? { ...data, [field]: value } : data))
+    );
+  };
+  const validateOrganization = (organization) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!organization) {
+      return " ";
+    } else if (!regex.test(organization)) {
+      return "Only alphabets with spaces allowed in Organization field";
+    } else {
+      return null;
+    }
+  };
+  const validateexpDesignation = (designation) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!designation) {
+      return " ";
+    } else if (!regex.test(designation)) {
+      return "Only alphabets with spaces allowed in Designation field";
+    } else {
+      return null;
+    }
+  };
+  const validateLastDrawnSalary = (lastDrawnSalary) => {
+    const regex = /^[0-9]*$/;
+    if (!lastDrawnSalary) {
+      return " ";
+    } else if (!regex.test(lastDrawnSalary)) {
+      return "Only numbers allowed in Last Drawn Salary field";
+    } else {
+      return null;
+    }
+  };
+  const validateLocation = (location) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!location) {
+      return " ";
+    } else if (!regex.test(location)) {
+      return "Only alphabets with spaces allowed in Location field";
+    } else {
+      return null;
+    }
+  };
+  const validateExperience = (experience) => {
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}\sto\s(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+    if (!experience) {
+      return " ";
+    } else if (!regex.test(experience)) {
+      return "Experience field should be in the format of 'dd/mm/yyyy to dd/mm/yyyy'";
+    } else {
+      return null;
+    }
+  };
+  const handleOnChangeReference = (e, index, field) => {
+    const { value } = e.target;
+    setReferenceData((prevState) =>
+      prevState.map((data, i) => (i === index ? { ...data, [field]: value } : data))
+    );
+  };
+  const validateReferences = (references) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!references) {
+      return " ";
+    } else if (!regex.test(references)) {
+      return "Only alphabets with spaces allowed in References field";
+    } else {
+      return null;
+    }
+  };
+  function validateMobile(mobile) {
+    let error = "";
+    if (mobile !== "" && !/^[0-9]{10}$/.test(mobile)) {
+      error = "*Mobile Number should only contain 10 digits";
+    }
+    return error;
+  }
+  const validaterefContactNo = (contactNo) => {
+    const isValidPhone = /^\d{10}$/.test(contactNo);
+    const isValidLandline = /^\d{8}$/.test(contactNo);
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactNo);
+    if (contactNo !== "" && !isValidPhone && !isValidLandline && !isValidEmail) {
+      return "Invalid Contact Details";
+    } else {
+      return null;
+    }
   }
   return (
     <body>
@@ -875,26 +1022,30 @@ function Addemp() {
                       <td>{data.SlNo}</td>
                       <td>{data.degree}</td>
                       <td>
-                        <input type="text" value={data.major} onChange={(e) => handleOnChange(e, index, "major")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.institution} onChange={(e) => handleOnChange(e, index, "institution")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.marks} onChange={(e) => handleOnChange(e, index, "marks")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.division} onChange={(e) => handleOnChange(e, index, "division")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.year} onChange={(e) => handleOnChange(e, index, "year")} />
-                      </td>
-                    </tr>
+      <input type="text" value={data.major} onChange={(e) => { handleOnChangeeducation(e, index, "major"); validateMajor(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateMajor(data.major)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.institution} onChange={(e) => { handleOnChangeeducation(e, index, "institution"); validateInstitution(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateInstitution(data.institution)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.marks} onChange={(e) => { handleOnChangeeducation(e, index, "marks"); validateMarks(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateMarks(data.marks)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.division} onChange={(e) => { handleOnChangeeducation(e, index, "division"); validateDivision(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateDivision(data.division)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.year} onChange={(e) => { handleOnChangeeducation(e, index, "year"); validateYear(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateYear(data.year)}</div>
+    </td>
+    </tr>
                   ))}
                 </tbody>
               </table>
               <br />
-
               <div><b>EXPERIENCE DETAILS:</b></div><br />
               <div>
                 <table>
@@ -913,19 +1064,24 @@ function Addemp() {
                       <tr key={index}>
                         <td>{data.SlNo}</td>
                         <td>
-                          <input type="text" value={data.Organization} onChange={(e) => handleChangeexp(e, index, "Organization")} />
+                        <input type="text" value={data.organization} onChange={(e) => { handleOnChangeexperience(e, index, "organization"); validateOrganization(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateOrganization(data.organization)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.designation} onChange={(e) => handleChangeexp(e, index, "designation")} />
+                        <input type="text" value={data.designation} onChange={(e) => { handleOnChangeexperience(e, index, "designation"); validateDesignation(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateexpDesignation(data.designation)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.lastdrawnsalary} onChange={(e) => handleChangeexp(e, index, "lastdrawnsalary")} />
+                        <input type="text" value={data.lastdrawnsalary} onChange={(e) => { handleOnChangeexperience(e, index, "lastdrawnsalary"); validateLastDrawnSalary(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateLastDrawnSalary(data.lastdrawnsalary)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.location} onChange={(e) => handleChangeexp(e, index, "location")} />
+                        <input type="text" value={data.location} onChange={(e) => { handleOnChangeexperience(e, index, "location"); validateLocation(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateLocation(data.location)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.experience} onChange={(e) => handleChangeexp(e, index, "experience")} />
+                        <input type="text" value={data.experience} onChange={(e) => { handleOnChangeexperience(e, index, "experience"); validateExperience(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateExperience(data.experience)}</div>
                         </td>
                       </tr>
                     ))}
@@ -934,9 +1090,6 @@ function Addemp() {
                 <button class="button25 " onClick={addRow}>Add Row</button>
               </div>
               <br />
-
-
-
               <div><b>REFERENCE OF PREVIOUS COMPANY:</b></div><br />
               <div>
                 <table>
@@ -950,25 +1103,56 @@ function Addemp() {
                     </tr>
                   </thead>
                   <tbody>
-                    {referenceData.map((data, index) => (
-                      <tr key={index}>
-                        <td>{data.SlNo}</td>
-
-                        <td>
-                          <input type="text" value={data.references} onChange={(eve) => handleChangeref(eve, index, "references")} />
-                        </td>
-                        <td>
-                          <input type="text" value={data.Organization} onChange={(eve) => handleChangeref(eve, index, "Organization")} />
-                        </td>
-                        <td>
-                          <input type="text" value={data.designation} onChange={(eve) => handleChangeref(eve, index, "designation")} />
-                        </td>
-                        <td>
-                          <input type="text" value={data.ContactNo} onChange={(eve) => handleChangeref(eve, index, "ContactNo")} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+  {referenceData.map((data, index) => (
+    <tr key={index}>
+      <td>{data.SlNo}</td>
+      <td>
+        <input
+          type="text"
+          value={data.references}
+          onChange={(e) => {
+            handleOnChangeReference(e, index, "references");
+            validateReferences(e.target.value);
+          }}
+        />
+        <div style={{ color: "red" }}>{validateReferences(data.references)}</div>
+      </td>
+      <td>
+        <input
+          type="text"
+          value={data.Organization}
+          onChange={(e) => {
+            handleOnChangeReference(e, index, "Organization");
+            validateReferences(e.target.value);
+          }}
+        />
+        <div style={{ color: "red" }}>{validateReferences(data.Organization)}</div>
+      </td>
+      <td>
+        <input
+          type="text"
+          value={data.designation}
+          onChange={(e) => {
+            handleOnChangeReference(e, index, "designation");
+            validateReferences(e.target.value);
+          }}
+        />
+        <div style={{ color: "red" }}>{validateReferences(data.designation)}</div>
+      </td>
+      <td>
+  <input
+    type="text"
+    value={data.ContactNo}
+    onChange={(e) => {
+      handleOnChangeReference(e, index, "ContactNo");
+      validaterefContactNo(e.target.value);
+    }}
+  />
+   <div style={{ color: "red" }}>{validaterefContactNo(data.ContactNo)}</div>
+</td>
+    </tr>
+  ))}
+</tbody>
                 </table>
                 <button class="button25 " onClick={handleAddRow}>Add Row</button>
               </div>

@@ -20,10 +20,11 @@ from io import StringIO
 from django.shortcuts import render
 from datetime import datetime, timedelta
 from django.db.models import Count
+from rest_framework.decorators import api_view
 from .constants import Login, Logout
 from django.db.models.functions import TruncDate
-from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours
-from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer,EmployeeSerializer,EmployeeHoursSerializer
+from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours,DeletedEmployee
+from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer,EmployeeSerializer,EmployeeHoursSerializer,DeletedEmployeeSerializer
 from django.db.models import Q
 import json
 import calendar
@@ -80,6 +81,14 @@ class EmployeeEditView(APIView):
         user.mobile = data["mobile"]
         user.designation = data["designation"]
         user.address = data["address"]
+        user.department=data["department"]
+        user.email=data["email"]
+        user.Aadhaarno=data["Aadhaarno"]
+        user.PanNo=data["PanNo"]
+        user.RNRNO=data["RNRNO"]
+        user.TNMCNO=data["TNMCNO"]
+        user.ValidlityDate=data["ValidlityDate"]
+        user.educationData=data["educationData"]
         user.save()
         return Response("Updated Successfully")
 
@@ -179,7 +188,7 @@ class RetrieveCalendarDataById(APIView):
     @csrf_exempt
     def post(self, request):
         data = request.data
-        print("data:", data)
+        # print("data:", data)
         employeelist = Admincalendarlogin.objects.filter(
             id=data["id"], month=data["month"], year=data['year']).values()
         # Adding 1 to every id (103 as 1031,1032) to avoid duplicate id error in calendar
@@ -320,7 +329,7 @@ class RetriveEmployeeexport(APIView):
             if start_time is None or end_time is None:
                 continue  # skip this employee if start_time or end_time is None
             hour = end_time - start_time
-            print(hour)
+            # print(hour)
             break_hours = Breakhours.objects.filter(
                 id=id, date=date).values("Breakhour")
             if break_hours:
@@ -601,16 +610,16 @@ class RetrieveBreak(APIView):
     def get(self, request):
         current_date = datetime.date.today()
         emp_breaks = Breakhours.objects.filter(date=current_date)
-        print("emp_breaks: ", emp_breaks)
+        # print("emp_breaks: ", emp_breaks)
         # Get the list of employee IDs that are currently on break
         emp_ids_on_break = [emp.id for emp in emp_breaks]
-        print("emp_ids_on_break: ", emp_ids_on_break)
+        # print("emp_ids_on_break: ", emp_ids_on_break)
         # Remove employees whose break duration has ended
         for emp in emp_breaks:
             if emp.Breakhour != "0":
                 emp_ids_on_break.remove(emp.id)
         # Filter the employees based on whether they are on break or not
         employees = Employee.objects.filter(id__in=emp_ids_on_break)
-        print("employees: ", employees)
+        # print("employees: ", employees)
         serializer = EmployeeShowSerializer(employees, many=True)
         return Response(serializer.data)

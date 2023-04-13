@@ -56,9 +56,10 @@ function MyComponent() {
             <div >
                 
                 <div style={{ textAlign: "center", marginTop: '30px', fontSize: "150px" }}>
-                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", color: "red", marginTop: "200px" }}>
+                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", color: "seagreen", marginTop: "200px" }}>
                         <label>Year</label>
                         <DatePicker
+                             className="rounded"
                             style={{ textAlign: "center" }}
                             selected={myYear}
                             onChange={(date) => setMyYear(date)}
@@ -68,9 +69,10 @@ function MyComponent() {
                             placeholderText=""
                         />
                     </div>
-                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", fontSize: "30px", color: "red" }}>
+                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", fontSize: "30px", color: "seagreen" }}>
                         <label>Month</label>
                         <DatePicker
+                             className="rounded"
                             selected={myMonth}
                             onChange={(date) => setMyMonth(date)}
                             showMonthYearPicker
@@ -82,6 +84,7 @@ function MyComponent() {
                     <div className="download-csv1">
                         <div class="button">
                             <div class="button-wrapper">
+                                
                                 <CSVLink data={userdata} filename={"payroll"} title="Download CSV">
                                     {/* <div class="text">Download</div> */}
                                     <span class="icon">
@@ -107,7 +110,6 @@ function MyComponent() {
                   ))}
                 </select>
             </div>
-        
           </div>
           </main>
           <Footer />

@@ -85,3 +85,41 @@
     border-color: #007bff;
   }
     */
+
+
+
+    .modal-100w {
+      max-width: 50% !important;
+    }
+    
+
+    @font-face {
+      font-family: 'Open Sans';
+      font-style: normal;
+      font-weight: 400;
+      src: url('https://fonts.gstatic.com/s/opensans/v23/mem8YaGs126MiZpBA-UFVZ0e.ttf') format('truetype');
+    }
+    
+
+    .footer3 {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: green;
+      color: white;
+      font-weight: 500;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.2rem;
+      height: 1rem; /* set the height of the footer */
+    }
+    
+    @media only screen and (max-width: 768px) {
+      .footer3 {
+        padding: 30px;
+      }
+    }
+    

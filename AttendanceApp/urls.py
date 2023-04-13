@@ -4,7 +4,7 @@ from pickle import FROZENSET
 # from django.conf.urls import url
 from django.urls import path, include
 from AttendanceApp import views
-from AttendanceApp.Views.deteteemp import DeleteEmp
+from AttendanceApp.Views.deteteemp import DeleteEmp,DeletedEmployeeList,PermanentDeleteEmp,RestoreEmployee
 from AttendanceApp.Views.adminview import EmployeeView, AdminLogin, AdminReg
 from AttendanceApp.Views.retrieveemp import EmployeeEditView, RetriveEmp, EmployeeSearchView, RetriveEmpById, AdminCalendarView, AdmincalendarloginView, AdmincalendarlogoutView, RetrieveCalendarDataById,  RetriveEmpdesignationCount, RetriveEmpBydesignation, Summary, RetriveEmployeeexport, BreakhoursView, BreakhourslogoutView, RetriveSummaryExport, RetriveBreakhours, send_email, send_whatsapp,upload_file,get_file,RetrieveEmployeehours
 from .views import EmployeeView
@@ -41,7 +41,12 @@ urlpatterns = [
     path('upload_file/', upload_file, name='upload_file'),
     path('get_file', get_file, name='get_file'),
     path('breakdetails', RetrieveBreak.as_view()), 
-    path('Employeehours',RetrieveEmployeehours.as_view())
+    path('Employeehours',RetrieveEmployeehours.as_view()),
+    path("delete-employee", DeleteEmp.as_view()),
+    path('deleted-employees/', DeletedEmployeeList.as_view()),
+    path('permanentdelete/<int:id>/', PermanentDeleteEmp.as_view()),
+    path('restore-employee/', RestoreEmployee.as_view()),
+
     # path('message/', send_whatsapp, name='message')
 ]
 

@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from gridfs_storage.storage import GridFSStorage
+from django.utils import timezone
 # image upload via local disk
 image_storage = FileSystemStorage(
     # Physical file location ROOT
@@ -22,11 +23,15 @@ image_storage = FileSystemStorage(
 )
 
 
+import datetime
+import uuid
+
 def image_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
+    # generate a new filename with timestamp and instance information
     extension = filename.split('.')[-1]
-    new_filename = f"{instance.name}_{instance.id}.{extension}"
+    new_filename = f"{instance.name}_{instance.id}_{uuid.uuid4().hex}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
     return u'picture/{0}'.format(new_filename)
+
 
 
 # Employee
@@ -62,8 +67,30 @@ class Employee(models.Model):
     referenceData = models.CharField(max_length=1200)
     selectedLanguages = models.CharField(max_length=500, blank=True)
 
-
-
+class DeletedEmployee(models.Model):
+    id = models.CharField(primary_key=True, max_length=500)
+    name = models.CharField(max_length=500)
+    email = models.CharField(max_length=500)
+    mobile = models.CharField(max_length=500)
+    department = models.CharField(max_length=500)
+    deleted_at =models.DateField()
+    designation = models.CharField(max_length=500)
+    address = models.CharField(max_length=500)
+    imgSrc = models.ImageField(
+        upload_to=image_directory_path, storage=image_storage) 
+    educationData = models.CharField(max_length=1200)
+    experienceData = models.CharField(max_length=1200)
+    referenceData = models.CharField(max_length=1200)
+    selectedLanguages = models.CharField(max_length=500, blank=True)
+    Aadhaarno= models.CharField(max_length=500)
+    PanNo=models.CharField(max_length=500)
+    IdentificationMark=models.CharField(max_length=500)
+    BloodGroup=models.CharField(max_length=500)
+    RNRNO = models.IntegerField(blank=True, null=True)
+    TNMCNO = models.CharField(max_length=500, blank=True, null=True)
+    ValidlityDate = models.DateField(blank=True, null=True)
+    dateofjoining = models.DateField()
+    bankaccnum = models.IntegerField()
 # Admin Login
 
 
@@ -71,6 +98,8 @@ class Admin(AbstractUser):
     name = models.CharField(max_length=500)
     email = models.CharField(max_length=500, unique=True)
     password = models.CharField(max_length=500)
+    role = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=100)  
     username = None
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

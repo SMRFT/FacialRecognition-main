@@ -26,6 +26,8 @@ class EmployeeView(APIView):
         file_contents1 = proof_file.read()
         certificates_file = request.FILES['certificates']
         file_contents = certificates_file.read()
+        # imgsrc_profile = request.FILES['imgSrc']
+        # file_contents3 = imgsrc_profile.read()
         serializer = EmployeeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         employee = serializer.save()
@@ -36,6 +38,7 @@ class EmployeeView(APIView):
         # certificates_filename =employee.name+".pdf"
         proof_file_id = fs.put(file_contents1, filename=employee.id+".pdf", employee_id=employee.id)
         certificates_file_id = fs.put(file_contents, filename=employee.name+".pdf", employee_id=employee.id)
+        # imgsrc_profile_id = fs.put(file_contents3, filename = employee.name + "-" + str(employee.id) + ".pdf", employee_id=employee.id)
         return Response({'message': 'New Employee Has Been Added Successfully'})
 
 
@@ -61,7 +64,11 @@ class AdminLogin(APIView):
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
-            'jwt': token
+            'jwt': token,
+            'email': user.email,
+                    'name': user.name,
+                    'role': user.role,
+                    'mobile': user.mobile
         }
         return response
 

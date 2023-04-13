@@ -266,7 +266,7 @@ button {
 
 
 .form-input{
-    padding: 10px;
+    padding: 20px;
     border: none;
     border-bottom: 2px solid #ccc;
     width: 100%;
@@ -286,3 +286,132 @@ button {
 }
 
 
+.screen-2 {
+  background: #f1f7fe;
+  padding: 3em;
+  display: flex;
+  margin: 220px auto;
+  height: 400px;
+  width: 600px;
+  margin-top: 7%;
+  flex-direction: column;
+  border-radius: 40px;
+  box-shadow: 0 0 1em #e6e9f9;
+  gap: 2em;
+}
+
+/* Add media query for screens smaller than 768px */
+@media (max-width: 767px) {
+  .screen-2 {
+    margin: 2em;
+    width: auto;
+    max-width: 90%;
+  }
+}
+
+.screen-2 .email {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+  margin-top: -3em;
+}
+
+/* Add media query for screens smaller than 576px */
+@media (max-width: 575px) {
+  .screen-2 .email {
+    margin-top: -2em;
+  }
+}
+
+.screen-2 .password {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+}
+
+.screen-2.login {
+  padding: 1em;
+  background: #3e4684;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+}
+
+.screen-2 .footer {
+  display: flex;
+  font-size: 0.7em;
+  color: #5e5e5e;
+  gap: 14em;
+  padding-bottom: 10em;
+}
+
+/* Add media query for screens smaller than 768px */
+@media (max-width: 767px) {
+  .screen-2 .footer {
+    gap: 2em;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 5em;
+  }
+}
+
+.screen-2 .footer span {
+  cursor: pointer;
+}
+
+
+.profile-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: -1vh;
+  margin-top: 1%;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* flex-direction: column; */
+  /* background-color: #f2f2f2; */
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  /* margin-top: -40%; */
+}
+
+.profile-info {
+  margin-bottom: 1px;
+  margin-right: 2%;
+}
+
+.profile-info p {
+  font-size: 18px;
+}
+
+.logout-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+  margin-top: -4%;
+}
+
+.logout-btn:hover {
+  background-color: #0056b3;
+}

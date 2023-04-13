@@ -12,42 +12,38 @@ function Adminlogin() {
     const [password, setPassword] = useState("");
     const [redirect, setRedirect] = useState(false);
     const [message, setMessage] = useState("");
-
+    const [name, setname] = useState("");
+    const [mobile, setMobile] = useState("");
+    const [role, setrole] = useState("");
     const navigate = useNavigate();
 
     const submit = async (e) => {
         e.preventDefault();
-
-        const response = await fetch('http://localhost:7000/attendance/adminlog',
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            });
-
+    
+        const response = await fetch('http://localhost:7000/attendance/adminlog', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+    
         const content = await response.json();
-
-        // console.log(content)
-
-        // console.log("response:", +response.status)
-
+    
         if (response.status === 200) {
             setMessage("Logged in successfully");
+            // Pass the admin details as props to the /Admin page
+            navigate('/Admin', { state: {  email,name,mobile,role } });
+           
         } else {
             setMessage("Email or Password is incorrect");
         }
-
+    
         if (content.jwt) {
             setRedirect(true);
         }
-    }
-
-    if (redirect) {
-        navigate('/Admin');
     }
 
     return (
@@ -58,7 +54,7 @@ function Adminlogin() {
                 <img src={profile} className="smrft_logo" alt="logo" />
             </div>
             <div class="screen-1">
-                {/* <img src={logo} className="logo1" alt="logo" /> */}
+                <img src={logo} className="logo1" alt="logo" />
                 <form onSubmit={submit}>
                     <div style={{ color: 'green', font: "caption", fontStyle: "Times", fontFamily: "-moz-initial", fontSize: "40px", textAlign: "center" }}>Admin Login</div>
                     <br />

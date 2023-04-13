@@ -9,6 +9,9 @@ import "./NavbarComp.css";
 import EmployeeHours from "./EmployeeHours"
 import Breakdetails from './Breakdetails';
 // import Footer from './Footer';
+import AdminReg from "./Adminreg";
+import Deleteemp from "./Deleteemp";
+import Admin from "../Admin";
 export default class NavbarComp extends Component {
     //Active link function to keep the navlink active when clicked
     state = {
@@ -22,6 +25,7 @@ export default class NavbarComp extends Component {
           
             <body>
                 <div>
+                    
                 <header>
                     <Navbar
                         collapseOnSelect
@@ -91,6 +95,22 @@ export default class NavbarComp extends Component {
                                 >
                                     Breakdetails
                                 </Nav.Link>
+                                <Nav.Link
+                                    as={Link}
+                                    to="Deleteemp"
+                                    className={`nav_link8 ${this.state.activeLink === 'Deleteemp' ? 'active' : ''}`}
+                                    onClick={() => this.handleNavItemClick('Deleteemp')}
+                                >
+                                  Pending Approvals
+                                </Nav.Link>
+                                <Nav.Link
+                                    as={Link}
+                                    to="AdminReg"
+                                    className={`nav_link8 ${this.state.activeLink === 'AdminReg' ? 'active' : ''}`}
+                                    onClick={() => this.handleNavItemClick('AdminReg')}
+                                >
+                                  Admin
+                                </Nav.Link>
                             </Nav>
                         </Navbar.Collapse>
                     </Navbar>
@@ -103,6 +123,8 @@ export default class NavbarComp extends Component {
                         <Route exact path='/Summary' element={<Summary />} ></Route>
                         <Route exact path='/EmployeeHours' element={<EmployeeHours/>} ></Route>
                         <Route exact path='/Breakdetails' element={<Breakdetails/>} ></Route>
+                        <Route exact path='/Deleteemp' element={<Deleteemp/>} ></Route>
+                        <Route exact path='/AdminReg' element={<AdminReg/>} ></Route>
                     </Routes>
                     </main>
                 </div>

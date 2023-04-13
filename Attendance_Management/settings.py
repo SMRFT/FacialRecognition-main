@@ -73,26 +73,26 @@ WSGI_APPLICATION = 'Attendance_Management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'CLIENT': {
-            "host": "localhost:27017",
-            "name": "data",
-        }
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'djongo',
 #         'CLIENT': {
-#             "host": "mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority",
-#             "name": "demodatabase",
-#             "authMechanism": "SCRAM-SHA-1"
+#             "host": "localhost:27017",
+#             "name": "data",
 #         }
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'CLIENT': {
+            "host": "mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority",
+            "name": "demodatabase",
+            "authMechanism": "SCRAM-SHA-1"
+        }
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 

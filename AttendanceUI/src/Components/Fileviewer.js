@@ -193,7 +193,7 @@ function DownloadButton(props) {
                 </a>
                 <a onClick={toggleTables} class="view-link" style={{ marginLeft: '-80px', marginTop: "90px" ,
              cursor: "pointer"}} >
-                    {showTables ? "Hide Data" : "Employee Data"}
+                    {showTables ? "Employee Data" : "Employee Data"} 
                 </a>
             </div>
             <div >

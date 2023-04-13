@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import Footer from "./Footer"
 import "./Viewemp.css";
 import { Cursor } from "mongoose";
+import Deleteemp from "./Deleteemp";
 ///view employee
 const Home = () => {
   const [error, setError] = useState(null);
@@ -117,7 +118,10 @@ const sortedData = useMemo(() => {
   return sortedData;
 }, [paginatedResults, sortConfig]);
 
-
+// const navigate1 = useNavigate();
+// const navigateToDeleteemp = () => {
+//     navigate1("/Deleteemp");
+// };
 
 
   if (error) {
@@ -144,7 +148,24 @@ const sortedData = useMemo(() => {
         </div>
         <br />
         <br />
+       
+        {/* <button 
+  onClick={navigateToDeleteemp}
+  style={{
+    marginLeft:"8%",
+    marginTop:"-2%",
+    backgroundColor: "red",
+    color: "white",
+    padding: "10px 30px",
+    borderRadius: "5px",
+    border: "none",
+    cursor: "pointer"
+  }}
+>
+  <b>Trash</b>
+</button> */}
 
+                
         <div className="table-wrapper">
         {/* {filteredResults.length === 0 ? (
         <p>No data available</p>
@@ -156,7 +177,7 @@ const sortedData = useMemo(() => {
               <tr style={{backgroundColor: "#E0FFFF"}}>
                 <th onClick={() => requestSort("id")}>
                   <div
-                   style={{ color: 'seagreen', fontFamily: 'Helvetica', fontSize: '16px',cursor: "pointer"}}
+                   style={{ color: 'cyan', fontFamily: 'Helvetica', fontSize: '16px',cursor: "pointer"}}
                   >
                     <b>Employee Id</b>
                   </div>
@@ -164,7 +185,7 @@ const sortedData = useMemo(() => {
                 <th  onClick={() => requestSort("name")}>
                   <div
                     style={{
-                      color: "seagreen",
+                      color: "cyan",
                       fontFamily: "-moz-initial",
                       fontSize: '16px',
                       textAlign: 'center',
@@ -177,8 +198,8 @@ const sortedData = useMemo(() => {
                 <th onClick={() => requestSort("department")}>
                   <div
                     style={{
-                      color: "seagreen",
-                      fontFamily: "-moz-initial",
+                      color: "cyan",
+                      fontFamily: "Open Sans",
                       fontSize: '16px',
                       textAlign: 'center',cursor: "pointer"
                     }}
@@ -189,7 +210,7 @@ const sortedData = useMemo(() => {
                 <th onClick={() => requestSort("designation")}>
                   <div
                     style={{
-                      color: "seagreen",
+                      color: "cyan",
                       fontFamily: "-moz-initial",
                       fontSize: '16px',
                       textAlign: 'center',cursor: "pointer"
@@ -202,7 +223,7 @@ const sortedData = useMemo(() => {
                 <th>
                   <div
                     style={{
-                      color: "seagreen",
+                      color: "cyan",
                       fontFamily: "-moz-initial",
                       fontSize: '16px',
                       textAlign: 'center'
@@ -214,7 +235,7 @@ const sortedData = useMemo(() => {
                 <th>
                   <div
                     style={{
-                      color: "seagreen",
+                      color: "cyan",
                       fontFamily: "-moz-initial",
                       fontSize: '16px',
                       textAlign: 'center'
@@ -226,7 +247,7 @@ const sortedData = useMemo(() => {
                 <th>
                   <div
                     style={{
-                      color: "seagreen",
+                      color: "cyan",
                       fontFamily: "-moz-initial",
                       fontSize: '16px',
                       textAlign: 'center'
@@ -242,11 +263,11 @@ const sortedData = useMemo(() => {
                 <tr style={{backgroundColor: "#E0FFFF",borderColor:"#E0FFFF"}} key={user.id}>
                   <td>{user.id}</td>
                   <td><div style={{ display: "flex", alignItems: "center" }}><img src={`http://localhost:7000${user.imgSrc}`} width="80" height="80" className="rounded-circle" />
-                    <div style={{ marginLeft: "20px" }}>{user.name}</div>
+                    <div style={{ marginLeft: "20px" ,fontFamily:"Open Sans"}}>{user.name}</div>
                   </div>
                   </td>
-                  <td>{user.department}</td>
-                  <td>{user.designation}</td>
+                  <td style={{fontFamily:"Open Sans"}}>{user.department}</td>
+                  <td style={{fontFamily:"Open Sans"}}>{user.designation}</td>
                   <td>{user.mobile}</td>
                   <td>{user.address}</td>
                   <td>
@@ -276,6 +297,7 @@ const sortedData = useMemo(() => {
                       </button>
                   
                     </OverlayTrigger>
+                    
 
                     <OverlayTrigger
                       overlay={<Tooltip id="tooltip">Calendar</Tooltip>}
@@ -314,15 +336,20 @@ const sortedData = useMemo(() => {
                     </OverlayTrigger>
 
                   </td>
-                  <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Edit Employee</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <EditForm theuser={selectedUser} />
-                    </Modal.Body>
-                    <Modal.Footer></Modal.Footer>
-                  </Modal>
+                  <Modal
+  show={show}
+  onHide={handleClose}
+  dialogClassName="modal-100w"
+  aria-labelledby="example-custom-modal-styling-title"
+>
+  <Modal.Header closeButton>
+    <Modal.Title style={{color:"green"}}>Edit Employee</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <EditForm theuser={selectedUser} />
+  </Modal.Body>
+</Modal>
+
                   
                 </tr>
      
@@ -344,8 +371,9 @@ const sortedData = useMemo(() => {
               />
           </div>
         </div >
-        <footer>
-        <Footer/>
+        <footer >
+      <div class="footer3">&copy;<span id="year"> </span><span> www.shanmugahospital.com. All rights reserved.|24, Saradha College Road,
+        Salem-636007. Tamilnadu.</span></div>
       </footer>
       </body >
     );

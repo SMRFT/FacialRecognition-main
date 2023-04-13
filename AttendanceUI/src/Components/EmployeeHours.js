@@ -42,32 +42,33 @@ function App() {
     getuserdata();
   }, [day,month,year,empId]);
   return (
-    <div>
-      
-    <div className="datepicker-container" style={{ textAlign: "center", marginTop: '110px', fontSize: "20px" ,color:"red"}}>
-      <div>EmpId:</div>
-      <div><input type="text" id="empId" value={empId} onChange={handleEmpIdChange} /></div>
-    </div>
-    <div className="datepicker-container">
-      <div  style={{ textAlign: "center",color:"red" }}>Select Date:</div>
-      <DatePicker
-        style={{ textAlign: "center" }}
-        selected={selectedDate}
-        onChange={handleDateChange}
-        dateFormat="dd/MM/yyyy"
-      />
-      <br/>
-      <br/>
-      {day && <p style={{ fontWeight: "bold", marginLeft: "30px" ,color:"Green" }}>Day: {day}</p>}
-      {month && <p style={{ fontWeight: "bold", marginLeft: "30px",color:"Green"  }}>Month: {month}</p>}
-      {year && <p style={{ fontWeight: "bold", marginLeft: "30px",color:"Green"  }}>year: {year}</p>}
-    </div>
- 
-  
-
-      <div style={{marginLeft: "47%"}}className="download-csv1">
+    
+    <div   style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" ,marginTop:"-11%"}}>
+    <div class="shadow-effect" style={{ backgroundColor: "#E0FFFF", padding: "20px", borderRadius: "10px", maxWidth: '600px', width: '100%'}}>
+      <div className="datepicker-container" style={{ textAlign: "center", marginTop: '20px', fontSize: "20px" ,color:"seagreen"}}>
+        <div>Employee Id:</div>
+        <div><input className="rounded" type="text" id="empId" value={empId} onChange={handleEmpIdChange} /></div>
+      </div>
+      <div className="datepicker-container">
+        <div  style={{ textAlign: "center",color:"seagreen" }}>Select Date:</div>
+        <DatePicker
+         className="rounded"
+          style={{ textAlign: "center" }}
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="dd/MM/yyyy"
+        />
+        <br/>
+        <br/>
+        {day && <p style={{ fontWeight: "bold", marginLeft: "30px" ,color:"Green" }}>Day: {day}</p>}
+        {month && <p style={{ fontWeight: "bold", marginLeft: "30px",color:"Green"  }}>Month: {month}</p>}
+        {year && <p style={{ fontWeight: "bold", marginLeft: "30px",color:"Green"  }}>year: {year}</p>}
+      </div>
+   
+      <div style={{marginLeft: "40%",marginTop:"-0.3%"}}className="download-csv1">
         <div class="button">
           <div class="button-wrapper">
+          <div class="text">Download</div>
             <CSVLink data={Userdata} filename={"latelogindetails"} title="Download CSV">
               <span class="icon">
                 <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" height="2em" width="2em" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -75,12 +76,13 @@ function App() {
                 </svg>
               </span>
             </CSVLink>
-            </div>
-           
+          </div>
         </div>
       </div>
-      <Footer />
-      </div>
+    </div>
+    <Footer />
+  </div>
+  
   );
 }
 export default App;

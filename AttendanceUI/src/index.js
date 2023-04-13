@@ -18,6 +18,8 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EmployeeHours from "./Components/EmployeeHours";
 import Breakdetails from "./Components/Breakdetails";
+import Deleteemp from "./Components/Deleteemp";
+import AdminReg from "./Components/Adminreg";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
@@ -34,6 +36,9 @@ root.render(
       <Route path="/Fileviewer/:name" element={<Fileviewer />} />
       <Route path="/EmployeeHours/*" element={<EmployeeHours />} />
       <Route path="/Breakdetails/*" element={<Breakdetails/>} />
+      <Route path="/Deleteemp/*" element={<Deleteemp/>} />
+      <Route path="/AdminReg/*" element={<AdminReg/>} />
+
       {/* <Route path="/Summary/*" element={<Summary />} /> */}
     </Routes>
   </BrowserRouter>

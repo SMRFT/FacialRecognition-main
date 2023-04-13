@@ -6,7 +6,8 @@
   .nav_link4,
   .nav_link5,
   .nav_link6 ,
-  .nav_link7{
+  .nav_link7,
+  .nav_link8{
     margin-right: 50px;
     color: cadetblue;
     font-weight: 900;
@@ -22,7 +23,8 @@
   .nav_link4:hover,
   .nav_link5:hover,
   .nav_link6:hover,
-  .nav_link7:hover  {
+  .nav_link7:hover,
+  .nav_link8:hover  {
     color: #007bff;
   }
 
@@ -39,7 +41,7 @@
     .nav_link3,
     .nav_link4,
     .nav_link5,
-    .nav_link6,.nav_link7 {
+    .nav_link6,.nav_link7,.nav_link8 {
       margin: 5px;
       font-size: 14px;
     }
@@ -52,7 +54,8 @@
     .nav_link4,
     .nav_link5,
     .nav_link6,
-    .nav_link7 {
+    .nav_link7,
+    .nav_link8 {
       margin: 5px;
       font-size: 12px;
     }
@@ -65,7 +68,9 @@
 .nav_link4.active,
 .nav_link5.active,
 .nav_link6.active ,
-.nav_link7.active{
+.nav_link7.active,
+.nav_link8.active
+{
     color:forestgreen!important;
     /* font-size:larger!important; */
     /* font-family:Verdana, Geneva, Tahoma, sans-serif!important; */

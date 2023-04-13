@@ -1,7 +1,7 @@
 from curses.ascii import EM
 from dataclasses import fields
 from rest_framework import serializers
-from AttendanceApp.models import Admincalendarlogin, Employee, Admin, Designation, Employeebydesignation, Hour, Summary, Employeeexport, Summaryexport, Breakhours,EmployeeHours
+from AttendanceApp.models import Admincalendarlogin, Employee, Admin, Designation, Employeebydesignation, Hour, Summary, Employeeexport, Summaryexport, Breakhours,EmployeeHours,DeletedEmployee
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -9,11 +9,15 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = '__all__'
 
-
+class DeletedEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeletedEmployee
+        fields = '__all__'
+        
 class EmployeeShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ('id', 'name', 'mobile', 'designation', 'address','imgSrc',"department","email", "BloodGroup","educationData","experienceData","referenceData")
+        fields = ('id', 'name', 'mobile', 'designation', 'address','imgSrc',"department","email", "BloodGroup","educationData","experienceData","referenceData","Aadhaarno","PanNo","RNRNO","TNMCNO","ValidlityDate")
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -32,6 +36,10 @@ class AdminSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class AdminregSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =Admin
+        fields = '__all__'
 
 class EmployeedesignationSerializer(serializers.ModelSerializer):
     class Meta:
