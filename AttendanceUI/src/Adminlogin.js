@@ -34,9 +34,18 @@ function Adminlogin() {
     
         if (response.status === 200) {
             setMessage("Logged in successfully");
+            const { email, name, mobile, role } = content;
+            localStorage.setItem('adminDetails', JSON.stringify({ email, name, mobile, role }));
             // Pass the admin details as props to the /Admin page
-            navigate('/Admin', { state: {  email,name,mobile,role } });
-           
+            navigate('/Admin/viewemp', { 
+                state: {  
+                    email,
+                    name,
+                    mobile,
+                    role 
+                }
+            });
+    
         } else {
             setMessage("Email or Password is incorrect");
         }

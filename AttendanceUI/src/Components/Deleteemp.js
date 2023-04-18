@@ -14,21 +14,41 @@ const TrashPage = () => {
         console.log(err);
       });
   }, []);
+  
+  // const deleteEmployee = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this employee?")) {
+  //     try {
+  //       await fetch(`http://127.0.0.1:7000/attendance/permanentdelete/${deletedEmployees.id}`, {
+  //         method: "post",
+  //         headers: { "Content-Type": "application/json" },
+  //         credentials: "include",
+  //       });
+  //       setDeletedEmployees(deletedEmployees.filter(employee => employee.id !== id));
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
 
   const deleteEmployee = async (id) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       try {
-        await fetch(`http://127.0.0.1:7000/attendance/permanentdelete/${id}`, {
-          method: "post",
+        await fetch("http://127.0.0.1:7000/attendance/permanentdelete", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
+          body: JSON.stringify({
+            id: id, // Use the id argument here
+          }),
         });
-        setDeletedEmployees(deletedEmployees.filter(employee => employee.id !== id));
+        window.location.reload();
+        // Update the deletedEmployees state or perform any other necessary actions
       } catch (error) {
         console.log(error);
       }
     }
   };
+  
   const restoreEmployee = async (id) => {
     if (window.confirm("Are you sure you want to restore this employee?")) {
       try {
@@ -70,17 +90,17 @@ const TrashPage = () => {
               <td>{employee.department}</td>
               <td>{employee.deleted_at}</td>
               <td>
-                <button onClick={() => deleteEmployee(employee.id)} style={{
-   alignItems:"center",
-    backgroundColor: "red",
-    color: "white",
+<button onClick={() => deleteEmployee(employee.id)} style={{
+    alignItems:"center",
+    backgroundColor: "Red",
+    color: "black",
+    marginLeft:"10px",
     padding: "10px 20px",
     borderRadius: "5px",
     border: "none",
     cursor: "pointer"
-  }}>
-                  Delete Permanently
-                </button>
+  }}>Delete Employee Permantly</button>
+
                 <button onClick={() => restoreEmployee(employee.id)} style={{
     alignItems:"center",
     backgroundColor: "#90EE90",

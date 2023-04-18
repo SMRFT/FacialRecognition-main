@@ -1,0 +1,52 @@
+.screen-2 {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+  }
+  
+  .screen-2 form {
+    display: grid;
+    gap: 10px;
+  }
+  
+  .screen-2 label {
+    display: block;
+    font-weight: bold;
+  }
+  
+  .screen-2 .form-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .screen-2 .form-input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .screen-2 .button-78 {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .screen-2 .button-78:hover {
+    background-color: #0056b3;
+  }
+  
+  .screen-2 .message {
+    margin-top: 10px;
+  }
+  
+
+
+  

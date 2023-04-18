@@ -19,7 +19,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EmployeeHours from "./Components/EmployeeHours";
 import Breakdetails from "./Components/Breakdetails";
 import Deleteemp from "./Components/Deleteemp";
-import AdminReg from "./Components/Adminreg";
+import AdminReg from "./Adminreg";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>

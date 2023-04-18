@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import * as ReactBootStrap from "react-bootstrap";
 import { Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -8,11 +8,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-r
 import BootstrapTable from 'react-bootstrap-table-next';
 import Pagination from "react-js-pagination";
 import { useMemo } from "react";
-// import "../Logo.css";
-import Footer from "./Footer"
+import Card from 'react-bootstrap/Card';
 import "./Viewemp.css";
-import { Cursor } from "mongoose";
-import Deleteemp from "./Deleteemp";
 ///view employee
 const Home = () => {
   const [error, setError] = useState(null);
@@ -32,8 +29,16 @@ const Home = () => {
         }
       );
   }, []);
-
-  ////edit employee
+  //hide and show actions
+  const [showaction, setShowaction] = useState(false);
+  const [showActionsBox, setShowActionsBox] = useState(false);
+  const [selectedUseraction, setSelectedUseraction] = useState(null);
+  const handleHide = (user) => {
+    setShowaction(true);
+    setShowActionsBox(!showActionsBox);
+    setSelectedUseraction(user);
+  };
+  //edit employee
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   useEffect(() => {
@@ -48,7 +53,7 @@ const Home = () => {
   const navigate = useNavigate();
   const navigateToCalendar = () => {
   };
-
+ //Navigate to Files
   const Fileviewer = useNavigate();
   const navigateToFileviewer = () => {
   };
@@ -65,8 +70,32 @@ const Home = () => {
       });
     window.location.reload(true);
   };
-
-
+// fetch the data from the server and update the state
+const [breakusers, setBreakusers] = useState([]);
+const [employeesOnBreak, setEmployeesOnBreak] = useState([]);
+const [employeesActive, setEmployeesActive] = useState([]);
+const [employeesNotActive, setEmployeesNotActive] = useState([]);
+const fetchData = useCallback(() => {
+  fetch("http://127.0.0.1:7000/attendance/breakdetails")
+    .then((res) => res.json())
+    .then(
+      (data) => {
+        setIsLoaded(true);
+        setBreakusers(data);
+        setEmployeesOnBreak(data.employees_on_break);
+        setEmployeesActive(data.employees_active);
+        setEmployeesNotActive(data.employees_not_active);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
+}, []);
+// Call the fetchData function when the component mounts
+useEffect(() => {
+  fetchData();
+}, [fetchData]);
   ///search employee
   const [searchString, setSearchString] = useState("");
   const filteredResults = users.blogs && users.blogs.filter((singleEmpObject) => {
@@ -87,43 +116,6 @@ const indexOfLastItem = activePage * ITEMS_PER_PAGE;
 const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
 // Slice the filtered results to show only the items for the current page
 const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem);
-const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
-const requestSort = (key) => {
-  let direction = "ascending";
-  if (
-    sortConfig &&
-    sortConfig.key === key &&
-    sortConfig.direction === "ascending"
-  ) {
-    direction = "descending";
-  }
-  setSortConfig({ key, direction });
-};
-
-const sortedData = useMemo(() => {
-  let sortedData = [...paginatedResults];
-  if (sortConfig !== null) {
-    sortedData.sort((a, b) => {
-      const nameA = (a[sortConfig.key] || '').toString().toLowerCase();
-      const nameB = (b[sortConfig.key] || '').toString().toLowerCase();
-      if (nameA < nameB) {
-        return sortConfig.direction === "ascending" ? -1 : 1;
-      }
-      if (nameA > nameB) {
-        return sortConfig.direction === "ascending" ? 1 : -1;
-      }
-      return 0;
-    });
-  }
-  return sortedData;
-}, [paginatedResults, sortConfig]);
-
-// const navigate1 = useNavigate();
-// const navigateToDeleteemp = () => {
-//     navigate1("/Deleteemp");
-// };
-
-
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
@@ -148,234 +140,118 @@ const sortedData = useMemo(() => {
         </div>
         <br />
         <br />
-       
-        {/* <button 
-  onClick={navigateToDeleteemp}
-  style={{
-    marginLeft:"8%",
-    marginTop:"-2%",
-    backgroundColor: "red",
-    color: "white",
-    padding: "10px 30px",
-    borderRadius: "5px",
-    border: "none",
-    cursor: "pointer"
-  }}
->
-  <b>Trash</b>
-</button> */}
-
-                
-        <div className="table-wrapper">
-        {/* {filteredResults.length === 0 ? (
-        <p>No data available</p>
-      ) : ( */}
-          <ReactBootStrap.Table
-            striped borderless hover 
+   <div className="row">
+    {paginatedResults.map((user) => (
+   <div className="col-md-3 mb-3" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
+    <Card md={4} className="employee"><br/>
+   <div><i style={{float:"right",marginRight:'5%',marginTop:"2%",cursor:"pointer"}} onClick={() => handleHide(user)} className="fa fa-ellipsis-h"></i>
+   <div style={{ float: "right", marginRight: "5%" }}>
+  {employeesOnBreak.some((breakUser) => breakUser.id === user.id) ? (
+    <button className="break-btn">Break</button>
+  ) : employeesActive.some((activeUser) => activeUser.id === user.id) ? (
+    <button className="active-btn">Active</button>
+  ) : (
+    <button className="not-active-btn">Not Active</button>
+  )}
+</div>
+   {showActionsBox && selectedUseraction === user && (
+    <div
+      style={{
+        position: "absolute",
+        borderRadius:"5%",
+        backgroundColor:"ghostwhite",
+        boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
+        padding: "4px 4px",
+        zIndex: 1,
+        top: "20px",
+        right: 0
+      }}
+    >
+    <button
+          onClick={() => editEmployee(user)}
+          className="btn text-warning btn-act"
+          data-toggle="modal"
+          style={{border:"none"}}
+      >
+        <i className="bi bi-pencil-fill"></i><div style={{color:"#7F8487",float:"right",marginLeft:"10px"}}> Edit</div>
+        </button>
+        <br/>
+        <button
+          onClick={() => deleteEmployee(user)}
+          className="btn text-danger btn-act"
+          data-toggle="modal"
+          style={{border:"none"}}
+        >
+        <i className="bi bi-trash-fill"></i><div style={{color:"#7F8487",float:"right",marginLeft:"10px"}}> Delete</div>
+      </button><br/>
+      <Link
+          to={`/AdminCalendar/${user.name + '_' + user.id}`}
+          activeClassName="current">
+          <button
+            onClick={() => navigateToCalendar(user)}
+            className="btn text-primary btn-act"
+            data-toggle="modal"
+            style={{border:"none"}}
           >
-            <thead align="center">
-              <tr style={{backgroundColor: "#E0FFFF"}}>
-                <th onClick={() => requestSort("id")}>
-                  <div
-                   style={{ color: 'cyan', fontFamily: 'Helvetica', fontSize: '16px',cursor: "pointer"}}
-                  >
-                    <b>Employee Id</b>
-                  </div>
-                </th>
-                <th  onClick={() => requestSort("name")}>
-                  <div
-                    style={{
-                      color: "cyan",
-                      fontFamily: "-moz-initial",
-                      fontSize: '16px',
-                      textAlign: 'center',
-                      cursor: "pointer"
-                    }}
-                  >
-                    <b>Name</b>
-                  </div>
-                </th>
-                <th onClick={() => requestSort("department")}>
-                  <div
-                    style={{
-                      color: "cyan",
-                      fontFamily: "Open Sans",
-                      fontSize: '16px',
-                      textAlign: 'center',cursor: "pointer"
-                    }}
-                  >
-                    <b>Department</b>
-                  </div>
-                </th>
-                <th onClick={() => requestSort("designation")}>
-                  <div
-                    style={{
-                      color: "cyan",
-                      fontFamily: "-moz-initial",
-                      fontSize: '16px',
-                      textAlign: 'center',cursor: "pointer"
-                      
-                    }}
-                  >
-                    <b>Designation</b>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      color: "cyan",
-                      fontFamily: "-moz-initial",
-                      fontSize: '16px',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <b>Mobileno</b>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      color: "cyan",
-                      fontFamily: "-moz-initial",
-                      fontSize: '16px',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <b>Address</b>
-                  </div>
-                </th>
-                <th>
-                  <div
-                    style={{
-                      color: "cyan",
-                      fontFamily: "-moz-initial",
-                      fontSize: '16px',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <b>Actions</b>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody align="center">
-              {sortedData.map((user) => (
-                <tr style={{backgroundColor: "#E0FFFF",borderColor:"#E0FFFF"}} key={user.id}>
-                  <td>{user.id}</td>
-                  <td><div style={{ display: "flex", alignItems: "center" }}><img src={`http://localhost:7000${user.imgSrc}`} width="80" height="80" className="rounded-circle" />
-                    <div style={{ marginLeft: "20px" ,fontFamily:"Open Sans"}}>{user.name}</div>
-                  </div>
-                  </td>
-                  <td style={{fontFamily:"Open Sans"}}>{user.department}</td>
-                  <td style={{fontFamily:"Open Sans"}}>{user.designation}</td>
-                  <td>{user.mobile}</td>
-                  <td>{user.address}</td>
-                  <td>
-                    <OverlayTrigger
-                      overlay={<Tooltip id="tooltip">Edit</Tooltip>}
-                      placement="left"
-                    >
-                      <button
-                        onClick={() => editEmployee(user)}
-                        className="btn text-warning btn-act"
-                        data-toggle="modal"
-                      >
-                        <i className="bi bi-pencil-fill"></i>
-                      </button>
-                    </OverlayTrigger>
-
-                    <OverlayTrigger
-                      overlay={<Tooltip id="tooltip">Delete</Tooltip>}
-                      placement="left"
-                    >
-                      <button
-                        onClick={() => deleteEmployee(user)}
-                        className="btn text-danger btn-act"
-                        data-toggle="modal"
-                      >
-                        <i className="bi bi-trash-fill"></i>
-                      </button>
-                  
-                    </OverlayTrigger>
-                    
-
-                    <OverlayTrigger
-                      overlay={<Tooltip id="tooltip">Calendar</Tooltip>}
-                      placement="left"
-                    >
-                      <Link
-                        to={`/AdminCalendar/${user.name + '_' + user.id}`}
-                        activeClassName="current"
-                      >
-                        <button
-                          onClick={() => navigateToCalendar(user)}
-                          className="btn text-primary btn-act"
-                          data-toggle="modal"
-                        >
-                          <i className="bi bi-calendar3-week"></i>
-                        </button>
-                      </Link>
-                    </OverlayTrigger>
-
-                    <OverlayTrigger
-                      overlay={<Tooltip id="tooltip">Files</Tooltip>}
-                      placement="left"
-                    >
-                      <Link
-                        to={`/Fileviewer/${user.name + '_' + user.id}`}
-                        activeClassName="current"
-                      >
-                        <button
-                          onClick={() => navigateToFileviewer(user)}
-                          className="btn text-primary btn-act"
-                          data-toggle="modal"
-                        >
-                          <i className="bi bi-file-earmark-text"></i>
-                        </button>
-                      </Link>
-                    </OverlayTrigger>
-
-                  </td>
-                  <Modal
-  show={show}
-  onHide={handleClose}
-  dialogClassName="modal-100w"
-  aria-labelledby="example-custom-modal-styling-title"
->
-  <Modal.Header closeButton>
-    <Modal.Title style={{color:"green"}}>Edit Employee</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <EditForm theuser={selectedUser} />
-  </Modal.Body>
-</Modal>
-
-                  
-                </tr>
-     
-              ))}
-            </tbody>
-          </ReactBootStrap.Table>
-          {/* )} */}
-          <div className="pagination-container">
-          <Pagination
-                activePage={activePage}
-                itemsCountPerPage={ITEMS_PER_PAGE}
-                totalItemsCount={filteredResults.length}
-                pageRangeDisplayed={20}
-                onChange={handlePageChange}
-                itemClass="page-item"
-                linkClass="page-link"
-                prevPageText="Prev"
-                nextPageText="Next"
-              />
-          </div>
-        </div >
-        <footer >
-      <div class="footer3">&copy;<span id="year"> </span><span> www.shanmugahospital.com. All rights reserved.|24, Saradha College Road,
-        Salem-636007. Tamilnadu.</span></div>
-      </footer>
-      </body >
+          <i className="bi bi-calendar3-week"></i><div style={{color:"#7F8487",float:"right",marginLeft:"10px"}}> Calendar</div>
+          </button>
+        </Link><br/>
+        <Link
+          to={`/Fileviewer/${user.name + '_' + user.id}`}
+          activeClassName="current"
+          >
+          <button
+            onClick={() => navigateToFileviewer(user)}
+            className="btn text-primary btn-act"
+            data-toggle="modal"
+            style={{border:"none"}}
+          >
+          <i className="bi bi-file-earmark-text"></i><div style={{color:"#7F8487",float:"right",marginLeft:"10px"}}> Files</div>
+          </button>
+        </Link><br/>
+        </div> )}
+        </div><br/><br/>
+      <Card.Img style={{ display: "block", margin:"auto", width:"70px", height:"70px", borderRadius:"50%" }}
+        src={`http://localhost:7000${user.imgSrc}`} className="rounded-circle" />
+      <Card.Body>
+        <Card.Title><center style={{color:"#525E75",font:"caption",fontWeight:"bold",fontFamily:"sans-serif",fontSize:"14px"}}>{user.name}</center></Card.Title>
+        <Card.Text>
+        <div><center style={{color:"#BFBFBF",font:"caption",fontFamily:"initial"}}>{user.designation}</center></div><br/>
+        <Button style={{backgroundColor:"#ECFCFF",color:"black",width:"100%",borderColor:"#C8E6F5"}}>
+        <div style={{color:"#7F8487",float:"left",font:"caption",fontFamily:"cursive",fontSize:"12px"}}>Department</div>
+        <div style={{color:"#7F8487",float:"right",font:"caption",fontFamily:"cursive",fontSize:"12px"}}>Date Hired</div><br/>
+        <div style={{float:"left",font:"caption",fontFamily:"Garamond",fontSize:"12px"}}>{user.department}</div>
+        <div style={{float:"right",font:"caption",fontFamily:"Times New Roman",fontSize:"12px"}}>{user.dateofjoining}</div><br/><br/>
+        <div style={{float:"left",font:"caption",fontFamily:"Copperplate",fontSize:"14px"}}>
+          <i style={{fontWeight:"bold",fontSize:"16px", color: "black", textShadow: "0.4px 0.4px black"}} className="bi bi-envelope"></i> {user.email}
+        </div><br/>
+        <div style={{float:"left",font:"caption",fontFamily:"Copperplate",fontSize:"14px"}}>
+          <i style={{fontWeight:"bold",fontSize:"14px", color: "black", textShadow: "0.4px 0.4px black"}} className="bi bi-telephone"></i> {user.mobile}
+        </div><br/>
+        <div style={{float:"left",font:"caption",fontFamily:"Copperplate",fontSize:"14px"}}>
+          <i style={{fontWeight:"bold",fontSize:"16px", color: "black", textShadow: "0.4px 0.4px black"}} className="bi bi-house-door"></i> {user.address}
+        </div>
+        </Button>
+        </Card.Text>
+      </Card.Body>
+      <Modal
+      show={show}
+      onHide={handleClose}
+      dialogClassName="modal-100w"
+      aria-labelledby="example-custom-modal-styling-title"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title style={{color:"green"}}>Edit Employee</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <EditForm theuser={selectedUser} />
+      </Modal.Body>
+    </Modal>
+    </Card>
+    </div>
+    ))}
+    </div>
+    </body >
     );
   }
 };

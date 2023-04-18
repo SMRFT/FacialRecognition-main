@@ -509,7 +509,7 @@ function Addemp() {
     }
   }
   return (
-    <body>
+    <body className="addemp">
       <div>
       <main>
         <br />
@@ -517,45 +517,76 @@ function Addemp() {
         
         <Row>
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Name</div></label>
-                  <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
-                      type="text"
-                      placeholder="Enter your name"
-                      ref={register("name", { pattern: /^[a-zA-Z]*$/ })}
-                      required
-                      autoComplete="off"
-                      onChange={e => { setName(e.target.value); validateName(e.target.value); }}
-                    />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateName(name) ? <p>{validateName(name)}</p> : null}</div>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
-            <br />
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>ID</div></label>
-                  <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
-                      type="text"
-                      placeholder="Enter ID is here"
-                      ref={register("id", { pattern: /^[0-9]*$/ })}
-                      required
-                      autoComplete="off"
-                      onChange={e => { setId(e.target.value); validateId(e.target.value); }}
-                    />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateId(id) ? <p>{validateId(id)}</p> : null}</div>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
+          <div className="row">
+  <div className="col-sm-4">
+    <Form.Field>
+      <label className="form-label">
+        <div
+          className="form-control-label text-muted"
+          style={{
+            font: "caption",
+            fontStyle: "italic",
+            fontFamily: "-moz-initial",
+            fontSize: "20px",
+          }}
+        >
+          Name
+        </div>
+      </label>
+      <input
+        style={{ borderRadius: 40 }}
+        className="form-control"
+        type="text"
+        placeholder="Enter your name"
+        ref={register("name", { pattern: /^[a-zA-Z]*$/ })}
+        required
+        autoComplete="off"
+        onChange={(e) => {
+          setName(e.target.value);
+          validateName(e.target.value);
+        }}
+      />
+      <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
+        {validateName(name) ? <p>{validateName(name)}</p> : null}
+      </div>
+    </Form.Field>
+  </div>
+  <div className="col-sm-4">
+    <Form.Field>
+      <label className="form-label">
+        <div
+          className="form-control-label text-muted"
+          style={{
+            font: "caption",
+            fontStyle: "italic",
+            fontFamily: "-moz-initial",
+            fontSize: "20px",
+          }}
+        >
+          ID
+        </div>
+      </label>
+      <input
+        style={{ borderRadius: 40 }}
+        className="form-control"
+        type="text"
+        placeholder="Enter ID here"
+        ref={register("id", { pattern: /^[0-9]*$/ })}
+        required
+        autoComplete="off"
+        onChange={(e) => {
+          setId(e.target.value);
+          validateId(e.target.value);
+        }}
+      />
+      <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
+        {validateId(id) ? <p>{validateId(id)}</p> : null}
+      </div>
+    </Form.Field>
+  </div>
+</div>
+
+
             <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>

@@ -56,18 +56,18 @@ const EditForm = ({ theuser }) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id: theuser.id,
-          name: theuser.name,
-          mobile: theuser.mobile,
-          address: theuser.address,
-          designation: theuser.designation,
-          department: theuser.department,
-          email: theuser.email,
-          Aadhaarno: theuser.Aadhaarno,
-          PanNo: theuser.PanNo,
-          RNRNO: theuser.RNRNO,
-          TNMCNO: theuser.TNMCNO,
-          ValidlityDate: theuser.ValidlityDate,
+          id:id,
+          name: name,
+          mobile:mobile,
+          address: address,
+          designation: designation,
+          department: department,
+          email:email,
+          Aadhaarno: Aadhaarno,
+          PanNo: PanNo,
+          RNRNO: RNRNO,
+          TNMCNO: TNMCNO,
+          ValidlityDate:ValidlityDate,
           educationData: JSON.stringify(dataArray)
         }),
       });
@@ -357,7 +357,7 @@ const EditForm = ({ theuser }) => {
             placeholder="ValidlityDate" 
             {...register("ValidlityDate", 
             { 
-              pattern: /^[0-9]{12}$/
+              pattern:  /^\d{4}-\d{2}-\d{2}$/
             })}       
             onChange={(e) => setValidlityDate(e.target.value)}/>
         </Form.Group>

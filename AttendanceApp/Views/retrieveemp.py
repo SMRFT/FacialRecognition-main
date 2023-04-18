@@ -609,17 +609,56 @@ class RetrieveBreak(APIView):
     @csrf_exempt
     def get(self, request):
         current_date = datetime.date.today()
+        department = request.GET.get('department') # get the department parameter from the request query params
+        employees = Employee.objects.all()
+        if department: # check if department is present in the query params
+            employees = employees.filter(department=department) # filter employees based on the selected department
         emp_breaks = Breakhours.objects.filter(date=current_date)
-        # print("emp_breaks: ", emp_breaks)
         # Get the list of employee IDs that are currently on break
         emp_ids_on_break = [emp.id for emp in emp_breaks]
-        # print("emp_ids_on_break: ", emp_ids_on_break)
         # Remove employees whose break duration has ended
         for emp in emp_breaks:
             if emp.Breakhour != "0":
                 emp_ids_on_break.remove(emp.id)
         # Filter the employees based on whether they are on break or not
-        employees = Employee.objects.filter(id__in=emp_ids_on_break)
-        # print("employees: ", employees)
-        serializer = EmployeeShowSerializer(employees, many=True)
-        return Response(serializer.data)
+        employees_on_break = Employee.objects.filter(id__in=emp_ids_on_break)
+        # Get the list of employee IDs that have logged in today
+        employee_logins = Admincalendarlogin.objects.filter(date=current_date).values()
+        emp_ids_logged_in = [emp['id'] for emp in employee_logins]
+        # Filter the employees based on whether they are on break or not
+        employees_on_break = employees.filter(id__in=emp_ids_on_break)
+        # Filter the employees based on whether they have logged in today or not
+        employees_not_on_break = employees.exclude(id__in=emp_ids_on_break)
+        employees_not_on_break = employees_not_on_break.exclude(id__in=emp_ids_logged_in)
+        # Filter the employees based on whether they are active or not
+        employees_active = employees.filter(id__in=emp_ids_logged_in)
+        # Create a dictionary to store employee IDs and their corresponding lunch start times
+        emp_lunch_starts = {}
+        for emp in emp_breaks:
+            if emp.id in emp_ids_on_break:
+                emp_lunch_starts[emp.id] = emp.lunchstart
+        # Create a list of dictionaries to store employee details along with their lunch start times
+        emp_details_on_break = []
+        for emp in employees_on_break:
+            emp_dict = EmployeeShowSerializer(emp).data
+            lunch_start = emp_lunch_starts.get(emp.id)
+            break_start_time = datetime.datetime.strptime(lunch_start, "%Y-%m-%d %I:%M %p")
+            emp_dict["break_start_time"] = datetime.datetime.strftime(break_start_time, "%I:%M %p")
+            emp_details_on_break.append(emp_dict)
+        # Create a list of dictionaries for employees not on break
+        emp_details_not_on_break = []
+        for emp in employees_not_on_break:
+            emp_dict = EmployeeShowSerializer(emp).data
+            emp_details_not_on_break.append(emp_dict)
+        # Create a list of dictionaries for active employees
+        emp_details_active = []
+        for emp in employees_active:
+            emp_dict = EmployeeShowSerializer(emp).data
+            emp_details_active.append(emp_dict)
+        # Return a response containing the three lists: employees on break, employees not on break but active, and employees not on break and not active
+        response_data = {
+            "employees_on_break": emp_details_on_break,
+            "employees_active": emp_details_active,
+            "employees_not_active": emp_details_not_on_break
+        }
+        return Response(response_data)

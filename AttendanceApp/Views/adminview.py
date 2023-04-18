@@ -5,7 +5,7 @@ from rest_framework.response import Response
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 # from rest_framework.authtoken.views import ObtainAuthToken
 # from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed,NotFound
 from django.views.decorators.csrf import csrf_exempt
 import jwt
 import datetime
@@ -80,3 +80,19 @@ class AdminReg(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class UserDetails(APIView):
+    def get(self, request):
+        email = request.GET.get('email') # Get the email from the query parameters
+        user = Admin.objects.filter(email=email).first() # Query the Admin model to get the user
+        if user is None:
+            raise NotFound('User not found!')
+        # Create a dictionary with the user details
+        user_data = {
+            'email': user.email,
+            'name': user.name,
+            'role': user.role,
+            'mobile': user.mobile
+        }
+        return Response(user_data)
