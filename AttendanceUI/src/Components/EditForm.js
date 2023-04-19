@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { Modal,  Row, Col } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
-//import { json } from "express";
+import VerticalTabs from "./VerticalTabs";
+
 const EditForm = ({ theuser }) => {
   const id = theuser.id;
   const [name, setname] = useState(theuser.name);
@@ -17,16 +17,17 @@ const EditForm = ({ theuser }) => {
   const [TNMCNO, setTNMCNO] = useState(theuser.TNMCNO);
   const [ValidlityDate, setValidlityDate] = useState(theuser. ValidlityDate);
   const [educationData, setEducationData] = useState(theuser. educationData);
-  const [department, setdepartment] = useState(theuser.department
-    );
+  const [department, setdepartment] = useState(theuser.department);
   const [showTable, setShowTable] = useState(false);
   const [dataArray, setDataArray] = useState(JSON.parse(educationData));
   const { register,handleSubmit,formState: { errors } } = useForm();
+
   const handleInputChange = (e, rowIndex, fieldName) => {
     const updatedDataArray = [...dataArray];
     updatedDataArray[rowIndex][fieldName] = e.target.value;
     setDataArray(updatedDataArray);
   };
+
   function handleUpdateResponse(response) {
     if (response.ok) {
       alert("Employee data updated successfully!");
@@ -35,9 +36,7 @@ const EditForm = ({ theuser }) => {
       throw new Error("Failed to update employee data.");
     }
   }
-  // const [showTable, setShowTable] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-  
   const handleViewTable = () => {
     if (dataArray && dataArray.length > 0) {
       setShowTable(true);
@@ -76,170 +75,154 @@ const EditForm = ({ theuser }) => {
       console.error(error);
     }
   };
-  
-  // const dataArray = JSON.parse(educationData);
-    
-  return (
-    <div className="App">
-      <Form onSubmit={handleSubmit(editemp)}>
-      <Row>
-      <Col>
-        <Form.Group>
-        <Form.Label>Name:</Form.Label>
-          <Form.Control
-            type="text" 
-            value={name} 
-            placeholder="name"  
-            onChange={(e) => setname(e.target.value)} 
-            disabled/>
-            <br/>
-            <div style={{color:"red"}}>*This field not be editable</div>
-          
-        </Form.Group>
-        </Col>
-        <br/>
-        <Col>
-        <Form.Group>
-        <Form.Label>Mobile:</Form.Label>
-          <Form.Control
-            type="text"
-             value={mobile} 
-             placeholder="mobile"
-            {...register("mobile",
-            {
-              pattern: /^[0-9]{10}$/
-            })}   
-            onChange={(e) => setmobile(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.mobile && <p>*Please enter the valid mobile number</p>}</div>
-        <br/>
-        </Col>
-        </Row>
 
-        <Row>
-      <Col>
+  const tabs = [
+    {
+      title: "Personal Details",
+      content: (
+        <div>
+          <Form.Group>
+            <Form.Label><div className="form-control-label text-muted" 
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Mobile</div>
+            </Form.Label>
+            <Form.Control 
+              className="w-50 mx-4 form-control"
+              type="text"
+              value={mobile}
+              placeholder="mobile"
+              {...register("mobile", {
+                pattern: /^[0-9]{10}$/
+              })}
+              onChange={(e) => setmobile(e.target.value)}
+            />
+          </Form.Group>
+          <div style={{ color: "red" }}>
+            {errors.mobile && <p>*Please enter the valid mobile number</p>}
+          </div>
+          <br />
+          <Form.Group>
+          <Form.Label><div className="form-control-label text-muted" 
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Email</div>
+            </Form.Label>
+            <Form.Control
+              className="w-50 mx-4 form-control"
+              type="text"
+              value={email}
+              placeholder="email"
+              {...register("email", {
+                pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+              })}
+              onChange={(e) => setemail(e.target.value)}
+            />
+          </Form.Group>
+          <div style={{ color: "red" }}>
+            {errors.email && <p>*Please check the Email</p>}
+          </div>
+          <br />
         <Form.Group>
-        <Form.Label>designation:</Form.Label>
+        <Form.Label><div className="form-control-label text-muted" 
+          style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div>
+        </Form.Label>
           <Form.Control
-            type="text" 
-            value={designation} 
-            placeholder="designation"
-            {...register("designation", 
-              { 
-                pattern: /^[a-zA-Z ]*$/ 
-            })} 
-            onChange={(e) => setdesignation(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-          {errors.designation && <p>*Please check the designation</p>}</div>
-        <br/>
-        </Col>
-        <Col>
-        <Form.Group>
-        <Form.Label>address:</Form.Label>
-          <Form.Control
-            as="textarea"
-            type="text" 
-            value={address} 
-            placeholder="address" 
-            {...register("address", 
-            { 
-              pattern:  /^[0-9/,a-zA-Z- 0-9.]*$/
-            })}       
-            onChange={(e) => setaddress(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.address && <p>*Please check the address</p>}
-       </div>
-       </Col>
-        </Row>
-        <br/>
-        <Row>
-      <Col>
-        <Form.Group>
-        <Form.Label>Department:</Form.Label>
-          <Form.Control
-            as="textarea"
-            type="text" 
-            value={department} 
-            placeholder="department" 
-            {...register("department", 
-            { 
+            className="w-50 mx-4 form-control"
+            type="text"
+            value={department}
+            placeholder="department"
+            {...register("department",
+            {
               pattern: /^[a-zA-Z ]*$/
-            })}       
+            })}
             onChange={(e) => setdepartment(e.target.value)}/>
         </Form.Group>
         <div style={{color:"red"}}>
-        {errors.department
- && <p>*Please check the Department</p>}
-       </div>
-       </Col>
-       <br/>
-       <Col>
-       <Form.Group>
-       <Form.Label>Email:</Form.Label>
-          <Form.Control
-            as="textarea"
-            type="text" 
-            value={email} 
-            placeholder="email" 
-            {...register("email", 
-            { 
-              pattern:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-            })}       
-            onChange={(e) => setemail(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.email
- && <p>*Please check the Email</p>}
+        {errors.department && <p>*Please check the Department</p>}
        </div>
        <br/>
-       </Col>
-        </Row>
-        <Row>
-      <Col>
-       <Form.Group>
-       <Form.Label>Aadhaarno:</Form.Label>
-          <Form.Control
-            type="text" 
-            value={Aadhaarno} 
-            placeholder="Aadhaarno" 
-            {...register("Aadhaarno", 
-            { 
-              pattern: /^[0-9]{12}$/
-            })}       
-            onChange={(e) => setAadhaarno(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.Aadhaarno
- && <p>*Please check the Aadhaarno </p>}
-       </div>
-       </Col>
-       <br/>
-       <Col>
-       <Form.Group>
-       <Form.Label>PanNo:</Form.Label>
-          <Form.Control
-            type="text" 
-            value={PanNo} 
-            placeholder="PanNo" 
-            {...register("PanNo", 
-            { 
-              pattern:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
-            })}       
-            onChange={(e) => setPanNo(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.PanNo
- && <p>*Please check the PanNo </p>}
-       </div>
-       <br/>
-       </Col>
-        </Row>
-
-       <br/>
-       <Form.Group>
+          <Form.Group>
+          <Form.Label><div className="form-control-label text-muted" 
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div>
+          </Form.Label>
+            <Form.Control 
+              className="w-50 mx-4 form-control"
+              type="text"
+              value={designation}
+              placeholder="designation"
+              {...register("designation", {
+                pattern: /^[a-zA-Z ]*$/
+              })}
+              onChange={(e) => setdesignation(e.target.value)}
+            />
+          </Form.Group>
+          <div style={{ color: "red" }}>
+            {errors.designation && <p>*Please check the designation</p>}
+          </div>
+          <br />
+          <Form.Group>
+          <Form.Label><div className="form-control-label text-muted" 
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div>
+            </Form.Label>
+            <Form.Control 
+              className="w-50 mx-4 form-control"
+              as="textarea"
+              type="text"
+              value={address}
+              placeholder="address"
+              {...register("address", {
+                pattern: /^[0-9/,a-zA-Z- 0-9.]*$/
+              })}
+              onChange={(e) => setaddress(e.target.value)}
+            />
+          </Form.Group>
+          <div style={{ color: "red" }}>
+            {errors.address && <p>*Please check the address</p>}
+          </div>
+          <br />
+          <Form.Group>
+          <Form.Label><div className="form-control-label text-muted" 
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Aadhaar No</div>
+            </Form.Label>
+            <Form.Control
+              className="w-50 mx-4 form-control"
+              type="text"
+              value={Aadhaarno}
+              placeholder="Aadhaar No"
+              {...register("Aadhaarno", {
+                pattern: /^[0-9]{12}$/
+              })}
+              onChange={(e) => setAadhaarno(e.target.value)}
+            />
+          </Form.Group>
+          <div style={{ color: "red" }}>
+            {errors.Aadhaarno && <p>*Please check the Aadhaar No</p>}
+          </div>
+          <br />
+          <Form.Group>
+          <Form.Label><div className="form-control-label text-muted" 
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Pan No</div>
+            </Form.Label>
+            <Form.Control
+              className="w-50 mx-4 form-control"
+              type="text"
+              value={PanNo}
+              placeholder="Pan No"
+              {...register("PanNo", {
+                pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
+              })}
+              onChange={(e) => setPanNo(e.target.value)}
+            />
+          </Form.Group>
+          <div style={{ color: "red" }}>
+            {errors.PanNo && <p>*Please check the PAN No</p>}
+          </div>
+          <br />
+          </div>
+          )
+    },
+    {
+      title: "Educational Details",
+      content: (
+      <div>
+        <Form.Group>
        <Button onClick={handleViewTable}>Educational Data</Button>
 {showMessage && <div>No data to display.</div>}
 {showTable && (
@@ -305,82 +288,106 @@ const EditForm = ({ theuser }) => {
     ))}
   </tbody>
 </Table>
-
 )}
 </Form.Group>
-<br/>
-<Row>
-      <Col>
-        <Form.Group>
-        <Form.Label> RNRNO:</Form.Label>
-          <Form.Control
-            type="text" 
-            value={ RNRNO} 
-            placeholder=" RNRNO" 
-            {...register(" RNRNO", 
-            { 
-              pattern: /^[0-9]{12}$/
-            })}       
-            onChange={(e) => setRNRNO(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors. RNRNO
- && <p>*Please check the  RNRNO </p>}
-       </div>
-       </Col>
-       <br/>
-       <Col>
-       <Form.Group>
-       <Form.Label>TNMCNO:</Form.Label>
-          <Form.Control
-            type="text" 
-            value={TNMCNO} 
-            placeholder="TNMCNO" 
-            {...register("TNMCNO", 
-            { 
-              pattern: /^[0-9]{12}$/
-            })}       
-            onChange={(e) => setTNMCNO(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.TNMCNO
- && <p>*Please check the TNMCNO </p>}
-       </div>
-       </Col>
-       <br/>
-       <Col>
-       <Form.Group>
-       <Form.Label>ValidlityDate:</Form.Label>
-          <Form.Control
-            type="text" 
-            value={ValidlityDate} 
-            placeholder="ValidlityDate" 
-            {...register("ValidlityDate", 
-            { 
-              pattern:  /^\d{4}-\d{2}-\d{2}$/
-            })}       
-            onChange={(e) => setValidlityDate(e.target.value)}/>
-        </Form.Group>
-        <div style={{color:"red"}}>
-        {errors.ValidlityDate
- && <p>*Please check the ValidlityDate </p>}
-       </div>
-       </Col>
-        </Row>
-        <br/>
-       <div style={{ display: "flex", justifyContent: "center" }}>
-  <Button onClick={() => { handleSubmit(editemp); }} variant="success" type="submit" block>
-    Save
-  </Button>
-</div>
-{/* 
-        <div style={{float:"right"}}>
-        <Button onClick={() => {handleUpdateResponse();}}  variant="danger" type="submit" block>
-          Close
+      </div>
+      )
+    },
+    {
+      title: "Other Details",
+      content: ( 
+      <div>
+      <Form.Group>
+      <Form.Label><div className="form-control-label text-muted" 
+        style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>RNR NO</div>
+      </Form.Label>
+        <Form.Control
+          className="w-50 mx-4 form-control"
+          type="text"
+          value={ RNRNO}
+          placeholder=" RNRNO"
+          {...register(" RNRNO",
+          {
+            pattern: /^[0-9]{12}$/
+          })}
+          onChange={(e) => setRNRNO(e.target.value)}/>
+      </Form.Group>
+      <div style={{color:"red"}}>
+      {errors. RNRNO && <p>*Please check the  RNRNO </p>}
+     </div>
+     <br/>
+     <Form.Group>
+     <Form.Label><div className="form-control-label text-muted" 
+        style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>TNMC NO</div>
+      </Form.Label>
+        <Form.Control
+          className="w-50 mx-4 form-control"
+          type="text"
+          value={TNMCNO}
+          placeholder="TNMCNO"
+          {...register("TNMCNO",
+          {
+            pattern: /^[0-9]{12}$/
+          })}
+          onChange={(e) => setTNMCNO(e.target.value)}/>
+      </Form.Group>
+      <div style={{color:"red"}}>
+      {errors.TNMCNO && <p>*Please check the TNMCNO </p>}
+     </div>
+     <br/>
+     <Form.Group>
+     <Form.Label><div className="form-control-label text-muted" 
+       style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Validlity Date</div>
+      </Form.Label>
+        <Form.Control
+          className="w-50 mx-4 form-control"
+          type="text"
+          value={ValidlityDate}
+          placeholder="ValidlityDate"
+          {...register("ValidlityDate",
+          {
+            pattern:  /^\d{4}-\d{2}-\d{2}$/
+          })}
+          onChange={(e) => setValidlityDate(e.target.value)}/>
+      </Form.Group>
+      <div style={{color:"red"}}>
+      {errors.ValidlityDate && <p>*Please check the ValidlityDate </p>}
+     </div>
+     <br/>
+     <div style={{ display: "flex", float:"right"}}>
+        <Button style={{backgroundColor:"cadetblue",border:"none"}} onClick={() => { handleSubmit(editemp); }} type="submit" block>
+          Save
         </Button>
-        </div> */}
+      </div>
+     </div>
+     ) 
+   }
+  ];
+
+ ////retrive image of an employee
+ let image = "http://localhost:7000/media/my_Employee/picture/" + name + ".jpg"
+  return (
+    <div className="App">
+      <Form onSubmit={handleSubmit(editemp)}>
+      <br/><br/>
+      <div className="profile">
+        <img src={`${image}`} className="empprofile" alt="profile" />
+        <div className="empname">{name + '_' + id}</div>
+      </div>
+      <VerticalTabs tabs={tabs}></VerticalTabs>
       </Form>
     </div>
   );
 }
 export default EditForm;
+
+
+
+
+
+
+
+
+
+
+

@@ -69,9 +69,9 @@ function Admin(props) {
       <div>
   <style>{'body { background-color: rgb(255, 255, 255); }'}</style>
   <div className='main'></div>
-  <div className='logo'>
+  {/* <div className='logo'>
     <img src={profile1} className="smrft_logo" alt="logo" />
-  </div>
+  </div> */}
   <div className="employee-container">
     <div
       className="profile-pic"
@@ -79,7 +79,7 @@ function Admin(props) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <img src="https://icon-library.com/images/admin-user-icon/admin-user-icon-5.jpg" alt="Profile Picture" />
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLeOveLZtW4qqRm8Lq3PVtV0y9OK2GrlDVyyCHAxryLBxpEnMi7grxB0NoxakAeuotLmQ&usqp=CAU" alt="Profile Picture" />
       {showTooltip && userData && (
         <div className="profile-pic-tooltip">
           <span className="profile-pic-tooltip-text">{userData.name}  {userData.email}</span>

@@ -10,7 +10,7 @@ import EmployeeHours from './EmployeeHours';
 
 import AdminReg from '../Adminreg';
 import Deleteemp from './Deleteemp';
-import profile from "../images/smrft.png";
+import profile from "../images/smrft(1).png";
 export default class NavbarComp extends Component {
   // Active link function to keep the navlink active when clicked
   state = {
@@ -27,7 +27,7 @@ export default class NavbarComp extends Component {
             className="sidenav"
             style={{
             height: '100%',
-            width: '15%',
+            width: '11%',
             position: 'fixed',
             zIndex: 1,
             top: 0,

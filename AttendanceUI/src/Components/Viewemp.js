@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback, useRef} from "react";
 import * as ReactBootStrap from "react-bootstrap";
 import { Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -30,6 +30,9 @@ const Home = () => {
       );
   }, []);
   //hide and show actions
+  const showActionsBoxRef = useRef(null); // Ref for the showActionsBox element
+  // const [showActionsBox, setShowActionsBox] = useState(false);
+  // const [selectedUseraction, setSelectedUseraction] = useState(null);
   const [showaction, setShowaction] = useState(false);
   const [showActionsBox, setShowActionsBox] = useState(false);
   const [selectedUseraction, setSelectedUseraction] = useState(null);
@@ -38,6 +41,22 @@ const Home = () => {
     setShowActionsBox(!showActionsBox);
     setSelectedUseraction(user);
   };
+
+  const handleOutsideClick = (event) => {
+    if (
+      showActionsBoxRef.current &&
+      !showActionsBoxRef.current.contains(event.target)
+    ) {
+      setShowActionsBox(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
   //edit employee
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -142,7 +161,7 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
         <br />
    <div className="row">
     {paginatedResults.map((user) => (
-   <div className="col-md-3 mb-3" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
+   <div className="col-md-2 mb-2" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
     <Card md={4} className="employee"><br/>
    <div><i style={{float:"right",marginRight:'5%',marginTop:"2%",cursor:"pointer"}} onClick={() => handleHide(user)} className="fa fa-ellipsis-h"></i>
    <div style={{ float: "right", marginRight: "5%" }}>
@@ -154,18 +173,20 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
     <button className="not-active-btn">Not Active</button>
   )}
 </div>
-   {showActionsBox && selectedUseraction === user && (
-    <div
-      style={{
-        position: "absolute",
-        borderRadius:"5%",
-        backgroundColor:"ghostwhite",
-        boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
-        padding: "4px 4px",
-        zIndex: 1,
-        top: "20px",
-        right: 0
-      }}
+
+{showActionsBox && selectedUseraction === user && (
+  <div
+    ref={showActionsBoxRef}
+    style={{
+      position: "absolute",
+      borderRadius:"5%",
+      backgroundColor:"ghostwhite",
+      boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
+      padding: "4px 4px",
+      zIndex: 1,
+      top: "50px",
+      right: 0
+    }}
     >
     <button
           onClick={() => editEmployee(user)}

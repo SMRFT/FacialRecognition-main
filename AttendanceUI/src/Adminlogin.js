@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavbarComp from './Components/NavbarComp';
-import profile from "./images/smrft.png";
+import profile from "./images/smrft(1).png";
 import logo from "./images/smrft_logo.png";
 import Footer from './Components/Footer';
 import { lightGreen, red } from '@material-ui/core/colors';

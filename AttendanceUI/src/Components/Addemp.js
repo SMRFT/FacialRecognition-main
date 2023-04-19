@@ -1,4 +1,3 @@
-//This components renders a Form to add information of an employee to db 
 import Webcam from "react-webcam";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -11,7 +10,8 @@ import Myconstants from "../Components/Myconstants";
 import { Radio, Checkbox } from 'semantic-ui-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-// import Footer from "./Footer"
+import VerticalTabs from "./VerticalTabs";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 function Addemp() {
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");
@@ -19,7 +19,7 @@ function Addemp() {
   const [imgSrcname, setImgSrcname] = useState("");
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
-  
+  const [activeTab, setActiveTab] = useState('personal-info');
   const [id, setId] = useState("");
   const [mobile, setMobile] = useState("");
   const [shift, setshift] = useState("");
@@ -240,7 +240,7 @@ function Addemp() {
         ({
           method: "POST",
           headers: {
-            "x-api-key": "6b447d65-7b43-4e94-ada9-cf54e57bdf16",
+            "x-api-key": "3fa600d7-e105-4773-af09-27978223a756",
           },
           url: "http://localhost:8000/api/v1/recognition/faces/?subject=" + name + "_" + id,
           data: comprefaceImage,
@@ -287,8 +287,8 @@ function Addemp() {
     return new File([u8arr], filename);
   }
 
-  // Validation for forms
-  function validateName(name) {
+   // Validation for forms
+   function validateName(name) {
     let error = "";
     const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
     if (!capitalized.match(/^[a-zA-Z]*$/)) {
@@ -508,86 +508,82 @@ function Addemp() {
       return null;
     }
   }
-  return (
-    <body className="addemp">
+ const tabs =[
+  {
+    title: "Personal Details",
+    content:(
+      
       <div>
-      <main>
-        <br />
-        <br />
-        
-        <Row>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="row">
-  <div className="col-sm-4">
-    <Form.Field>
-      <label className="form-label">
-        <div
-          className="form-control-label text-muted"
-          style={{
-            font: "caption",
-            fontStyle: "italic",
-            fontFamily: "-moz-initial",
-            fontSize: "20px",
-          }}
-        >
-          Name
+         <div className="row">
+          <div className="col-sm-6">
+            <Form.Field>
+              <label className="form-label">
+                <div
+                  className="form-control-label text-muted"
+                  style={{
+                    font: "caption",
+                    fontStyle: "italic",
+                    fontFamily: "-moz-initial",
+                    fontSize: "20px",
+                  }}
+                >
+                  Name
+                </div>
+              </label>
+              <input
+                style={{ borderRadius: 40 }}
+                className="form-control"
+                type="text"
+                placeholder="Enter your name"
+                ref={register("name", { pattern: /^[a-zA-Z]*$/ })}
+                required
+                autoComplete="off"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  validateName(e.target.value);
+                }}
+              />
+              <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
+                {validateName(name) ? <p>{validateName(name)}</p> : null}
+              </div>
+            </Form.Field>
+          </div>
+          <div className="col-sm-6">
+            <Form.Field>
+              <label className="form-label">
+                <div
+                  className="form-control-label text-muted"
+                  style={{
+                    font: "caption",
+                    fontStyle: "italic",
+                    fontFamily: "-moz-initial",
+                    fontSize: "20px",
+                  }}
+                >
+                  ID
+                </div>
+              </label>
+              <input
+                style={{ borderRadius: 40 }}
+                className="form-control"
+                type="text"
+                placeholder="Enter ID here"
+                ref={register("id", { pattern: /^[0-9]*$/ })}
+                required
+                autoComplete="off"
+                onChange={(e) => {
+                  setId(e.target.value);
+                  validateId(e.target.value);
+                }}
+              />
+              <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
+                {validateId(id) ? <p>{validateId(id)}</p> : null}
+              </div>
+            </Form.Field>
+          </div>
         </div>
-      </label>
-      <input
-        style={{ borderRadius: 40 }}
-        className="form-control"
-        type="text"
-        placeholder="Enter your name"
-        ref={register("name", { pattern: /^[a-zA-Z]*$/ })}
-        required
-        autoComplete="off"
-        onChange={(e) => {
-          setName(e.target.value);
-          validateName(e.target.value);
-        }}
-      />
-      <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
-        {validateName(name) ? <p>{validateName(name)}</p> : null}
-      </div>
-    </Form.Field>
-  </div>
-  <div className="col-sm-4">
-    <Form.Field>
-      <label className="form-label">
-        <div
-          className="form-control-label text-muted"
-          style={{
-            font: "caption",
-            fontStyle: "italic",
-            fontFamily: "-moz-initial",
-            fontSize: "20px",
-          }}
-        >
-          ID
-        </div>
-      </label>
-      <input
-        style={{ borderRadius: 40 }}
-        className="form-control"
-        type="text"
-        placeholder="Enter ID here"
-        ref={register("id", { pattern: /^[0-9]*$/ })}
-        required
-        autoComplete="off"
-        onChange={(e) => {
-          setId(e.target.value);
-          validateId(e.target.value);
-        }}
-      />
-      <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
-        {validateId(id) ? <p>{validateId(id)}</p> : null}
-      </div>
-    </Form.Field>
-  </div>
-</div>
-
-
-            <br />
+        <br/>
+        <br/>
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
@@ -596,7 +592,7 @@ function Addemp() {
                   </label>
                   <div>
                     <Radio className="mx-5"
-                      label=' Male'
+                      label='Male'
                       name='gender'
                       value='male'
                       checked={Gender === 'male'}
@@ -613,8 +609,7 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br/>
-            <Form.Field>
+          <Form.Field>
     <Col sm={{ span: 12 }}>
           <div className="mb-3">
           <label className=" mx-3 form-label">
@@ -653,11 +648,13 @@ function Addemp() {
           </div>
         </Col>
         </Form.Field>
-            <Form.Field>
+        <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}> BloodGroup:</div></label>
-                  <div className="mx-5">
+                  <div className="mx-5
+                  
+                  ">
                     <label>
                       <select value={BloodGroup} onChange={e => { setBloodGroup(e.target.value); }}>
                         <option value="">Select</option>
@@ -680,8 +677,8 @@ function Addemp() {
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Mobile Number</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%"}}
+                      className=" mx-4 form-control"
                       type="text"
                       placeholder="Enter your mobile number"
                       ref={register("mobile", { pattern: /^[0-9]{10}$/ })}
@@ -694,14 +691,13 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
-                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Email Id</div></label>
+                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px"}}>Email Id</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%" }}
+                      className=" mx-4 form-control"
                       type="text"
                       placeholder="Enter your Email id"
                       ref={register("email", { pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i })}
@@ -714,14 +710,13 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"100%" }}
+                      className=" mx-4 form-control"
                       type="text"
                       placeholder="Enter your address"
                       ref={register("address", { pattern: /^[0-9/,a-zA-Z- 0-9.]*$/ })}
@@ -734,7 +729,6 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
@@ -774,8 +768,8 @@ function Addemp() {
                   <div className="mb-3">
                     <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>TnmcNo</div></label>
                     <div className="col-sm-7">
-                      <input style={{ borderRadius: 40 }}
-                        className="w-50 mx-4 form-control"
+                      <input style={{ borderRadius: 40 ,width:"100%"}}
+                        className="mx-4 form-control"
                         type="text"
                         placeholder="Enter your TnmcNo"
                         ref={register("TNMCNO")}
@@ -794,8 +788,8 @@ function Addemp() {
                   <div className="mb-3">
                     <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>RnrNo</div></label>
                     <div className="col-sm-7">
-                      <input style={{ borderRadius: 40 }}
-                        className="w-50 mx-4 form-control"
+                      <input style={{ borderRadius: 40 ,width:"100%"}}
+                        className=" mx-4 form-control"
                         type="text"
                         placeholder="Enter your RnrNo"
                         ref={register("RNRNO")}
@@ -814,8 +808,8 @@ function Addemp() {
                   <div className="mb-3">
                     <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>ValidlityDate</div></label>
                     <div className="col-sm-7">
-                      <input style={{ borderRadius: 40 }}
-                        className="w-50 mx-4 form-control"
+                      <input style={{ borderRadius: 40 ,width:"100%"}}
+                        className=" mx-4 form-control"
                         type="text"
                         placeholder="Enter your ValidlityDate"
                         ref={register("ValidlityDate")}
@@ -827,14 +821,14 @@ function Addemp() {
                   </div>
                 </Col>
               </Form.Field>
-            )}
-            <Form.Field>
+                        )}
+                         <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"100%" }}
+                      className=" mx-4 form-control"
                       type="text"
                       placeholder="Enter your designation"
                       ref={register("designation", { pattern: /^[a-zA-Z]*$/ })}
@@ -847,14 +841,14 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
+            <br/>
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Bank Account Number</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%"}}
+                      className=" mx-4 form-control"
                       type="text"
                       placeholder="Enter your Bank account number"
                       ref={register("bankaccnum", { pattern: /^[0-9]{9,18}$/ })}
@@ -873,8 +867,8 @@ function Addemp() {
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Aadhaarno</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%"}}
+                      className="mx-4 form-control"
                       type="text"
                       placeholder="Enter your Aadhaarno"
                       ref={register("Aadhaarno")}
@@ -887,14 +881,15 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
+
             <br />
             <Form.Field>
               <Col sm={{ span: 8 }}>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>PAN No:</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"100%"}}
+                      className="mx-4 form-control"
                       type="text"
                       placeholder="Enter your PAN No"
                       ref={register("PanNo", { pattern: /^[A-Z0-9]*$/ })}
@@ -913,8 +908,8 @@ function Addemp() {
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Joining</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%"}}
+                      className="mx-4 form-control"
                       type="text"
                       placeholder="Enter your Date Of Joining"
                       ref={register("dateofjoining", { pattern: /^\d{4}-\d{2}-\d{2}$/ })}
@@ -1007,6 +1002,7 @@ function Addemp() {
                   </>
                 )}
               </div>
+              </Col>
               <br />
               <div className="mx-5 form-group">
                 <input id="selectFile" type="file" accept=".pdf" onChange={handleFileSelect} hidden /><b>Choose a PAN or Aadhaar proof :</b>
@@ -1034,7 +1030,16 @@ function Addemp() {
                 )}
               </div>
               <br />
-              <div><b>EDUCATIONAL QUALIFICATIONS:</b></div><br />
+              <button className="button-71" role="button" type="submit" >Next</button>
+      </div>
+    )
+    
+  },
+  {
+  title: "Educational Details",
+    content:(
+      <div>
+ <div><b>EDUCATIONAL QUALIFICATIONS:</b></div><br />
               <table>
                 <thead>
                   <tr>
@@ -1076,8 +1081,16 @@ function Addemp() {
                   ))}
                 </tbody>
               </table>
-              <br />
-              <div><b>EXPERIENCE DETAILS:</b></div><br />
+              <button className="button-71" role="button" type="submit" >previous</button>
+              <button className="button-71" role="button" type="submit" >Next</button>
+      </div>
+    )
+  },
+  {
+    title: "Experience Details",
+      content:(
+        <div>
+   <div><b>EXPERIENCE DETAILS:</b></div><br />
               <div>
                 <table>
                   <thead>
@@ -1120,8 +1133,16 @@ function Addemp() {
                 </table>
                 <button class="button25 " onClick={addRow}>Add Row</button>
               </div>
-              <br />
-              <div><b>REFERENCE OF PREVIOUS COMPANY:</b></div><br />
+              <button className="button-71" role="button" type="submit" >previous</button>
+              <button className="button-71" role="button" type="submit" >Next</button>
+        </div>
+      )
+    },
+    {
+      title: "Reference Details",
+        content:(
+          <div>
+    <div><b>REFERENCE OF PREVIOUS COMPANY:</b></div><br />
               <div>
                 <table>
                   <thead>
@@ -1184,26 +1205,26 @@ function Addemp() {
     </tr>
   ))}
 </tbody>
-                </table>
-                <button class="button25 " onClick={handleAddRow}>Add Row</button>
-              </div>
-              <br />
+ </table>
+   <button class="button25 " onClick={handleAddRow}>Add Row</button>
+  </div>
+  <button className="button-71" role="button" type="submit" >previous</button>
+  
+  <button className="button-71" role="button" type="submit" onClick={() => { handleClick() }}>ADD EMPLOYEE</button>      
 
+     </div>  
+        )
+      },
+      
+ ]
 
-              <button className="button-71" role="button" type="submit" onClick={() => { handleClick() }}>ADD EMPLOYEE</button>
-            </Col>
-            <br />
-          </Form>
-        </Row>
-        
-       
-        <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>
-     </main>
-      </div>
-      <footer >
-      <div class="footer2">&copy;<span id="year"> </span><span> www.shanmugahospital.com. All rights reserved.|24, Saradha College Road,
-        Salem-636007. Tamilnadu.</span></div>
-      </footer>
+  return (
+    <body className="Addemp">
+       <div className="App">
+       <Form onSubmit={handleSubmit(onSubmit)}>
+       <VerticalTabs tabs={tabs}></VerticalTabs>
+       </Form>
+    </div>
     </body >
   );
 }

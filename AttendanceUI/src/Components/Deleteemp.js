@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Card from 'react-bootstrap/Card';
 // import "./Viewemp.css";
 const TrashPage = () => {
   const [deletedEmployees, setDeletedEmployees] = useState([]);
@@ -15,20 +16,6 @@ const TrashPage = () => {
       });
   }, []);
   
-  // const deleteEmployee = async (id) => {
-  //   if (window.confirm("Are you sure you want to delete this employee?")) {
-  //     try {
-  //       await fetch(`http://127.0.0.1:7000/attendance/permanentdelete/${deletedEmployees.id}`, {
-  //         method: "post",
-  //         headers: { "Content-Type": "application/json" },
-  //         credentials: "include",
-  //       });
-  //       setDeletedEmployees(deletedEmployees.filter(employee => employee.id !== id));
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // };
 
   const deleteEmployee = async (id) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
@@ -65,62 +52,84 @@ const TrashPage = () => {
     }
   };
   
-  
+
   
   return (
     <div>
-      <h1>Deleted Employees</h1>
-      <table striped borderless hover>
-        <thead align="center">
-          <tr style={{backgroundColor: "#E0FFFF"}}>
-            <th>id</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>deleted At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {deletedEmployees.map((employee) => (
-            <tr key={employee.id}>
-              <td>{employee.id}</td>
-              <td>{employee.name}</td>
-              <td>{employee.email}</td>
-              <td>{employee.department}</td>
-              <td>{employee.deleted_at}</td>
-              <td>
-<button onClick={() => deleteEmployee(employee.id)} style={{
-    alignItems:"center",
-    backgroundColor: "Red",
-    color: "black",
-    marginLeft:"10px",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    cursor: "pointer"
-  }}>Delete Employee Permantly</button>
+     <h1 style={{ marginLeft: "250px", color: "blue", fontSize: "30px" }}>
+    Deleted Employees
+  </h1>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "20px",marginLeft:"250px" }}>
+      {deletedEmployees.map((employee) => (
+        <div
+          key={employee.id}
+          style={{
+            backgroundColor: "ghostwhite",
+            borderRadius: "5px",
+            boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
+            padding: "20px",
+            width: "300px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+         <img
+         src={`http://localhost:7000${employee.imgSrc}`}
+          alt="profile"
+          // className="center"
+          style={{ width: "30%", height: "30%", marginBottom: "5px",marginLeft:"70px" ,borderRadius:"20px"}}
+        />
+         <Card.Body>
+          <h2 style={{ marginBottom: "10px" }}>ID: {employee.id}</h2>
+          <p style={{ marginBottom: "10px" }}>
+            Name: {employee.name}
+          </p>
+          <p style={{ marginBottom: "10px" }}>
+            Email: {employee.email}
+          </p>
+          <p style={{ marginBottom: "10px" }}>
+            Department: {employee.department}
+          </p>
+          <p style={{ marginBottom: "10px" }}>
+            Deleted At: {employee.deleted_at}
+          </p>
 
-                <button onClick={() => restoreEmployee(employee.id)} style={{
-    alignItems:"center",
-    backgroundColor: "#90EE90",
-    color: "black",
-    marginLeft:"10px",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    cursor: "pointer"
-  }}>
-    Restore
-  </button>
-              </td>
-              
-
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </Card.Body>
+          <div style={{ marginTop: "auto" }}>
+            <button
+              onClick={() => deleteEmployee(employee.id)}
+              style={{
+                backgroundColor: "red",
+                color: "white",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "none",
+                cursor: "pointer",
+                marginRight: "10px",
+              }}
+            >
+              Delete 
+            </button>
+            <button
+              onClick={() => restoreEmployee(employee.id)}
+              style={{
+                backgroundColor: "#90EE90",
+                color: "black",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Restore
+            </button>
+         
+          </div>
+        </div>
+      ))}
     </div>
+  </div>
+  
   );
 };
 
