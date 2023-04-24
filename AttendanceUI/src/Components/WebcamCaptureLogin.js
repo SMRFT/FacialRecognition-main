@@ -88,7 +88,7 @@ const WebcamCaptureLogin = () => {
                       "Content-Type": "application/json",
                       Accept: "application/json",
                     },
-                    body: JSON.stringify({ subject: subject, message: messages, recipient: email }),
+                    body: JSON.stringify({ subject: subject, message: messages, recipient: email,cc_recipients:cc }),
                   })
                   fetch("http://127.0.0.1:7000/attendance/send-whatsapp/", {
                     method: "POST",
@@ -135,6 +135,7 @@ const WebcamCaptureLogin = () => {
             // console.log(data.name)
 
             ////employee shift time
+            const cc= 'parthipanmurugan335317@gmail.com'
             const subject = "Shanmuga Hospital Login Details";
             const messages = `Name: ${empId[0]},
             Employee id:${empId[1]},

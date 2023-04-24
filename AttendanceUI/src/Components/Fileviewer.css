@@ -3,7 +3,22 @@ body {
     background-color: lightblue;
 }
 
-
+.employee-details-container {
+    margin: 20px;
+    margin-top: 2%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f6f6;
+    margin-right: 80%;
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  p {
+    margin: 5px 0;
+  }
 
 .download-container {
     display: flex;
@@ -143,3 +158,18 @@ body {
     /* Up arrow unicode character */
     margin-left: 5px;
 }
+
+
+
+
+  
+  /* You can customize the styles based on your preferences */
+  
+
+  .loading {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    /* Add additional styles as needed */
+  }
+  

@@ -130,7 +130,7 @@ function DownloadButton(props) {
         closeIframe(); // or closeIframe1()
     };
 
-
+    const [employee, setEmployee] = useState(null);
     useEffect(() => {
         const apiUrl = `http://127.0.0.1:7000/attendance/showemp?id=${id}`;
 
@@ -139,6 +139,7 @@ function DownloadButton(props) {
             .then(
                 (data) => {
                     console.log(data);
+                    setEmployee(data);
                     setEducationData(JSON.parse(data.educationData));
                     setExperienceData(JSON.parse(data.experienceData));
                     setReferenceData(JSON.parse(data.referenceData));
@@ -149,6 +150,7 @@ function DownloadButton(props) {
             );
     }, [id]);
 
+   
 
     // Render the download and view buttons
     return (
@@ -193,12 +195,32 @@ function DownloadButton(props) {
                 </a>
                 <a onClick={toggleTables} class="view-link" style={{ marginLeft: '-80px', marginTop: "90px" ,
              cursor: "pointer"}} >
-                    {showTables ? "Employee Data" : "Employee Data"} 
+                    {showTables ? "Employee Details" : "Employee Details"} 
                 </a>
             </div>
             <div >
+          
                 {showTables && (
                     <>
+                      <div className="employee-details-container">
+      <h2>{employee.name}'s Details:</h2>
+      <p>Employee ID: {employee.id}</p>
+      <p>Email: {employee.email}</p>
+      <p>Department: {employee.department}</p>
+      <p>dob: {employee.dob}</p>
+      <p>Maritalstatus: {employee.Maritalstatus}</p>
+      <p>department: {employee.department}</p>
+      <p>RNRNO: {employee.RNRNO}</p>
+      <p>TNMCNO: {employee.TNMCNO}</p>
+      <p>ValidlityDate: {employee.ValidlityDate}</p>
+      <p>bankaccnum : {employee.bankaccnum}</p>
+      <p>Aadhaarno: {employee.Aadhaarno}</p>
+      <p>PanNo: {employee.PanNo}</p>
+      <p>IdentificationMark: {employee.IdentificationMark}</p>
+      <p>BloodGroup: {employee.BloodGroup}</p>
+      <p>Gender: {employee.Gender}</p>
+      <p>selectedLanguages: {employee.selectedLanguages}</p>
+    </div>
                         <div>
                         <caption>EducationData</caption>
                             {educationData ? (
@@ -297,7 +319,8 @@ function DownloadButton(props) {
                     </>
                 )}
             </div>
-            <Footer />
+
+            {/* <Footer /> */}
         </React.Fragment >
     );
 }

@@ -4,7 +4,6 @@ import DatePicker from "react-datepicker";
 import "./Summary.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Container } from 'react-bootstrap'
-import Footer from './Footer';
 function MyComponent() {
     const [userdata, setUserdata] = useState([]);
     const [myMonth, setMyMonth] = useState(new Date());
@@ -52,14 +51,22 @@ function MyComponent() {
     return (
         // <div class="card">
         <div>
-            <main>
             <div >
-                
-                <div style={{ textAlign: "center", marginTop: '30px', fontSize: "150px" }}>
-                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", color: "seagreen", marginTop: "200px" }}>
-                        <label>Year</label>
+                <div style={{ textAlign: "center", marginTop: '5px'}}>
+                <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", fontSize: "30px"}}>
+                        <label>Select Month</label>
                         <DatePicker
-                             className="rounded"
+                            selected={myMonth}
+                            onChange={(date) => setMyMonth(date)}
+                            showMonthYearPicker
+                            dateFormat="MMMM"
+                            renderCustomHeader={({ date }) => <div></div>}
+                            placeholderText=""
+                        />
+                    </div>
+                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", marginTop: "180px" }}>
+                        <label>Select Year</label>
+                        <DatePicker
                             style={{ textAlign: "center" }}
                             selected={myYear}
                             onChange={(date) => setMyYear(date)}
@@ -69,22 +76,24 @@ function MyComponent() {
                             placeholderText=""
                         />
                     </div>
-                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", fontSize: "30px", color: "seagreen" }}>
-                        <label>Month</label>
-                        <DatePicker
-                             className="rounded"
-                            selected={myMonth}
-                            onChange={(date) => setMyMonth(date)}
-                            showMonthYearPicker
-                            dateFormat="MMMM"
-                            renderCustomHeader={({ date }) => <div></div>}
-                            placeholderText=""
-                        />
+                    <br/><br/><br/>
+                    <div className="mb-3">
+                        <label className="mx-3 form-label"><div className="form-control-label" style={{ display: "inline-block", cursor: "pointer", fontSize: "25px"}}>Select Department</div></label>
+                        <div className="col-sm-12">
+                        <select className="w-30" style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
+                        <option style={{textAlign:"center"}} value="" disabled>Select department</option>
+                        {departments.map((department, index) => (
+                            <option style={{textAlign:"center"}} key={index} value={department}>
+                            {department}
+                            </option>
+                        ))}
+                        </select>
                     </div>
+                  </div>
+
                     <div className="download-csv1">
                         <div class="button">
                             <div class="button-wrapper">
-                                
                                 <CSVLink data={userdata} filename={"payroll"} title="Download CSV">
                                     {/* <div class="text">Download</div> */}
                                     <span class="icon">
@@ -97,22 +106,8 @@ function MyComponent() {
                         </div>
                     </div>
                 </div>
+                
             </div>
-            <div className="mb-3">
-                <label className="mx-4 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div></label>
-                <div className="col-sm-7">
-                  <select className="w-50 mx-4" form-control style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
-                  <option style={{textAlign:"center"}} value="" disabled>Select department</option>
-                  {departments.map((department, index) => (
-                    <option style={{textAlign:"center"}} key={index} value={department}>
-                      {department}
-                    </option>
-                  ))}
-                </select>
-            </div>
-          </div>
-          </main>
-          <Footer />
         </div>
     );
 }

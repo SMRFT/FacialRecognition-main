@@ -32,7 +32,7 @@ class EmployeeView(APIView):
         serializer.is_valid(raise_exception=True)
         employee = serializer.save()
         # Store the files in GridFS
-        client = MongoClient("mongodb://localhost:27017/")
+        client = MongoClient("mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority")
         db = client["data"]
         fs = GridFS(db)
         # certificates_filename =employee.name+".pdf"

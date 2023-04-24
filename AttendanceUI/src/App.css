@@ -1,25 +1,7 @@
 /* < !-- HTML !--><button class="Appnew" role="button">Button 24</button> */
 
 /* CSS */
-body {
 
-  /* background: url("https://t3.ftcdn.net/jpg/01/91/95/30/360_F_191953033_gehQATeDoh5z6PyRDbeKyBZuS83CjMEF.jpg") center / cover no-repeat fixed; */
-  background-color: brown;
-  /* background-position: center; */
-  /* background-repeat: repeat-x; */
-  background-size: cover;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #333;
-}
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: url('https://fonts.gstatic.com/s/opensans/v23/mem8YaGs126MiZpBA-UFVZ0e.ttf') format('truetype');
-}
 
 .Admin {
   background-color: #c2fbd7;

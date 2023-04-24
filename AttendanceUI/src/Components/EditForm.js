@@ -15,19 +15,22 @@ const EditForm = ({ theuser }) => {
   const [PanNo, setPanNo] = useState(theuser.PanNo);
   const [RNRNO, setRNRNO] = useState(theuser.RNRNO);
   const [TNMCNO, setTNMCNO] = useState(theuser.TNMCNO);
-  const [ValidlityDate, setValidlityDate] = useState(theuser. ValidlityDate);
-  const [educationData, setEducationData] = useState(theuser. educationData);
+  const [ValidlityDate, setValidlityDate] = useState(theuser.ValidlityDate);
+  const [educationData, setEducationData] = useState(theuser.educationData);
   const [department, setdepartment] = useState(theuser.department);
+  const [dateofjoining, setdateofjoining] = useState(theuser.dateofjoining);
   const [showTable, setShowTable] = useState(false);
   const [dataArray, setDataArray] = useState(JSON.parse(educationData));
+  const [showMessage, setShowMessage] = useState(false);
   const { register,handleSubmit,formState: { errors } } = useForm();
+  const [proof, setProof] = useState(theuser.proof);
+  const [certificates, setCertificate] = useState(theuser.certificates);
 
   const handleInputChange = (e, rowIndex, fieldName) => {
     const updatedDataArray = [...dataArray];
     updatedDataArray[rowIndex][fieldName] = e.target.value;
     setDataArray(updatedDataArray);
   };
-
   function handleUpdateResponse(response) {
     if (response.ok) {
       alert("Employee data updated successfully!");
@@ -36,7 +39,19 @@ const EditForm = ({ theuser }) => {
       throw new Error("Failed to update employee data.");
     }
   }
-  const [showMessage, setShowMessage] = useState(false);
+  
+  const handleFileSelect = (e) => {
+    setProof(e.target.files[0]);
+  };
+
+  const handleCertificateSelect = (e) => {
+    setCertificate(e.target.files[0]);
+  };
+  
+  useEffect(() => {
+    handleViewTable();
+  }, []);
+
   const handleViewTable = () => {
     if (dataArray && dataArray.length > 0) {
       setShowTable(true);
@@ -46,46 +61,47 @@ const EditForm = ({ theuser }) => {
       setShowMessage(true);
     }
   };
-  const handleHideTable = () => {
-    setShowTable(false);
-  };
+
   const editemp = async () => {
     try {
+      const formData = new FormData();
+      formData.append("id", id);
+      formData.append("name", name);
+      formData.append("mobile", mobile);
+      formData.append("address", address);
+      formData.append("designation", designation);
+      formData.append("department", department);
+      formData.append("dateofjoining",dateofjoining)
+      formData.append("email", email);
+      formData.append("Aadhaarno", Aadhaarno);
+      formData.append("PanNo", PanNo);
+      formData.append("RNRNO", RNRNO);
+      formData.append("TNMCNO", TNMCNO);
+      formData.append("ValidlityDate", ValidlityDate);
+      formData.append("educationData", JSON.stringify(dataArray));
+      formData.append("proof", proof);
+      formData.append("certificates", certificates);
       const res = await fetch(`http://localhost:7000/attendance/editemp`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id:id,
-          name: name,
-          mobile:mobile,
-          address: address,
-          designation: designation,
-          department: department,
-          email:email,
-          Aadhaarno: Aadhaarno,
-          PanNo: PanNo,
-          RNRNO: RNRNO,
-          TNMCNO: TNMCNO,
-          ValidlityDate:ValidlityDate,
-          educationData: JSON.stringify(dataArray)
-        }),
+        body: formData,
       });
       handleUpdateResponse(res);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const tabs = [
     {
-      title: "Personal Details",
+      title: <div className="tab-title" id="personal-details">Personal Details</div> ,
       content: (
-        <div>
+        <div class="tab-content active" id='tab1'>
           <Form.Group>
             <Form.Label><div className="form-control-label text-muted" 
-              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Mobile</div>
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px" }}>Mobile</div>
             </Form.Label>
-            <Form.Control 
+            <Form.Control style={{borderRadius:"0.5cm"}}
               className="w-50 mx-4 form-control"
               type="text"
               value={mobile}
@@ -102,9 +118,9 @@ const EditForm = ({ theuser }) => {
           <br />
           <Form.Group>
           <Form.Label><div className="form-control-label text-muted" 
-              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Email</div>
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Email</div>
             </Form.Label>
-            <Form.Control
+            <Form.Control style={{borderRadius:"0.5cm"}}
               className="w-50 mx-4 form-control"
               type="text"
               value={email}
@@ -121,9 +137,9 @@ const EditForm = ({ theuser }) => {
           <br />
         <Form.Group>
         <Form.Label><div className="form-control-label text-muted" 
-          style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div>
+          style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Department</div>
         </Form.Label>
-          <Form.Control
+          <Form.Control style={{borderRadius:"0.5cm"}}
             className="w-50 mx-4 form-control"
             type="text"
             value={department}
@@ -140,9 +156,9 @@ const EditForm = ({ theuser }) => {
        <br/>
           <Form.Group>
           <Form.Label><div className="form-control-label text-muted" 
-              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div>
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Designation</div>
           </Form.Label>
-            <Form.Control 
+            <Form.Control style={{borderRadius:"0.5cm"}}
               className="w-50 mx-4 form-control"
               type="text"
               value={designation}
@@ -159,9 +175,9 @@ const EditForm = ({ theuser }) => {
           <br />
           <Form.Group>
           <Form.Label><div className="form-control-label text-muted" 
-              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div>
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Address</div>
             </Form.Label>
-            <Form.Control 
+            <Form.Control style={{borderRadius:"0.5cm"}}
               className="w-50 mx-4 form-control"
               as="textarea"
               type="text"
@@ -179,9 +195,9 @@ const EditForm = ({ theuser }) => {
           <br />
           <Form.Group>
           <Form.Label><div className="form-control-label text-muted" 
-              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Aadhaar No</div>
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Aadhaar No</div>
             </Form.Label>
-            <Form.Control
+            <Form.Control style={{borderRadius:"0.5cm"}}
               className="w-50 mx-4 form-control"
               type="text"
               value={Aadhaarno}
@@ -198,9 +214,9 @@ const EditForm = ({ theuser }) => {
           <br />
           <Form.Group>
           <Form.Label><div className="form-control-label text-muted" 
-              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Pan No</div>
+              style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Pan No</div>
             </Form.Label>
-            <Form.Control
+            <Form.Control style={{borderRadius:"0.5cm"}}
               className="w-50 mx-4 form-control"
               type="text"
               value={PanNo}
@@ -219,89 +235,90 @@ const EditForm = ({ theuser }) => {
           )
     },
     {
-      title: "Educational Details",
+      title: <div className="tab-title" id="educational-details">Educational Details</div> ,
       content: (
-      <div>
-        <Form.Group>
-       <Button onClick={handleViewTable}>Educational Data</Button>
-{showMessage && <div>No data to display.</div>}
-{showTable && (
-       <Table striped bordered hover  variant='dark'>
-  <thead>
-    <tr>
-      <th>SlNo</th>
-      <th>Degree</th>
-      <th>Major</th>
-      <th>Institution</th>
-      <th>Marks</th>
-      <th>Division</th>
-      <th>Year</th>
-    </tr>
-  </thead>
-  <tbody>
-    {dataArray.map((data, index) => (
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>
-          <Form.Control
-            type="text"
-            value={data.degree}
-            onChange={(e) => handleInputChange(e, index, "degree")}
-          />
-        </td>
-        <td>
-          <Form.Control
-            type="text"
-            value={data.major}
-            onChange={(e) => handleInputChange(e, index, "major")}
-          />
-        </td>
-        <td>
-          <Form.Control
-            type="text"
-            value={data.institution}
-            onChange={(e) => handleInputChange(e, index, "institution")}
-          />
-        </td>
-        <td>
-          <Form.Control
-            type="text"
-            value={data.marks}
-            onChange={(e) => handleInputChange(e, index, "marks")}
-          />
-        </td>
-        <td>
-          <Form.Control
-            type="text"
-            value={data.division}
-            onChange={(e) => handleInputChange(e, index, "division")}
-          />
-        </td>
-        <td>
-          <Form.Control
-            type="text"
-            value={data.year}
-            onChange={(e) => handleInputChange(e, index, "year")}
-          />
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</Table>
-)}
-</Form.Group>
+      <div class="tab-content" id='tab2'>
+      {showMessage && (
+      <p><b><center>You haven't added any education details yet!</center></b></p>
+    )}
+    {showTable && (
+      <Form.Group>
+      <Table striped hover className='emptable'>
+      <thead>
+        <tr>
+          <th style={{textAlign:"center",color:"lightcyan"}}>SNo</th>
+          <th style={{textAlign:"center",color:"lightcyan"}}>Degree</th>
+          <th style={{textAlign:"center",color:"lightcyan"}}>Major</th>
+          <th style={{textAlign:"center",color:"lightcyan"}}>Institution</th>
+          <th style={{textAlign:"center",color:"lightcyan"}}>Marks</th>
+          <th style={{textAlign:"center",color:"lightcyan"}}>Division</th>
+          <th style={{textAlign:"center",color:"lightcyan"}}>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        {dataArray.map((data, index) => (
+          <tr key={index}>
+            <td>{index + 1}</td>
+            <td>
+              <Form.Control style={{borderRadius:"0.2cm"}}
+                type="text"
+                value={data.degree}
+                onChange={(e) => handleInputChange(e, index, "degree")}
+              />
+            </td>
+            <td>
+              <Form.Control style={{borderRadius:"0.2cm"}}
+                type="text"
+                value={data.major}
+                onChange={(e) => handleInputChange(e, index, "major")}
+              />
+            </td>
+            <td>
+              <Form.Control style={{borderRadius:"0.2cm"}}
+                type="text"
+                value={data.institution}
+                onChange={(e) => handleInputChange(e, index, "institution")}
+              />
+            </td>
+            <td>
+              <Form.Control style={{borderRadius:"0.2cm"}}
+                type="text"
+                value={data.marks}
+                onChange={(e) => handleInputChange(e, index, "marks")}
+              />
+            </td>
+            <td>
+              <Form.Control style={{borderRadius:"0.2cm"}}
+                type="text"
+                value={data.division}
+                onChange={(e) => handleInputChange(e, index, "division")}
+              />
+            </td>
+            <td>
+              <Form.Control style={{borderRadius:"0.2cm"}}
+                type="text"
+                value={data.year}
+                onChange={(e) => handleInputChange(e, index, "year")}
+              />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+      </Table>
+      </Form.Group>
+      )}
       </div>
       )
     },
     {
-      title: "Other Details",
+      title: <div className="tab-title" id="other-details">Other Details</div> ,
       content: ( 
-      <div>
+      <div class="tab-content" id='tab3'>
       <Form.Group>
       <Form.Label><div className="form-control-label text-muted" 
-        style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>RNR NO</div>
+        style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>RNR NO</div>
       </Form.Label>
-        <Form.Control
+        <Form.Control style={{borderRadius:"0.5cm"}}
           className="w-50 mx-4 form-control"
           type="text"
           value={ RNRNO}
@@ -318,9 +335,9 @@ const EditForm = ({ theuser }) => {
      <br/>
      <Form.Group>
      <Form.Label><div className="form-control-label text-muted" 
-        style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>TNMC NO</div>
+        style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>TNMC NO</div>
       </Form.Label>
-        <Form.Control
+        <Form.Control style={{borderRadius:"0.5cm"}}
           className="w-50 mx-4 form-control"
           type="text"
           value={TNMCNO}
@@ -337,9 +354,9 @@ const EditForm = ({ theuser }) => {
      <br/>
      <Form.Group>
      <Form.Label><div className="form-control-label text-muted" 
-       style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Validlity Date</div>
+       style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px" }}>Validlity Date</div>
       </Form.Label>
-        <Form.Control
+        <Form.Control style={{borderRadius:"0.5cm"}}
           className="w-50 mx-4 form-control"
           type="text"
           value={ValidlityDate}
@@ -354,6 +371,19 @@ const EditForm = ({ theuser }) => {
       {errors.ValidlityDate && <p>*Please check the ValidlityDate </p>}
      </div>
      <br/>
+     <div className="form-group">
+      <input id="selectFile" type="file" accept=".pdf" onChange={handleFileSelect} hidden />
+      <div className="form-control-label text-muted" 
+       style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>PAN or Aadhaar proof</div>
+      <label for="selectFile" className="mx-4 bi bi-folder-check" style={{ fontSize: "40px", color:"cadetblue", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
+     </div>
+      <br />
+     <div className="form-group">
+      <input id="formFileMultiple" type="file" accept=".pdf" onChange={handleCertificateSelect} multiple hidden />
+      <div className="form-control-label text-muted" 
+       style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "18px"  }}>Certificates</div>
+      <label for="formFileMultiple" className="mx-4 bi bi-folder-plus" style={{ fontSize: "40px", color:"cadetblue", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
+    </div>  
      <div style={{ display: "flex", float:"right"}}>
         <Button style={{backgroundColor:"cadetblue",border:"none"}} onClick={() => { handleSubmit(editemp); }} type="submit" block>
           Save
@@ -364,30 +394,12 @@ const EditForm = ({ theuser }) => {
    }
   ];
 
- ////retrive image of an employee
- let image = "http://localhost:7000/media/my_Employee/picture/" + name + ".jpg"
   return (
     <div className="App">
       <Form onSubmit={handleSubmit(editemp)}>
-      <br/><br/>
-      <div className="profile">
-        <img src={`${image}`} className="empprofile" alt="profile" />
-        <div className="empname">{name + '_' + id}</div>
-      </div>
       <VerticalTabs tabs={tabs}></VerticalTabs>
       </Form>
     </div>
   );
 }
 export default EditForm;
-
-
-
-
-
-
-
-
-
-
-

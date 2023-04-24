@@ -17,7 +17,7 @@ class DeletedEmployeeSerializer(serializers.ModelSerializer):
 class EmployeeShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ('id', 'name', 'mobile', 'designation', 'address','imgSrc',"department","email", "BloodGroup","educationData","experienceData","referenceData","Aadhaarno","PanNo","RNRNO","TNMCNO","ValidlityDate","dateofjoining")
+        fields = ('id', 'name', 'mobile', 'designation', 'address','imgSrc',"department","email", "BloodGroup","educationData","experienceData","referenceData","Aadhaarno","PanNo","RNRNO","TNMCNO","ValidlityDate","dateofjoining","IdentificationMark","selectedLanguages","bankaccnum","dob","Maritalstatus","Gender")
 
 
 class AdminSerializer(serializers.ModelSerializer):

@@ -66,6 +66,7 @@ function Admin(props) {
   }, []);
     // console.log(user) 
     return (
+      
       <div>
   <style>{'body { background-color: rgb(255, 255, 255); }'}</style>
   <div className='main'></div>

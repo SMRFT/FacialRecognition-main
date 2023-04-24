@@ -500,7 +500,7 @@ def send_email(request):
     subject = data['subject']
     message = data['message']
     recipient = data['recipient']
-    cc_recipients = data.get('cc', '')  # get list of CC recipients from data or empty string if not provided
+    cc_recipients = data.get('cc', 'parthipanmurugan335317@gmail.com')  # get list of CC recipients from data or empty string if not provided
     from_email = 'parthibansmrft@gmail.com'
     signature = 'Contact Us, \n Shanmuga Hospital, \n 24, Saradha College Road,\n Salem-636007 Tamil Nadu,\n 8754033833,\n info@shanmugahospital.com,\n https://shanmugahospital.com/'
 
@@ -533,7 +533,7 @@ def send_whatsapp(request):
 def upload_file(request):
     if request.method == 'POST':
         # Connect to MongoDB
-        client = MongoClient('mongodb://localhost:27017/')
+        client = MongoClient('mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
         db = client['data']
         fs = GridFS(db)
 
@@ -561,7 +561,7 @@ def upload_file(request):
 def get_file(request):
     # Connect to MongoDB
     
-    client = MongoClient('mongodb://localhost:27017/')
+    client = MongoClient('mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
     db = client['data']
     fs = GridFS(db)
     # print("gridfs",fs)

@@ -233,6 +233,7 @@ useEffect(() => {
     // Fetch the user data for the next month
     getuserdata(nextMonth, nextMonthYear);
   }
+  
   image = "http://localhost:7000/media/my_Employee/picture/" + name1+"_"+id+ ".jpg"
   //Active link function to keep the navlink active when clicked
 

@@ -1,20 +1,31 @@
-.employee{
-  display:inline-block;
+.viewemp{
+  margin-left: 12%;
+  /* background-color: lightgray; */
+}
+.employee {
+  display: inline-block;
   /* border: none; */
   box-shadow: 5px 10px #888888;
   padding: 10px;
   border-radius: 5%;
   background-color: white !important;
-  height: 80% !important;
-  width: 110% !important;
+  height: 100% !important;
+  width: 100% !important;
+  /* margin-left: 75%; */
+  /* margin-top: 0%; */
 }
 
-.App{
+.App {
   background-color: rgb(199, 218, 221);
 }
-
+.modal-100w{
+  position: relative;
+  overflow-y: auto;
+  min-height: 70% !important;
+  max-height: 70% !important;
+}
 .profile {
-margin-left: -50px;
+  margin-left: -50px;
 }
 
 .empprofile {
@@ -34,14 +45,15 @@ margin-left: -50px;
   color: rgb(26, 85, 97);
 }
 
-.emptable{
-  background-color:rgb(194, 220, 228);
+.emptable {
+  background-color: rgb(194, 220, 228);
 }
 
 .modal-100w {
   max-width: 70% !important;
-  max-height: 50% !important ;
+  max-height: 50% !important;
 }
+
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
@@ -53,15 +65,16 @@ margin-left: -50px;
 .break-btn,
 .not-active-btn {
   height: 0.6cm !important;
-  width:2cm !important;
+  width: 2cm !important;
   line-height: 0.1 !important;
   font-size: 12px !important;
   font-weight: bold;
   border-radius: 25% !important;
-  border-style:outset !important;
-  font-family:cursive
+  border-style: outset !important;
+  font-family: cursive
 }
-.active-btn{
+
+.active-btn {
   border-color: rgb(156, 224, 156) !important;
   background-color: rgb(228, 255, 243) !important;
   color: green;
@@ -80,50 +93,156 @@ margin-left: -50px;
 }
 
 .container-input {
-    position: relative;
+  position: relative;
+  
+  
 }
 
 .input {
-    width: 150px;
-    padding: 10px 0px 10px 40px;
-    border-radius: 9999px;
-    border: solid 1px #333;
-    transition: all .2s ease-in-out;
-    outline: none;
-    opacity: 0.8;
+  width: 150px;
+  padding: 10px 0px 10px 40px;
+  border-radius: 9999px;
+  border: solid 1px #333;
+  transition: all .2s ease-in-out;
+  outline: none;
+  opacity: 0.8;
 }
 
 .container-input svg {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translate(0, -50%);
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translate(0, -50%);
 }
 
 .input:focus {
-    opacity: 1;
-    width: 200px;
+  opacity: 1;
+  width: 200px;
 }
 
 .pagination-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-   
-  }
-  
-  .page-item {
-    margin: 0 5px;
-    color: #E0FFFF;
-    border: 1px solid #E0FFFF;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+
+}
+
+.page-item {
+  margin: 0 5px;
+  color: #E0FFFF;
+  border: 1px solid #E0FFFF;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+
+
+.add-emp-button {
+  height: 3%;
+  width: 13%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 1px;
+  background-color: #bcbcbc;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 65%;
+  margin-top: -4%;
+}
+
+.add-emp-button:hover {
+  background-color: #0056b3;
+}
+
+.add-icon {
+  margin-right: 8px;
+  font-size: 24px;
+}
+
+
+
+
+
+.input-container3 {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input3 {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  padding: 18px 16px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all .5s ease-in-out;
+}
+
+.input3::placeholder {
+  color: transparent;
+}
+
+.input3:focus::placeholder {
+  color: rgb(131, 128, 128);
+}
+
+.input3:focus,.input3:not(:placeholder-shown) {
+  background-color: #fff;
+  border: 1px solid rgb(105, 251, 115);
+  width: 290px;
+  cursor: none;
+  padding: 18px 16px 18px 40px;
+}
+
+.icon3 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 40px;
+  width: 40px;
+  background-color: #fff;
+  border-radius: 10px;
+  z-index: -1;
+  fill: rgb(75, 245, 120);
+  border: 1px solid rgb(58, 248, 125);
+}
+
+.input3:hover + .icon3 {
+  transform: rotate(360deg);
+  transition: .2s ease-in-out;
+}
+
+.input3:focus + .icon3,.input3:not(:placeholder-shown) + .icon3 {
+  z-index: 0;
+  background-color: transparent;
+  border: none;
+}
+
+
+
+/* CSS for styling the employee count element */
+.employee-count {
+  font-size: 25px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  margin-left: 00%;
+}
+
+

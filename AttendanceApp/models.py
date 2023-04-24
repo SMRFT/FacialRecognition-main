@@ -26,13 +26,17 @@ image_storage = FileSystemStorage(
 import datetime
 import uuid
 
+# def image_directory_path(instance, filename):
+#     # generate a new filename with timestamp and instance information
+#     extension = filename.split('.')[-1]
+#     new_filename = f"{instance.name}_{instance.id}_{uuid.uuid4().hex}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
+#     return u'picture/{0}'.format(new_filename)
+
 def image_directory_path(instance, filename):
-    # generate a new filename with timestamp and instance information
+    # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
     extension = filename.split('.')[-1]
-    new_filename = f"{instance.name}_{instance.id}_{uuid.uuid4().hex}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
+    new_filename = f"{instance.name}_{instance.id}.{extension}"
     return u'picture/{0}'.format(new_filename)
-
-
 
 # Employee
 
