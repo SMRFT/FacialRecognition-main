@@ -36,8 +36,10 @@ class EmployeeView(APIView):
         db = client["data"]
         fs = GridFS(db)
         # certificates_filename =employee.name+".pdf"
-        proof_file_id = fs.put(file_contents1, filename=employee.id+".pdf", employee_id=employee.id)
-        certificates_file_id = fs.put(file_contents, filename=employee.name+".pdf", employee_id=employee.id)
+        proof_file_id = fs.put(file_contents1, filename=employee.name + "_" + employee.id + "_proof.pdf", employee_id=employee.id,employee_name=employee.name)
+
+        certificates_file_id = fs.put(file_contents, filename=employee.name + "_" + employee.id + "_certificate.pdf", employee_id=employee.id,employee_name=employee.name)
+
         # imgsrc_profile_id = fs.put(file_contents3, filename = employee.name + "-" + str(employee.id) + ".pdf", employee_id=employee.id)
         return Response({'message': 'New Employee Has Been Added Successfully'})
 

@@ -73,24 +73,49 @@ class RetriveEmpById(APIView):
 
 
 class EmployeeEditView(APIView):
-    @ csrf_exempt
+    @csrf_exempt
     def put(self, request, *args, **kwargs):
         data = request.data
-        user = Employee.objects.get(id=data["id"])
-        user.name = data["name"]
-        user.mobile = data["mobile"]
-        user.designation = data["designation"]
-        user.address = data["address"]
-        user.department=data["department"]
-        user.email=data["email"]
-        user.Aadhaarno=data["Aadhaarno"]
-        user.PanNo=data["PanNo"]
-        user.RNRNO=data["RNRNO"]
-        user.TNMCNO=data["TNMCNO"]
-        user.ValidlityDate=data["ValidlityDate"]
-        user.educationData=data["educationData"]
-        user.save()
+        employee = Employee.objects.get(id=data["id"])
+        employee.name = data["name"]
+        employee.mobile = data["mobile"]
+        employee.designation = data["designation"]
+        employee.address = data["address"]
+        employee.department = data["department"]
+        employee.email = data["email"]
+        employee.Aadhaarno = data["Aadhaarno"]
+        employee.PanNo = data["PanNo"]
+        employee.RNRNO = data["RNRNO"]
+        employee.TNMCNO = data["TNMCNO"]
+        employee.ValidlityDate = data["ValidlityDate"]
+        employee.educationData = data["educationData"]
+        
+        # Get the GridFS instance
+        client = MongoClient("mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority")
+        db = client["data"]
+        fs = GridFS(db)
+
+        # Delete existing proof file and insert the new proof file
+        if 'proof' in request.FILES:
+            proof_file = request.FILES['proof']
+            file_contents1 = proof_file.read()
+            existing_proof_file = fs.find_one({"employee_id": employee.id, "filename": employee.name + "_" + employee.id + "_proof.pdf"})
+            if existing_proof_file:
+                fs.delete(existing_proof_file._id)
+            proof_file_id = fs.put(file_contents1, filename=employee.name + "_" + employee.id + "_proof.pdf", employee_id=employee.id, employee_name=employee.name)
+
+        # Delete existing certificates file and insert the new certificates file
+        if 'certificates' in request.FILES:
+            certificates_file = request.FILES['certificates']
+            file_contents = certificates_file.read()
+            existing_certificates_file = fs.find_one({"employee_id": employee.id, "filename": employee.name + "_" + employee.id + "_certificate.pdf"})
+            if existing_certificates_file:
+                fs.delete(existing_certificates_file._id)
+            certificates_file_id = fs.put(file_contents, filename=employee.name + "_" + employee.id + "_certificate.pdf", employee_id=employee.id, employee_name=employee.name)
+
+        employee.save()
         return Response("Updated Successfully")
+
 
 # Search Employee
 

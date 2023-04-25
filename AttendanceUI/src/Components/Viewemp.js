@@ -265,7 +265,7 @@ style={{marginLeft:"55%",marginTop:"-3.9%"}}
         </Link><br/>
         </div> )}
         </div><br/><br/>
-      <Card.Img style={{ display: "block", margin:"auto", width:"70px", height:"70px", borderRadius:"50%" }}
+      <Card.Img style={{ display: "block", margin:"auto", width:"90px", height:"90px", borderRadius:"50%" }}
         src={`http://localhost:7000${user.imgSrc}`} className="rounded-circle" />
       <Card.Body>
         <Card.Title><center style={{color:"#525E75",font:"caption",fontWeight:"bold",fontFamily:"sans-serif",fontSize:"14px"}}>{user.name}</center></Card.Title>

@@ -34,7 +34,7 @@ const EditForm = ({ theuser }) => {
   function handleUpdateResponse(response) {
     if (response.ok) {
       alert("Employee data updated successfully!");
-      window.location.reload();
+      // window.location.reload();
     } else {
       throw new Error("Failed to update employee data.");
     }

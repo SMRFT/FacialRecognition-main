@@ -39,8 +39,8 @@ function DownloadButton(props) {
         const queryParams = new URLSearchParams();
 
         // Make a POST request to the server to get the file as a blob
-        axios.post(`http://localhost:7000/attendance/get_file?filename=${name1}.pdf`, {
-            filename: `${name1}.pdf`,
+        axios.post(`http://localhost:7000/attendance/get_file?filename=${name}_certificate.pdf`, {
+            filename: `${name}_certificate.pdf`,
         }, {
             responseType: "blob"
         })
@@ -79,8 +79,8 @@ function DownloadButton(props) {
         const queryParams = new URLSearchParams();
 
         // Make a POST request to the server to get the file as a blob
-        axios.post(`http://localhost:7000/attendance/get_file?filename=${id}.pdf`, {
-            filename: `${id}.pdf`,
+        axios.post(`http://localhost:7000/attendance/get_file?filename=${name}_proof.pdf`, {
+            filename: `${name}_proof.pdf`,
         }, {
             responseType: "blob"
         })
