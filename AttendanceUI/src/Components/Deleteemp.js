@@ -73,12 +73,15 @@ const TrashPage = () => {
             flexDirection: "column",
           }}
         >
-         <img
-         src={`http://localhost:7000${employee.imgSrc}`}
-          alt="profile"
-          // className="center"
-          style={{ width: "30%", height: "30%", marginBottom: "5px",marginLeft:"70px" ,borderRadius:"20px"}}
-        />
+     
+         <img src={`http://localhost:7000/attendance/profile_image?profile_picture_id=${employee.profile_picture_id}`}   style={{
+          display: "block",
+          margin: "auto",
+          width: "90px",
+          height: "90px",
+          borderRadius: "50%",
+        }} alt="Profile Picture" />
+     
          <Card.Body>
           <h2 style={{ marginBottom: "10px" }}>ID: {employee.id}</h2>
           <p style={{ marginBottom: "10px" }}>

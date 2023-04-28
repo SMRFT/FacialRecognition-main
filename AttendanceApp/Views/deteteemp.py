@@ -24,7 +24,7 @@ class DeleteEmp(APIView):
         emp_mobile=emp.mobile
         emp_designation=emp.designation
         emp_Address=emp.address
-        emp_imgSrc =emp.imgSrc 
+        # emp_imgSrc =emp.imgSrc 
         emp_educationData =emp.educationData
         emp_experienceData=emp.experienceData
         emp_referenceData=emp.referenceData
@@ -38,6 +38,7 @@ class DeleteEmp(APIView):
         emp_ValidlityDate=emp.ValidlityDate
         emp_dateofjoining =emp.dateofjoining
         emp_bankaccnum =emp.bankaccnum
+        emp_profile_picture_id=emp.profile_picture_id
         emp.delete()
         
         deleted_emp = DeletedEmployee(
@@ -48,7 +49,7 @@ class DeleteEmp(APIView):
             mobile =emp_mobile ,
             designation=emp_designation,
             address=emp_Address,
-            imgSrc =emp_imgSrc,
+            # imgSrc =emp_imgSrc,
             educationData =emp.educationData,
             experienceData=emp.experienceData,
             referenceData=emp.referenceData,
@@ -62,6 +63,7 @@ class DeleteEmp(APIView):
             ValidlityDate=emp.ValidlityDate,
             dateofjoining =emp.dateofjoining,
             bankaccnum =emp.bankaccnum,
+            profile_picture_id=emp.profile_picture_id,
             deleted_at=timezone.now()
         )
         deleted_emp.save()
@@ -79,14 +81,6 @@ class DeletedEmployeeList(APIView):
         serializer = DeletedEmployeeSerializer(employees, many=True)
         return Response(serializer.data)
 
-
-# class PermanentDeleteEmp(APIView):
-#     @csrf_exempt
-#     def delete(self, request, id):
-#         deleted_emp = DeletedEmployee.objects.get(id=id)
-#         deleted_emp.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
 class PermanentDeleteEmp(APIView):
     @csrf_exempt
     def post(self, request):
@@ -102,7 +96,7 @@ class RestoreEmployee(APIView):
         data = request.data
         deleted_employee = DeletedEmployee.objects.get(id=data["id"])
         employee = Employee(id=deleted_employee.id,name=deleted_employee.name, email=deleted_employee.email, department=deleted_employee.department,mobile=deleted_employee.mobile,
-                            designation=deleted_employee.designation, address=deleted_employee.address,imgSrc =deleted_employee.imgSrc, educationData =deleted_employee.educationData,
+                            designation=deleted_employee.designation, address=deleted_employee.address, educationData =deleted_employee.educationData,
             experienceData=deleted_employee.experienceData,
             referenceData=deleted_employee.referenceData,
             selectedLanguages =deleted_employee.selectedLanguages ,
@@ -114,7 +108,7 @@ class RestoreEmployee(APIView):
             TNMCNO =deleted_employee.TNMCNO,
             ValidlityDate=deleted_employee.ValidlityDate,
             dateofjoining =deleted_employee.dateofjoining,
-            bankaccnum =deleted_employee.bankaccnum,)
+            bankaccnum =deleted_employee.bankaccnum,profile_picture_id=deleted_employee.profile_picture_id)
         employee.save()
         deleted_employee.delete()
         return JsonResponse({'message': 'Employee restored successfully.'})

@@ -1,12 +1,33 @@
-.addemp{
-   margin-left: 13%;
+.addemp,.app{
+   margin-left: 20%;
 
 
 
 }
 
+.Addemp{
+    margin-left: 13%;
+ }
+.select-box {
+    width: 200px !important;
+}
 
-
+.next-button {
+    float: right;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  .pre-button{
+      float: right;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+    }
+    .button-71.Add-employee-button {
+      position: absolute;
+      right: 0;
+    }
 /* .Addemp {
 
     margin-top: 20px;

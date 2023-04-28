@@ -1,3 +1,6 @@
+.navbar {
+  position: sticky;
+ }
 .nav_link1,
 .nav_link2,
 .nav_link3,

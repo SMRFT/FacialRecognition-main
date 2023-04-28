@@ -392,7 +392,8 @@ class RetriveEmployeeexport(APIView):
         return Response(serializer.data)
 # Export Calendar Details
 
-
+# Export Calendar Details (Summary export for download outside the calendar(Employee details))
+# This view is for exporting overall employee details per month
 class RetriveSummaryExport(APIView):
     def post(self, request):
         data = request.data
@@ -401,42 +402,47 @@ class RetriveSummaryExport(APIView):
         selected_department = data.get("department", "") # get the selected department value
         # Get all employees who have logged in during the specified month and year
         emp_data = Admincalendarlogin.objects.filter(Q(month=month) & Q(year=year)).values()
+        # print("empdata::",emp_data )
         emp_ids = emp_data.values_list("name", flat=True).distinct()
                 # Define an empty queryset
         queryset = Employee.objects.none()
         if selected_department:
             queryset = queryset.filter(department=selected_department)
         emp_ids = emp_data.values_list("name", flat=True).distinct()
-        # Create a list to store the details for each employee
-
+         # Create a list to store the details for each employee
         emp_details = []
         for emp_id in emp_ids:
             # Split the name and id of the employee
             emp_id_split = emp_id.split("_")
-            id = emp_id_split[1]
-            name = emp_id_split[0]
-      # Initialize variables for calculating the different values
+            id = emp_id_split[1] if len(emp_id_split) >= 2 else None
+            name = emp_id_split[0] if len(emp_id_split) >= 1 else None
+            # Initialize variables for calculating the different values
             working_days = 0
-            leave_days = 0
-            overtime_hours = 0
+            loss_of_pay = 0
+            overtime_days = 0
             total_weekoff = 0
             weekoff_used = 0
-            # Loop through the queryset for the employee and calculate the values
+            cl_taken = 0
+            sl_taken = 0
+            # Loop through the filtered queryset for the employee and calculate the values
             for employee in emp_data.filter(name=emp_id):
                 if employee["leavetype"] == "None":
                     start_time = employee["start"]
                     end_time = employee["end"]
                     hour = end_time - start_time
                     if hour > timedelta(hours=8):
-                        overtime_hours += (hour - timedelta(hours=8)).total_seconds() / 3600
+                        overtime_days += (hour - timedelta(hours=8)).total_seconds() / 3600
+                        # print(overtime_days)
                     # Check if the event occurred on a Sunday
                     if start_time.weekday() == 6:
                         working_days += 1
                         weekoff_used += 1# Increment weekoff_used since it's a working day on Sunday
                     else:
                         working_days += 1
-                else:
-                    leave_days += 1
+                elif employee["leavetype"] == "CL":
+                    cl_taken += 1
+                elif employee["leavetype"] == "SL":
+                    sl_taken += 1
             # Calculate the total number of Sundays in the month
             month_calendar = calendar.monthcalendar(year, month)
             total_sundays = sum(1 for week in month_calendar if week[6] != 0)
@@ -446,14 +452,22 @@ class RetriveSummaryExport(APIView):
             if month == today.month and year == today.year:
                 month_days = today.day
             # Calculate the number of leave days
-            leave_days = month_days - working_days
+            loss_of_pay = month_days - working_days
             # # Update the total_weekoff and weekoff_used variables
             total_weekoff += total_sundays
             # Add the details for the employee to the list
-            emp_data = Employee.objects.filter(id=id).values('designation','department')
-            department = emp_data[0]['department']
-            designation = emp_data[0]['designation']
-            if not selected_department or department == selected_department: # add the employee details only if they belong to the selected department
+            if id:
+                emp_det = Employee.objects.filter(id=id).values('department','designation')
+                if emp_det:
+                    department = emp_det[0]['department']
+                    designation = emp_det[0]['designation']
+                else:
+                    department = None
+                    designation = None
+            else:
+                department = None
+                designation = None
+            if not selected_department or department == selected_department:  # add the employee details only if they belong to the selected department or if no department is selected
                 # Create a dictionary to store the details for the employee
                 emp_dict = {
                     "id": id,
@@ -463,13 +477,16 @@ class RetriveSummaryExport(APIView):
                     "department": department,
                     "designation": designation,
                     "workingdays": working_days,
-                    "leavedays": leave_days,
-                    "overtime": overtime_hours,
+                    "overtimedays": overtime_days,
+                    "CL_Taken": cl_taken,
+                    "SL_Taken": sl_taken,
+                    "loss_of_pay": loss_of_pay,
                     "total_weekoff": total_weekoff,
                     "weekoff_used": weekoff_used,
                 }
                 # Add the details for the employee to the list
                 emp_details.append(emp_dict)
+                # print(emp_dict)
         # Serialize the employee details list and return the response
         serializer = SummaryexportSerializer(emp_details, many=True)
         return Response(serializer.data)
@@ -598,16 +615,37 @@ def get_file(request):
     if file is not None:
         # Return the file contents as an HTTP response
         response = HttpResponse(file.read())
-        print("type",response )
+        # print("type",response )
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment; filename=%s' % file.filename
-        print("filename",file.filename)
+        # print("filename",file.filename)
         return response
     else:
         # Return a 404 error if the file is not found
         return HttpResponse(status=404)
  
-
+@csrf_exempt
+def get_profile_image(request):
+    # Connect to MongoDB
+    client = MongoClient('mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
+    db = client['data']
+    fs = GridFS(db)
+    
+    # Get the employee's profile_picture_id from the request
+    profile_picture_id = request.GET.get('profile_picture_id')
+    
+    # Look up the corresponding file in GridFS
+    file = fs.find_one(ObjectId(profile_picture_id))
+    
+    if file is not None:
+        # Return the file contents as an HTTP response
+        response = HttpResponse(file.read())
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment; filename=%s' % file.filename
+        return response
+    else:
+        # Return a 404 error if the file is not found
+        return HttpResponse(status=404)
 class RetrieveEmployeehours(APIView):
     def post(self, request):
         data = request.data

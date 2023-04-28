@@ -18,7 +18,7 @@ import io
 # django file storage
 from gridfs import GridFS
 from pymongo import MongoClient
-
+from django.core.files.storage import default_storage
 class EmployeeView(APIView):
     @csrf_exempt
     def post(self, request):
@@ -26,8 +26,8 @@ class EmployeeView(APIView):
         file_contents1 = proof_file.read()
         certificates_file = request.FILES['certificates']
         file_contents = certificates_file.read()
-        # imgsrc_profile = request.FILES['imgSrc']
-        # file_contents3 = imgsrc_profile.read()
+        imgsrc_profile = request.FILES['imgSrc']
+        file_contents3 = imgsrc_profile.read()
         serializer = EmployeeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         employee = serializer.save()
@@ -37,9 +37,10 @@ class EmployeeView(APIView):
         fs = GridFS(db)
         # certificates_filename =employee.name+".pdf"
         proof_file_id = fs.put(file_contents1, filename=employee.name + "_" + employee.id + "_proof.pdf", employee_id=employee.id,employee_name=employee.name)
-
         certificates_file_id = fs.put(file_contents, filename=employee.name + "_" + employee.id + "_certificate.pdf", employee_id=employee.id,employee_name=employee.name)
-
+        imgsrc_profile_id = fs.put(file_contents3, filename=employee.name + "_" + employee.id + "_profile.jpg", employee_id=employee.id,employee_name=employee.name)
+        employee.profile_picture_id = str(imgsrc_profile_id)
+        employee.save()
         # imgsrc_profile_id = fs.put(file_contents3, filename = employee.name + "-" + str(employee.id) + ".pdf", employee_id=employee.id)
         return Response({'message': 'New Employee Has Been Added Successfully'})
 

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { CSVLink } from 'react-csv';
 import DatePicker from "react-datepicker";
 import "./Summary.css";
-import "react-datepicker/dist/react-datepicker.css";
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+// import 'react-datepicker/dist/react-datepicker.css';
 import { Container } from 'react-bootstrap'
 function MyComponent() {
     const [userdata, setUserdata] = useState([]);
@@ -14,30 +15,31 @@ function MyComponent() {
     const maxDate = new Date(myYear.getFullYear(), myMonth.getMonth() + 1, 0);
     const departments = ["IT" ,"DOCTOR","NURSE","HR", "LAB", "RT TECH","PHARMACY","TELECALLER","FRONT OFFICE","SECURITY","ELECTRICIAN","ACCOUNTS","NURSING","HOUSE KEEPING","DENSIST CONSULTANT","COOK"];
     const [selectedDepartment, setSelectedDepartment] = useState("");
-    function handleChange(e) {
-        setSelectedDepartment(e.currentTarget.value);
-        console.log("e.currentTarget.value",e.currentTarget.value);
-        console.log("test:",selectedDepartment);
+    const [startDate, setStartDate] = useState(new Date());
+    function handleChange(e, selectedDate) {
+        setSelectedDepartment(e.target.value);
+        setStartDate(selectedDate);
+        console.log("Selected department:", e.target.value);
+        console.log("Selected date:", selectedDate);
       }
-    useEffect(() => {
-        console.log(selectedDepartment);
+      useEffect(() => {
         const getuserdata = async () => {
-            fetch("http://127.0.0.1:7000/attendance/EmployeeSummaryExport", {
-                method: "post",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    month: myMonth.getMonth() + 1,
-                    year: myYear.getFullYear(),
-                    department:selectedDepartment
-                }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    setUserdata(data);
-                });
+          fetch("http://127.0.0.1:7000/attendance/EmployeeSummaryExport", {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              month: startDate.getMonth() + 1,
+              year: startDate.getFullYear(),
+              department: selectedDepartment,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              setUserdata(data);
+            });
         };
         getuserdata();
-    }, [myMonth, myYear,selectedDepartment]);
+      }, [startDate, selectedDepartment]);
     useEffect(() => {
         setMyDay(new Date(myYear.getFullYear(), myMonth.getMonth(), 1));
     }, [myMonth, myYear, setMyDay]);
@@ -49,38 +51,25 @@ function MyComponent() {
     };
     // render the component
     return (
-        // <div class="card">
         <div>
             <div >
                 <div style={{ textAlign: "center", marginTop: '5px'}}>
-                <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", fontSize: "30px"}}>
-                        <label>Select Month</label>
+                <div class="date-picker" >
+                        <label style={{fontSize: "20px"}}>Select Month and year</label>
+                        <div  style={{ marginLeft:"10px", cursor: "pointer", fontSize: "10px"}}>
                         <DatePicker
-                            selected={myMonth}
-                            onChange={(date) => setMyMonth(date)}
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            dateFormat="MM/yyyy"
                             showMonthYearPicker
-                            dateFormat="MMMM"
-                            renderCustomHeader={({ date }) => <div></div>}
-                            placeholderText=""
                         />
                     </div>
-                    <div class="date-picker" style={{ display: "inline-block", cursor: "pointer", marginRight: "0px", fontSize: "30px", marginTop: "180px" }}>
-                        <label>Select Year</label>
-                        <DatePicker
-                            style={{ textAlign: "center" }}
-                            selected={myYear}
-                            onChange={(date) => setMyYear(date)}
-                            renderCustomHeader={({ date }) => <div></div>}
-                            showYearPicker
-                            dateFormat="yyyy"
-                            placeholderText=""
-                        />
                     </div>
-                    <br/><br/><br/>
+                    <br/>
                     <div className="mb-3">
-                        <label className="mx-3 form-label"><div className="form-control-label" style={{ display: "inline-block", cursor: "pointer", fontSize: "25px"}}>Select Department</div></label>
+                        <label className="mx-3 form-label"><div className="form-control-label" style={{ display: "inline-block", cursor: "pointer", fontSize: "20px"}}>Select Department</div></label>
                         <div className="col-sm-12">
-                        <select className="w-30" style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
+                        <select className="w-28" style={{ borderRadius: 60 }} value={selectedDepartment} onChange={(e) => handleChange(e, startDate)}>
                         <option style={{textAlign:"center"}} value="" disabled>Select department</option>
                         {departments.map((department, index) => (
                             <option style={{textAlign:"center"}} key={index} value={department}>
@@ -90,23 +79,11 @@ function MyComponent() {
                         </select>
                     </div>
                   </div>
+                  <CSVLink data={userdata} filename={"payroll"} title="Download CSV">
+  <CloudDownloadIcon style={{ fontSize: 50 }} />
+</CSVLink>
 
-                    <div className="download-csv1">
-                        <div class="button">
-                            <div class="button-wrapper">
-                                <CSVLink data={userdata} filename={"payroll"} title="Download CSV">
-                                    <div class="text">Download</div>
-                                    <span class="icon">
-                                        <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" height="2em" width="2em" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" fill="none"></path>
-                                        </svg>
-                                    </span>
-                                </CSVLink>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-                
             </div>
         </div>
     );

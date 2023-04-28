@@ -37,7 +37,7 @@ function Adminlogin() {
             const { email, name, mobile, role } = content;
             localStorage.setItem('adminDetails', JSON.stringify({ email, name, mobile, role }));
             // Pass the admin details as props to the /Admin page
-            navigate('/Admin/viewemp', { 
+            navigate('/Admin/Viewemp', { 
                 state: {  
                     email,
                     name,

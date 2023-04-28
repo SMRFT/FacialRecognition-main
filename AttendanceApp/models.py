@@ -13,14 +13,14 @@ from django.http import JsonResponse
 from gridfs_storage.storage import GridFSStorage
 from django.utils import timezone
 # image upload via local disk
-image_storage = FileSystemStorage(
-    # Physical file location ROOT
-    location=u'{0}/my_Employee/'.format(
-        settings.MEDIA_ROOT),
-    # Url for file
-    base_url=u'{0}my_Employee/'.format(
-        settings.MEDIA_URL),
-)
+# image_storage = FileSystemStorage(
+#     # Physical file location ROOT
+#     location=u'{0}/my_Employee/'.format(
+#         settings.MEDIA_ROOT),
+#     # Url for file
+#     base_url=u'{0}my_Employee/'.format(
+#         settings.MEDIA_URL),
+# )
 
 
 import datetime
@@ -32,11 +32,11 @@ import uuid
 #     new_filename = f"{instance.name}_{instance.id}_{uuid.uuid4().hex}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.{extension}"
 #     return u'picture/{0}'.format(new_filename)
 
-def image_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
-    extension = filename.split('.')[-1]
-    new_filename = f"{instance.name}_{instance.id}.{extension}"
-    return u'picture/{0}'.format(new_filename)
+# def image_directory_path(instance, filename):
+#     # file will be uploaded to MEDIA_ROOT/my_sell/picture/<filename>
+#     extension = filename.split('.')[-1]
+#     new_filename = f"{instance.name}_{instance.id}.{extension}"
+#     return u'picture/{0}'.format(new_filename)
 
 # Employee
 
@@ -63,14 +63,13 @@ class Employee(models.Model):
     IdentificationMark=models.CharField(max_length=500)
     BloodGroup=models.CharField(max_length=500)
     address = models.CharField(max_length=500)
-    imgSrc = models.ImageField(
-        upload_to=image_directory_path, storage=image_storage) 
+    imgSrc =models.FileField(storage=GridFSStorage())
     imgSrcname = models.CharField(max_length=500)
     educationData = models.CharField(max_length=1200)
     experienceData = models.CharField(max_length=1200)
     referenceData = models.CharField(max_length=1200)
     selectedLanguages = models.CharField(max_length=500, blank=True)
-
+    profile_picture_id = models.CharField(max_length=24, null=True, blank=True)
 class DeletedEmployee(models.Model):
     id = models.CharField(primary_key=True, max_length=500)
     name = models.CharField(max_length=500)
@@ -80,8 +79,7 @@ class DeletedEmployee(models.Model):
     deleted_at =models.DateField()
     designation = models.CharField(max_length=500)
     address = models.CharField(max_length=500)
-    imgSrc = models.ImageField(
-        upload_to=image_directory_path, storage=image_storage) 
+    # imgSrc = models.ImageField() 
     educationData = models.CharField(max_length=1200)
     experienceData = models.CharField(max_length=1200)
     referenceData = models.CharField(max_length=1200)
@@ -95,6 +93,9 @@ class DeletedEmployee(models.Model):
     ValidlityDate = models.DateField(blank=True, null=True)
     dateofjoining = models.DateField()
     bankaccnum = models.IntegerField()
+    profile_picture_id = models.CharField(max_length=24, null=True, blank=True)
+
+    
 # Admin Login
 
 
@@ -173,30 +174,36 @@ class Summary(models.Model):
 
 # Employee calendar export model for single employee
 
-
+# Employee calendar export model for single employee
 class Employeeexport(models.Model):
+    id = models.CharField(max_length=500, primary_key=True)
     name = models.CharField(max_length=500)
+    date = models.DateField()
+    month = models.IntegerField()
     start = models.DateTimeField()
     end = models.DateTimeField()
-    # month = models.IntegerField()
-    # year = models.IntegerField()
-    # shift = models.CharField(max_length=500)
+    shift = models.CharField(max_length=500)
+    workedhours = models.CharField(max_length=500)
     Breakhour = models.CharField(max_length=500)
-    hour = models.CharField(max_length=500)
+    overtimehours = models.CharField(max_length=500)
+    Total_hours_worked = models.CharField(max_length=500)
     leavetype = models.CharField(max_length=500)
 # Employee calendar export model for all the employee
-
-
 class Summaryexport(models.Model):
     id = models.CharField(max_length=500, primary_key=True)
     name = models.CharField(max_length=500)
     month = models.IntegerField()
     year = models.IntegerField()
-    workingdays = models.IntegerField()
-    leavedays = models.IntegerField()
-    overtime = models.IntegerField()
     department = models.CharField(max_length=500)
-   
+    designation = models.CharField(max_length=500)
+    workingdays = models.IntegerField()
+    overtimedays = models.IntegerField()
+    CL_Taken = models.IntegerField()
+    SL_Taken = models.IntegerField()
+    loss_of_pay = models.IntegerField()
+    total_weekoff = models.IntegerField()
+    weekoff_used = models.IntegerField()
+
 
 class Breakhours(models.Model):
     id = models.CharField(max_length=500)

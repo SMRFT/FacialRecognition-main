@@ -1,4 +1,4 @@
-//This components renders a Form to add information of an employee to db 
+// //This components renders a Form to add information of an employee to db 
 import Webcam from "react-webcam";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -11,14 +11,19 @@ import Myconstants from "../Components/Myconstants";
 import { Radio, Checkbox } from 'semantic-ui-react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import VerticalTabs from "./VerticalTabs";
+
+
+
 function Addemp() {
+  const [page, setPage] = useState(1);
   const webcamRef = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState("");
   const [imageSrc, setImageSrc] = useState("");
   const [imgSrcname, setImgSrcname] = useState("");
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
-  
+  const [activeTab, setActiveTab] = useState('personal-info');
   const [id, setId] = useState("");
   const [mobile, setMobile] = useState("");
   const [shift, setshift] = useState("");
@@ -28,8 +33,6 @@ function Addemp() {
   const [bankaccnum, setBankAccNum] = useState("");
   const [address, setAddress] = useState("");
   const [proof, setProof] = useState(null);
-  const [proof_url, setProofUrl] = useState("");
-  const [certificates_url, setCertificateUrl] = useState("");
   const [certificates, setCertificate] = useState(null);
   const [message, setMessage] = useState("");
   const [isShown, setIsShown] = useState(true);
@@ -43,6 +46,7 @@ function Addemp() {
   const [PanNo, setPanNo] = useState("");
   const [IdentificationMark, setIdentificationMark] = useState("");
   const [BloodGroup, setBloodGroup] = useState("");
+  const { reset } = useForm();
   const [educationData, setEducationData] = useState([
     { SlNo: 1, degree: "SSLC", major: "", institution: "", marks: "", division: "", year: "" },
     { SlNo: 2, degree: "HSC", major: "", institution: "", marks: "", division: "", year: "" },
@@ -72,9 +76,8 @@ function Addemp() {
   const [selectedLanguages, setSelectedLanguages] = useState([]);
 
   const handleLanguageChange = (e) => {
-    const value = e.target.value;
-
-    if (e.target.checked) {
+    const { value, checked } = e.target;
+    if (checked) {
       setSelectedLanguages([...selectedLanguages, value]);
     } else {
       setSelectedLanguages(selectedLanguages.filter((lang) => lang !== value));
@@ -82,22 +85,14 @@ function Addemp() {
   };
 
   const handleOtherLanguageChange = (e) => {
-    const value = e.target.value;
-
-    setSelectedLanguages((prevLanguages) => {
-      const otherLangIndex = prevLanguages.findIndex((lang) => lang === "Other");
-      const newLanguages = [...prevLanguages];
-
-      if (otherLangIndex === -1) {
-        newLanguages.push("Other");
-      }
-
-      newLanguages[otherLangIndex + 1] = value;
-
-      return newLanguages;
-    });
+    setSelectedLanguages([...selectedLanguages, e.target.value]);
   };
-
+  
+  function refreshPage() {
+    {
+       window.location.reload();
+     }
+ }
 
   //Functions for selecting department using dropdown
   function handleChange(e) {
@@ -134,6 +129,8 @@ function Addemp() {
     setIsShown((current) => !current);
   };
   const { register, handleSubmit, formState: { errors } } = useForm();
+
+  
   const handleImageSelect = (event) => {
     setImgSrc(event.target.files[0]);
   };
@@ -199,6 +196,7 @@ function Addemp() {
     data.append("age",age);
     data.append("department", selectedDepartment);
     data.append("RNRNO", RNRNO);
+    data.append("selectedLanguages",selectedLanguages);
     data.append("TNMCNO", TNMCNO);
     data.append("ValidlityDate", ValidlityDate);
     data.append("designation", designation);
@@ -226,6 +224,7 @@ function Addemp() {
     let formData = new FormData();
     formData.append("file", proof);
     formData.append("file", certificates);
+    console.log(data)
     try {
       const res = await axios({
         method: "post",
@@ -286,10 +285,11 @@ function Addemp() {
     return new File([u8arr], filename);
   }
 
-  // Validation for forms
-  function validateName(name) {
+   // Validation for forms
+   function validateName(name) {
     let error = "";
-    if (!name.match(/^[a-zA-Z]*$/)) {
+    const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
+    if (!capitalized.match(/^[a-zA-Z]*$/)) {
       error = "*Name should only contain letters";
     }
     return error;
@@ -325,11 +325,12 @@ function Addemp() {
   }
   function validateAadhaarNo(AadhaarNo) {
     let error = "";
-    if (AadhaarNo !== "" && !/^\d{12}$/.test(AadhaarNo)) {
-      error = "*Invalid Aadhaar Number Aadhaar should be 12 Digits";
+    if (AadhaarNo !== "" && !/^(\d{4}\s?){2}\d{4}$/.test(AadhaarNo)) {
+      error = "*Invalid Aadhaar Number. Aadhaar should be 12 Digits with allowed spaces.";
     }
     return error;
   }
+  
   
   
   function validateEmail(email) {
@@ -360,62 +361,207 @@ function Addemp() {
     }
     return error;
   }
-  return (
-    <body className="addemp">
+  const handleOnChangeeducation = (e, index, field) => {
+    const { value } = e.target;
+    setEducationData((prevState) =>
+      prevState.map((data, i) => (i === index ? { ...data, [field]: value } : data))
+    );
+  };
+  const validateMajor = (major) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!major) {
+      return " ";
+    } else if (!regex.test(major)) {
+      return "Only alphabets with spaces allowed in Major field";
+    } else {
+      return null;
+    }
+  };
+  const validateInstitution = (institution) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!institution) {
+      return " ";
+    } else if (!regex.test(institution)) {
+      return "Only alphabets with spaces allowed in Institution field";
+    } else {
+      return null;
+    }
+  };
+  const validateMarks = (marks) => {
+    const regex = /^[0-9]*$/;
+    if (!marks) {
+      return " ";
+    } else if (!regex.test(marks)) {
+      return "Only numbers allowed in Marks field";
+    } else {
+      return null;
+    }
+  };
+  const validateDivision = (division) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    const romanRegex = /^(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i;
+    if (!division) {
+      return " ";
+    } else if (!regex.test(division) && !romanRegex.test(division)) {
+      return "Only alphabets with spaces and roman letters allowed in Division field";
+    } else {
+      return null;
+    }
+  };
+  const validateYear = (year) => {
+    const regex = /^(19|20)\d{2}$/;
+    if (!year) {
+      return " ";
+    } else if (!regex.test(year)) {
+      return "Only valid years allowed in Year of Passing field";
+    } else {
+      return null;
+    }
+  };
+  const handleOnChangeexperience = (e, index, field) => {
+    const { value } = e.target;
+    setExperienceData((prevState) =>
+      prevState.map((data, i) => (i === index ? { ...data, [field]: value } : data))
+    );
+  };
+  const validateOrganization = (organization) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!organization) {
+      return " ";
+    } else if (!regex.test(organization)) {
+      return "Only alphabets with spaces allowed in Organization field";
+    } else {
+      return null;
+    }
+  };
+  const validateexpDesignation = (designation) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!designation) {
+      return " ";
+    } else if (!regex.test(designation)) {
+      return "Only alphabets with spaces allowed in Designation field";
+    } else {
+      return null;
+    }
+  };
+  const validateLastDrawnSalary = (lastDrawnSalary) => {
+    const regex = /^[0-9]*$/;
+    if (!lastDrawnSalary) {
+      return " ";
+    } else if (!regex.test(lastDrawnSalary)) {
+      return "Only numbers allowed in Last Drawn Salary field";
+    } else {
+      return null;
+    }
+  };
+  const validateLocation = (location) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!location) {
+      return " ";
+    } else if (!regex.test(location)) {
+      return "Only alphabets with spaces allowed in Location field";
+    } else {
+      return null;
+    }
+  };
+  const validateExperience = (experience) => {
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}\sto\s(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+    if (!experience) {
+      return " ";
+    } else if (!regex.test(experience)) {
+      return "Experience field should be in the format of 'dd/mm/yyyy to dd/mm/yyyy'";
+    } else {
+      return null;
+    }
+  };
+  const handleOnChangeReference = (e, index, field) => {
+    const { value } = e.target;
+    setReferenceData((prevState) =>
+      prevState.map((data, i) => (i === index ? { ...data, [field]: value } : data))
+    );
+  };
+  const validateReferences = (references) => {
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!references) {
+      return " ";
+    } else if (!regex.test(references)) {
+      return "Only alphabets with spaces allowed in References field";
+    } else {
+      return null;
+    }
+  };
+  function validateMobile(mobile) {
+    let error = "";
+    if (mobile !== "" && !/^[0-9]{10}$/.test(mobile)) {
+      error = "*Mobile Number should only contain 10 digits";
+    }
+    return error;
+  }
+  const validaterefContactNo = (contactNo) => {
+    const isValidPhone = /^\d{10}$/.test(contactNo);
+    const isValidLandline = /^\d{8}$/.test(contactNo);
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactNo);
+    if (contactNo !== "" && !isValidPhone && !isValidLandline && !isValidEmail) {
+      return "Invalid Contact Details";
+    } else {
+      return null;
+    }
+  }
+  const nextPage = () => {
+    setPage(page + 1);
+  };
+
+  const prevPage = () => {
+    setPage(page - 1);
+  };
+ const tabs =[
+  
+  {
+    title: "Personal Details",
+    content:(
       <div>
-        <br />
-        <br />
-        <Row>
-          <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        {page === 1 && (
+        <div>
+         <div className="row">   
+          <div className="col-sm-6"> 
             <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Name</div></label>
-                  <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
-                      type="text"
-                      placeholder="Enter your name"
-                      ref={register("name", { pattern: /^[a-zA-Z]*$/ })}
-                      required
-                      autoComplete="off"
-                      onChange={e => { setName(e.target.value); validateName(e.target.value); }}
-                    />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateName(name) ? <p>{validateName(name)}</p> : null}</div>
-                  </div>
-                </div>
+            <Col>
+            <div className="mb-3">
+            <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Name</div></label>
+            <div className="col-sm-7">
+            <input style={{ borderRadius: 40 ,width:"100%"}}
+                className=" mx-4 form-control"
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                ref={register("name", { pattern: /^[a-zA-Z]*$/ })}
+                required
+                autoComplete="off"
+                onChange={(e) => {
+                setName(e.target.value);
+                validateName(e.target.value);
+                }}
+              />
+              <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
+                {validateName(name) ? <p>{validateName(name)}</p> : null}
+              </div>
+              </div>
+              </div>
               </Col>
             </Form.Field>
-            <br />
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>ID</div></label>
-                  <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
-                      type="text"
-                      placeholder="Enter ID is here"
-                      ref={register("id", { pattern: /^[0-9]*$/ })}
-                      required
-                      autoComplete="off"
-                      onChange={e => { setId(e.target.value); validateId(e.target.value); }}
-                    />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateId(id) ? <p>{validateId(id)}</p> : null}</div>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
-            <br />
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
+          </div>
+          <br/>
+          <div className="col-sm-6">
+        <Form.Field>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label">
                     <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Gender</div>
                   </label>
                   <div>
                     <Radio className="mx-5"
-                      label=' Male'
+                      label='Male'
                       name='gender'
                       value='male'
                       checked={Gender === 'male'}
@@ -427,14 +573,44 @@ function Addemp() {
                       value='female'
                       checked={Gender === 'female'}
                       onChange={e => { setGender(e.target.value); }}
-                    ></Radio>
+                    ></Radio>   
                   </div>
                 </div>
+              </Col>  
+            </Form.Field>
+            </div>
+            </div>
+          <div className="row">   
+          <div className="col-sm-6">
+            <Form.Field>
+            <Col>
+            <div className="mb-3">
+            <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Id</div></label>
+            <div className="col-sm-7">
+            <input style={{ borderRadius: 40 ,width:"100%"}}
+                className=" mx-4 form-control"
+                type="text"
+                value={id}
+                placeholder="Enter ID here"
+                ref={register("id", { pattern: /^[0-9]*$/ })}
+                required
+                autoComplete="off"
+                onChange={(e) => {
+                  setId(e.target.value);
+                  validateId(e.target.value);
+                }}
+              />
+              <div style={{ color: "red", marginLeft: "10%", marginTop: "-4%" }}>
+                {validateId(id) ? <p>{validateId(id)}</p> : null}
+              </div>
+              </div>
+              </div>
               </Col>
             </Form.Field>
-            <br/>
-            <Form.Field>
-    <Col sm={{ span: 12 }}>
+          </div>
+          <div className="col-sm-6">
+          <Form.Field>
+         <Col>
           <div className="mb-3">
           <label className=" mx-3 form-label">
           <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Birth:</div>
@@ -470,15 +646,42 @@ function Addemp() {
                 readOnly
               /></div>
           </div>
-        </Col>
+        </Col> 
         </Form.Field>
+        </div>
+        </div>
+        <br/>
+        <div className="row">
+        <div className="col-sm-6">
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Mobile Number</div></label>
+                  <div className="col-sm-7">
+                    <input style={{ borderRadius: 40 ,width:"100%"}}
+                      className=" mx-4 form-control"
+                      type="text"
+                      value={mobile}
+                      placeholder="Enter your mobile number"
+                      ref={register("mobile", { pattern: /^[0-9]{10}$/ })}
+                      required
+                      autoComplete="off"
+                      onChange={e => { setMobile(e.target.value); validateMobile(e.target.value); }}
+                    />
+                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateMobile(mobile) ? <p>{validateMobile(mobile)}</p> : null}</div>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            </div >
+            <div className="col-sm-6">
+            <Form.Field>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}> BloodGroup:</div></label>
                   <div className="mx-5">
                     <label>
-                      <select value={BloodGroup} onChange={e => { setBloodGroup(e.target.value); }}>
+                      <select className="select-box" value={BloodGroup} onChange={e => { setBloodGroup(e.target.value); }}>
                         <option value="">Select</option>
                         <option value="A+">A+</option>
                         <option value="A-">A-</option>
@@ -494,34 +697,20 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
+            </div>    
+        </div>
+        <br/>
+        <div className="row">
+        <div className="col-sm-6">
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Mobile Number</div></label>
+                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px"}}>Email Id</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%" }}
+                      className=" mx-4 form-control"
                       type="text"
-                      placeholder="Enter your mobile number"
-                      ref={register("mobile", { pattern: /^[0-9]{10}$/ })}
-                      required
-                      autoComplete="off"
-                      onChange={e => { setMobile(e.target.value); validateMobile(e.target.value); }}
-                    />
-                    <div style={{ color: "red", marginLeft: "55%", marginTop: "-4%" }}>{validateMobile(mobile) ? <p>{validateMobile(mobile)}</p> : null}</div>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
-            <br />
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Email Id</div></label>
-                  <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
-                      type="text"
+                      value={email}
                       placeholder="Enter your Email id"
                       ref={register("email", { pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i })}
                       required
@@ -533,15 +722,38 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
+            </div>
+            <div className="col-sm-6">
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
+                <div className="mb-3">
+                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}> Marital Status:</div></label>
+                  <div className="mx-5">
+                    <label>
+                      <select value={Maritalstatus} className="select-box" onChange={e => { setMaritalstatus(e.target.value); }}>
+                        <option value="">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </Col>
+            </Form.Field>
+            </div>
+            </div>
+            <br/>
+            <div className="row">
+            <div className="col-sm-6">
+            <Form.Field>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Address</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"100%" }}
+                      className=" mx-4 form-control"
                       type="text"
+                      value={address}
                       placeholder="Enter your address"
                       ref={register("address", { pattern: /^[0-9/,a-zA-Z- 0-9.]*$/ })}
                       required
@@ -553,29 +765,14 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
-            <br />
+            </div>
+            <div className="col-sm-6">
             <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}> Marital Status:</div></label>
-                  <div className="mx-5">
-                    <label>
-                      <select value={Maritalstatus} onChange={e => { setMaritalstatus(e.target.value); }}>
-                        <option value="">Select</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                      </select>
-                    </label>
-                  </div>
-                </div>
-              </Col>
-            </Form.Field>
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Department</div></label>
                   <div className="col-sm-7">
-                    <select className="w-50 mx-4" form-control style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
+                    <select className="w-60 mx-4" form-control style={{ borderRadius: 40 }} value={selectedDepartment} onChange={handleChange}>
                       <option style={{ textAlign: "center" }} value="" disabled>Select department</option>
                       {departments.map((department, index) => (
                         <option style={{ textAlign: "center" }} key={index} value={department}>
@@ -589,12 +786,12 @@ function Addemp() {
             </Form.Field>
             {selectedDepartment === "DOCTOR" && (
               <Form.Field>
-                <Col sm={{ span: 12 }}>
+                <Col>
                   <div className="mb-3">
                     <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>TnmcNo</div></label>
                     <div className="col-sm-7">
-                      <input style={{ borderRadius: 40 }}
-                        className="w-50 mx-4 form-control"
+                      <input style={{ borderRadius: 40 ,width:"100%"}}
+                        className="mx-4 form-control"
                         type="text"
                         placeholder="Enter your TnmcNo"
                         ref={register("TNMCNO")}
@@ -609,12 +806,12 @@ function Addemp() {
             )}
             {selectedDepartment === "NURSE" && (
               <Form.Field>
-                <Col sm={{ span: 8 }}>
+                <Col>
                   <div className="mb-3">
                     <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>RnrNo</div></label>
                     <div className="col-sm-7">
-                      <input style={{ borderRadius: 40 }}
-                        className="w-50 mx-4 form-control"
+                      <input style={{ borderRadius: 40 ,width:"100%"}}
+                        className=" mx-4 form-control"
                         type="text"
                         placeholder="Enter your RnrNo"
                         ref={register("RNRNO")}
@@ -629,12 +826,12 @@ function Addemp() {
             )}
             {selectedDepartment === "NURSE" && (
               <Form.Field>
-                <Col sm={{ span: 8 }}>
+                <Col>
                   <div className="mb-3">
                     <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>ValidlityDate</div></label>
                     <div className="col-sm-7">
-                      <input style={{ borderRadius: 40 }}
-                        className="w-50 mx-4 form-control"
+                      <input style={{ borderRadius: 40 ,width:"100%"}}
+                        className=" mx-4 form-control"
                         type="text"
                         placeholder="Enter your ValidlityDate"
                         ref={register("ValidlityDate")}
@@ -646,15 +843,21 @@ function Addemp() {
                   </div>
                 </Col>
               </Form.Field>
-            )}
+              )}
+              </div>
+              </div>
+              <br/>
+              <div className="row">
+             <div className="col-sm-6">   
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Designation</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"100%" }}
+                      className=" mx-4 form-control"
                       type="text"
+                      value={designation}
                       placeholder="Enter your designation"
                       ref={register("designation", { pattern: /^[a-zA-Z]*$/ })}
                       required
@@ -665,16 +868,79 @@ function Addemp() {
                   </div>
                 </div>
               </Col>
-            </Form.Field>
-            <br />
+             </Form.Field>
+            </div>    
+            <div className="col-sm-6">
+  <Form.Field>
+    <Col sm={{ span: 12 }}>
+      <div className="mb-3">
+        <label className=" mx-3 form-label">
+          <div
+            className="form-control-label text-muted"
+            style={{
+              font: "caption",
+              fontStyle: "italic",
+              fontFamily: "-moz-initial",
+              fontSize: "20px",
+            }}
+          >
+            Languages
+          </div>
+        </label>
+        <Form.Checkbox
+          className="mx-5"
+          type="checkbox"
+          label="Tamil"
+          value="Tamil"
+          checked={selectedLanguages.includes('Tamil')} 
+          onChange={handleLanguageChange}
+        />
+        <Form.Checkbox
+          className="mx-5"
+          type="checkbox"
+          label="English"
+          value="English"
+          checked={selectedLanguages.includes('English')} 
+          onChange={handleLanguageChange}
+        />
+        <Form.Checkbox
+          className="mx-5"
+          type="checkbox"
+          label="Other"
+          value="Other"
+          checked={selectedLanguages.includes('Other')}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setSelectedLanguages([...selectedLanguages, 'Other']);
+            } else {
+              setSelectedLanguages(
+                selectedLanguages.filter((lang) => lang !== 'Other')
+              );
+            }
+          }}
+        />
+        {selectedLanguages.includes('Other') && (
+          <FormControl
+            className="w-50 mx-4 form-control"
+            type="text"
+            placeholder="Enter other language"
+            onChange={handleOtherLanguageChange}
+          />
+        )}
+      </div>
+    </Col>
+  </Form.Field>
+</div>
+
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Bank Account Number</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"50%"}}
+                      className=" mx-4 form-control"
                       type="text"
+                      value={bankaccnum}
                       placeholder="Enter your Bank account number"
                       ref={register("bankaccnum", { pattern: /^[0-9]{9,18}$/ })}
                       required
@@ -685,16 +951,27 @@ function Addemp() {
                   </div>
                 </div>
               </Col>
+              <button onClick={nextPage} className="next-button">
+              <i className="fa fa-arrow-right"></i>
+            </button>
             </Form.Field>
-            <br />
+            </div>
+            </div>
+           )}
+        
+            {page === 2 && (
+             <div>
+              <div className="row">
+              <div className="col-sm-6">   
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Aadhaarno</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"100%"}}
+                      className="mx-4 form-control"
                       type="text"
+                      value={Aadhaarno}
                       placeholder="Enter your Aadhaarno"
                       ref={register("Aadhaarno")}
                       required
@@ -706,15 +983,35 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
+            </div>
             <br />
+            <div className="col-sm-6"> 
+            <div className="mx-5 form-group">
+                <input id="selectFile" type="file" accept=".pdf" onChange={handleFileSelect} hidden /><b>Choose a PAN or Aadhaar proof :</b>
+                <label for="selectFile" className="mx-4 bi bi-folder-check" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
+                {proof && (
+                  <>
+                    <span className="mx-3">{proof.name}</span>
+                    <button className="btn btn-danger" onClick={handleRemoveFile}>
+                      <i className="fa fa-times"></i>
+                    </button>
+                  </>
+                )}
+              </div>
+</div>
+</div>
+<br/>
+              <div className="row">
+              <div className="col-sm-6"> 
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>PAN No:</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40,width:"100%"}}
+                      className="mx-4 form-control"
                       type="text"
+                      value={PanNo}
                       placeholder="Enter your PAN No"
                       ref={register("PanNo", { pattern: /^[A-Z0-9]*$/ })}
                       required
@@ -726,15 +1023,33 @@ function Addemp() {
                 </div>
               </Col>
             </Form.Field>
+            </div>
             <br/>
+            <div className="col-sm-6"> 
+            <div className="mx-5 form-group">
+                <input id="formFileMultiple" type="file" accept=".pdf" onChange={handleCertificateSelect} multiple hidden /><b>Choose a Certificates (multiple file select) :</b>
+                <label for="formFileMultiple" className="mx-4 bi bi-folder-plus" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
+                {certificates && (
+                  <>
+                    <span className="mx-3">{certificates.name}</span>
+                    <button className="btn btn-danger" onClick={handleRemoveCertificate}>
+                      <i className="fa fa-times"></i>
+                    </button>
+                  </>
+                )}
+              </div>  
+              </div>
+              </div>
+<br/>
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className="mx-3 form-label"><div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Date Of Joining</div></label>
                   <div className="col-sm-7">
-                    <input style={{ borderRadius: 40 }}
-                      className="w-50 mx-4 form-control"
+                    <input style={{ borderRadius: 40 ,width:"50%"}}
+                      className="mx-4 form-control"
                       type="text"
+                      value={dateofjoining}
                       placeholder="Enter your Date Of Joining"
                       ref={register("dateofjoining", { pattern: /^\d{4}-\d{2}-\d{2}$/ })}
                       required
@@ -747,8 +1062,9 @@ function Addemp() {
               </Col>
             </Form.Field>
             <br />
+            <br/>
             <Form.Field>
-              <Col sm={{ span: 8 }}>
+              <Col>
                 <div className="mb-3">
                   <label className=" mx-3 form-label"  >
                     <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Identification Mark</div>
@@ -759,101 +1075,60 @@ function Addemp() {
                       cols="50"
                       name="comment"
                       form="usrform"
+                      value={IdentificationMark}
                       onChange={e => setIdentificationMark(e.target.value)}
                     ></textarea>
                   </div>
                 </div>
               </Col>
             </Form.Field>
-            <Form.Field>
-              <Col sm={{ span: 8 }}>
-                <div className="mb-3">
-                  <label className=" mx-3 form-label"  >
-                    <div className="form-control-label text-muted" style={{ font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }}>Languages</div>
-                  </label>
-                  <Form.Checkbox className="mx-5"
-                    type="checkbox"
-                    label="Tamil"
-                    value="Tamil"
-                    onChange={handleLanguageChange}
-                  />
-                  <Form.Checkbox className="mx-5"
-                    type="checkbox"
-                    label="English"
-                    value="English"
-                    onChange={handleLanguageChange}
-                  />
-                  <Form.Checkbox className="mx-5"
-                    type="checkbox"
-                    label="Other"
-                    value="Other"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedLanguages([...selectedLanguages, "Other"]);
-                      } else {
-                        setSelectedLanguages(selectedLanguages.filter((lang) => lang !== "Other"));
-                      }
-                    }}
-                  />
-                  {selectedLanguages.includes("Other") && (
-                    <FormControl className="w-50 mx-4 form-control"
-                      type="text"
-                      placeholder="Enter other language"
-                      onChange={handleOtherLanguageChange}
-                    />
-                  )}
-                </div>
-              </Col>
-            </Form.Field>
+
+            <div className="row">
+            <div className="col-sm-6"> 
             <div className="mx-5 container" style={{ height: "250px", width: "300px", borderRadius: 40 }}>
               <Webcam style={{ height: "220px", width: "270px", borderRadius: 60 }} audio={false} ref={webcamRef} screenshotFormat="image/jpg" />
             </div>
             <button style={{ marginLeft: "170px", marginTop: "-100px", borderColor: "#B9ADAD" }} className="Click" onClick={Capture}>
               <i className="fa fa-2x fa-camera" aria-hidden="true"></i>
             </button><br /><br />
-            <div style={{ marginLeft: "170px" }}><b>(or)</b></div>
-            <Col sm={{ span: 12 }}>
-              <br />
-              <div className="mx-5 form-group">
-                <input id="selectImage" type="file" onChange={handleImageSelect} hidden /><b>Choose image:</b>
-                <label for="selectImage" className="mx-4 bi bi-cloud-arrow-up" style={{ fontSize: "50px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
-                {imgSrc && (
-                  <>
-                    <span className="mx-3">{imgSrc.name}</span>
-                    <button className="btn btn-danger" onClick={handleRemoveImage}>
-                      <i className="fa fa-times"></i>
-                    </button>
-                  </>
-                )}
-              </div>
-              <br />
-              <div className="mx-5 form-group">
-                <input id="selectFile" type="file" accept=".pdf" onChange={handleFileSelect} hidden /><b>Choose a PAN or Aadhaar proof :</b>
-                <label for="selectFile" className="mx-4 bi bi-folder-check" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
-                {proof && (
-                  <>
-                    <span className="mx-3">{proof.name}</span>
-                    <button className="btn btn-danger" onClick={handleRemoveFile}>
-                      <i className="fa fa-times"></i>
-                    </button>
-                  </>
-                )}
-              </div>
-              <br />
-              <div className="mx-5 form-group">
-                <input id="formFileMultiple" type="file" accept=".pdf" onChange={handleCertificateSelect} multiple hidden /><b>Choose a Certificates (multiple file select) :</b>
-                <label for="formFileMultiple" className="mx-4 bi bi-folder-plus" style={{ fontSize: "40px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
-                {certificates && (
-                  <>
-                    <span className="mx-3">{certificates.name}</span>
-                    <button className="btn btn-danger" onClick={handleRemoveCertificate}>
-                      <i className="fa fa-times"></i>
-                    </button>
-                  </>
-                )}
-              </div>
-              <br />
-              <div><b>EDUCATIONAL QUALIFICATIONS:</b></div><br />
+            </div>
+
+            <div className="col-sm-6">
+            <div style={{ marginLeft: "-100px", marginTop: "130px" }}><b>(or)</b></div>
+
+            <Col>
+            <div style={{ marginTop:"-60px" }} className="mx-5 form-group">
+  <input id="selectImage" type="file" onChange={handleImageSelect} hidden />
+  <b >Choose image:</b>
+  <label htmlFor="selectImage" className="mx-4 bi bi-cloud-arrow-up" style={{ fontSize: "50px", color: "#00A693", opacity: "9.9", WebkitTextStroke: "2.0px", cursor: "pointer" }}></label>
+  {imgSrc && (
+    <>
+      <span className="mx-3">{imgSrc.name}</span>
+      <button className="btn btn-danger" onClick={handleRemoveImage}>
+        <i className="fa fa-times"></i>
+      </button>
+    </>
+  )}
+</div>
+  </Col>
+  </div>
+   </div>
+   <br />
+ <button onClick={prevPage} className="pre-button">
+  <i className="fa fa-arrow-left"></i>
+  </button>
+  </div>
+   )}  
+  </Form> 
+  </div>  
+    )   
+  },
+  {
+  title: "Educational Details",
+  content:(
+      <Form onSubmit={handleSubmit(onSubmit)}>
+      <div>
+ <div><b>EDUCATIONAL QUALIFICATIONS:</b></div><br />
               <table>
                 <thead>
                   <tr>
@@ -872,27 +1147,43 @@ function Addemp() {
                       <td>{data.SlNo}</td>
                       <td>{data.degree}</td>
                       <td>
-                        <input type="text" value={data.major} onChange={(e) => handleOnChange(e, index, "major")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.institution} onChange={(e) => handleOnChange(e, index, "institution")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.marks} onChange={(e) => handleOnChange(e, index, "marks")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.division} onChange={(e) => handleOnChange(e, index, "division")} />
-                      </td>
-                      <td>
-                        <input type="text" value={data.year} onChange={(e) => handleOnChange(e, index, "year")} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <br />
+      <input type="text" value={data.major} onChange={(e) => { handleOnChangeeducation(e, index, "major"); validateMajor(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateMajor(data.major)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.institution} onChange={(e) => { handleOnChangeeducation(e, index, "institution"); validateInstitution(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateInstitution(data.institution)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.marks} onChange={(e) => { handleOnChangeeducation(e, index, "marks"); validateMarks(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateMarks(data.marks)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.division} onChange={(e) => { handleOnChangeeducation(e, index, "division"); validateDivision(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateDivision(data.division)}</div>
+    </td>
+    <td>
+      <input type="text" value={data.year} onChange={(e) => { handleOnChangeeducation(e, index, "year"); validateYear(e.target.value); }} />
+      <div style={{ color: "red" }}>{validateYear(data.year)}</div>
+    </td>
+    </tr>
+     ))}
+     </tbody>
+     </table>
+     </div>
+     <br/>
 
-              <div><b>EXPERIENCE DETAILS:</b></div><br />
+     </Form>
+     
+       )
+     },
+
+  {
+    title: "Experience Details",
+      content:(
+        <Form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+   <div><b>EXPERIENCE DETAILS:</b></div><br />
               <div>
                 <table>
                   <thead>
@@ -910,31 +1201,41 @@ function Addemp() {
                       <tr key={index}>
                         <td>{data.SlNo}</td>
                         <td>
-                          <input type="text" value={data.Organization} onChange={(e) => handleChangeexp(e, index, "Organization")} />
+                        <input type="text" value={data.organization} onChange={(e) => { handleOnChangeexperience(e, index, "organization"); validateOrganization(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateOrganization(data.organization)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.designation} onChange={(e) => handleChangeexp(e, index, "designation")} />
+                        <input type="text" value={data.designation} onChange={(e) => { handleOnChangeexperience(e, index, "designation"); validateDesignation(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateexpDesignation(data.designation)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.lastdrawnsalary} onChange={(e) => handleChangeexp(e, index, "lastdrawnsalary")} />
+                        <input type="text" value={data.lastdrawnsalary} onChange={(e) => { handleOnChangeexperience(e, index, "lastdrawnsalary"); validateLastDrawnSalary(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateLastDrawnSalary(data.lastdrawnsalary)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.location} onChange={(e) => handleChangeexp(e, index, "location")} />
+                        <input type="text" value={data.location} onChange={(e) => { handleOnChangeexperience(e, index, "location"); validateLocation(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateLocation(data.location)}</div>
                         </td>
                         <td>
-                          <input type="text" value={data.experience} onChange={(e) => handleChangeexp(e, index, "experience")} />
+                        <input type="text" value={data.experience} onChange={(e) => { handleOnChangeexperience(e, index, "experience"); validateExperience(e.target.value); }} />
+                        <div style={{ color: "red" }}>{validateExperience(data.experience)}</div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
                 <button class="button25 " onClick={addRow}>Add Row</button>
-              </div>
-              <br />
-
-
-
-              <div><b>REFERENCE OF PREVIOUS COMPANY:</b></div><br />
+                 </div>
+                 </div>
+                </Form>
+          )
+    },
+    {
+      title: "Reference Details",
+        content:(
+          <Form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+    <div><b>REFERENCE OF PREVIOUS COMPANY:</b></div><br />
               <div>
                 <table>
                   <thead>
@@ -947,39 +1248,82 @@ function Addemp() {
                     </tr>
                   </thead>
                   <tbody>
-                    {referenceData.map((data, index) => (
-                      <tr key={index}>
-                        <td>{data.SlNo}</td>
+  {referenceData.map((data, index) => (
+    <tr key={index}>
+      <td>{data.SlNo}</td>
+      <td>
+        <input
+          type="text"
+          value={data.references}
+          onChange={(e) => {
+            handleOnChangeReference(e, index, "references");
+            validateReferences(e.target.value);
+          }}
+        />
+        <div style={{ color: "red" }}>{validateReferences(data.references)}</div>
+      </td>
+      <td>
+        <input
+          type="text"
+          value={data.Organization}
+          onChange={(e) => {
+            handleOnChangeReference(e, index, "Organization");
+            validateReferences(e.target.value);
+          }}
+        />
+        <div style={{ color: "red" }}>{validateReferences(data.Organization)}</div>
+      </td>
+      <td>
+        <input
+          type="text"
+          value={data.designation}
+          onChange={(e) => {
+            handleOnChangeReference(e, index, "designation");
+            validateReferences(e.target.value);
+          }}
+        />
+        <div style={{ color: "red" }}>{validateReferences(data.designation)}</div>
+      </td>
+      <td>
+  <input
+    type="text"
+    value={data.ContactNo}
+    onChange={(e) => {
+      handleOnChangeReference(e, index, "ContactNo");
+      validaterefContactNo(e.target.value);
+    }}
+  />
+   <div style={{ color: "red" }}>{validaterefContactNo(data.ContactNo)}</div>
+</td>
+    </tr>
+  ))}
+</tbody>
+ </table>
+   <button class="button25 " onClick={handleAddRow}>Add Row</button>
+  </div>
+  
+  
+  <button className="button-71 Add-employee-button" role="button" type="submit" onClick={() => { handleClick();}}>ADD EMPLOYEE</button>
 
-                        <td>
-                          <input type="text" value={data.references} onChange={(eve) => handleChangeref(eve, index, "references")} />
-                        </td>
-                        <td>
-                          <input type="text" value={data.Organization} onChange={(eve) => handleChangeref(eve, index, "Organization")} />
-                        </td>
-                        <td>
-                          <input type="text" value={data.designation} onChange={(eve) => handleChangeref(eve, index, "designation")} />
-                        </td>
-                        <td>
-                          <input type="text" value={data.ContactNo} onChange={(eve) => handleChangeref(eve, index, "ContactNo")} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <button class="button25 " onClick={handleAddRow}>Add Row</button>
-              </div>
-              <br />
 
+     </div>  
+  
+     </Form>
+      
+        )
+        
+      },
+      // <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>   
+ ]
 
-              <button className="button-71" role="button" type="submit" onClick={() => { handleClick() }}>ADD EMPLOYEE</button>
-            </Col>
-            <br />
-          </Form>
-        </Row>
-        <div style={{ marginLeft: "800px", font: "caption", fontStyle: "italic", fontFamily: "-moz-initial", fontSize: "20px" }} className="message">{message ? <p>{message}</p> : null}</div>
+  return (
+    <body className="Addemp">
+      
+      <div className="App">
+        <VerticalTabs tabs={tabs} />
       </div>
-    </body >
+   
+    </body>
   );
 }
 export default Addemp;

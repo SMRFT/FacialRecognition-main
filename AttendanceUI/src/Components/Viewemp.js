@@ -11,9 +11,14 @@ import { useMemo } from "react";
 import Card from 'react-bootstrap/Card';
 import "./Viewemp.css";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import MUIButton from '@material-ui/core/Button';
+import axios from 'axios';
+import Summary from "./Summary";
+import { IconButton } from '@material-ui/core';
 ///view employee
 const Home = () => {
+
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [users, setUsers] = useState({ blogs: [] });
@@ -32,7 +37,13 @@ const Home = () => {
       );
   }, []);
 
-  
+const [showModal, setShowModal] = useState(false);
+const handleShowModal = () => {
+  setShowModal(true);
+};
+const handleCloseModal = () => {
+  setShowModal(false);
+};
   //hide and show actions
   const showActionsBoxRef = useRef(null); // Ref for the showActionsBox element
   // const [showActionsBox, setShowActionsBox] = useState(false);
@@ -115,20 +126,38 @@ const fetchData = useCallback(() => {
       }
     );
 }, []);
-// Call the fetchData function when the component mounts
-useEffect(() => {
-  fetchData();
-}, [fetchData]);
+
   ///search employee
   const [searchString, setSearchString] = useState("");
-  const filteredResults = users.blogs && users.blogs.filter((singleEmpObject) => {
-    return Object.values(singleEmpObject).some((val) =>
-      val && val.toString().toLowerCase().includes(searchString.toString().toLowerCase())
-    );
-  });
-  const countFilteredResults = filteredResults.length;
-  const countData = users.blogs.length; 
-// State to keep track of the current page
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [countFilteredResults, setCountFilteredResults] = useState(0);
+  const [countData, setCountData] = useState(0);
+  const [imageSrc, setImageSrc] = useState([]);
+ 
+  useEffect(() => {
+    const fetchFilteredResults = () => {
+      const filteredResults = users.blogs && users.blogs.filter((singleEmpObject) => {
+        return Object.values(singleEmpObject).some((val) =>
+          val && val.toString().toLowerCase().includes(searchString.toString().toLowerCase())
+        );
+      }).map((empObject) => {
+        const profile_picture_id = empObject.profile_picture_id;
+        return {
+          ...empObject,
+          profile_picture_id
+        };
+      });
+      setFilteredResults(filteredResults);
+      setCountFilteredResults(filteredResults.length);
+      setCountData(users.blogs.length);
+    };
+  
+    fetchFilteredResults();
+  }, [searchString, users.blogs]);
+  
+  // Fetch image blobs and update state
+
+  
 const [activePage, setActivePage] = useState(1);
 // Function to handle page change
 const handlePageChange = (pageNumber) => {
@@ -141,10 +170,23 @@ const handleclicktosummary = () => {
   navigate('/Admin/Summary'); // Navigate to login page after logout
 }
 // Number of items to show per page
-const ITEMS_PER_PAGE = 12;
+// const [activePage, setActivePage] = useState(1);
+const [itemsPerPage, setItemsPerPage] = useState(10);
+// const handlePageChange = (pageNumber) => {
+//   setActivePage(pageNumber);
+// };
+const handleItemsPerPageChange = (event) => {
+  setItemsPerPage(parseInt(event.target.value));
+  setActivePage(1);
+};
+const startIndex = (activePage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const displayedResults = filteredResults.slice(startIndex, endIndex);
+// Number of items to show per page
+const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 // Get the index of the first and last items to show on the current page
-const indexOfLastItem = activePage * ITEMS_PER_PAGE;
-const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+const indexOfLastItem = activePage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 // Slice the filtered results to show only the items for the current page
 const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem);
   if (error) {
@@ -178,23 +220,38 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
 
 
 
-<button className="add-emp-button" onClick={handleclicktoaddemp}>
-  <span className="add-icon">&#43;</span>
-  Add Employee
+<button className="add-emp-button"  style={{marginLeft:"35%",marginTop:"-3.9%"}} onClick={handleclicktoaddemp}>
+  <PersonAddIcon style={{ fontSize: 40 }} />
 </button>
-<MUIButton
-style={{marginLeft:"55%",marginTop:"-3.9%"}}
-  variant="contained"
-  color="primary"
-  startIcon={<CloudDownloadIcon />}
-  onClick={handleclicktosummary}
->
-  summary
-  </MUIButton>
 
+  <>
+  <MUIButton
+  style={{marginLeft:"30%",marginTop:"-3.9%"}}
+  color="primary"
+  onClick={handleShowModal}
+>
+<CloudDownloadIcon style={{ fontSize: 60 }} />
+  <span style={{ marginLeft: '5px' }}></span>
+</MUIButton>
+
+      <Modal show={showModal} onHide={handleCloseModal} className="summary-modal">
+        <Modal.Header closeButton>
+          <Modal.Title>Summary</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Summary />
+        </Modal.Body>
+        <Modal.Footer style={{ height: "40px" }}>
+  <Button variant="danger" onClick={handleCloseModal} style={{ width: "100px", fontSize: "15px", marginTop:"-18px" }}>
+    Close
+  </Button>
+</Modal.Footer>
+
+      </Modal>
+    </>
    <div className="row">
     {paginatedResults.map((user) => (
-   <div className="col-md-2 mb-2" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
+   <div className="col-md-3 mb-2" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
     <Card md={4} className="employee"><br/>
    <div><i style={{float:"right",marginRight:'5%',marginTop:"2%",cursor:"pointer"}} onClick={() => handleHide(user)} className="fa fa-ellipsis-h"></i>
    <div style={{ float: "right", marginRight: "5%" }}>
@@ -265,11 +322,16 @@ style={{marginLeft:"55%",marginTop:"-3.9%"}}
         </Link><br/>
         </div> )}
         </div><br/><br/>
-      <Card.Img style={{ display: "block", margin:"auto", width:"90px", height:"90px", borderRadius:"50%" }}
-        src={`http://localhost:7000${user.imgSrc}`} className="rounded-circle" />
+        <img src={`http://localhost:7000/attendance/profile_image?profile_picture_id=${user.profile_picture_id}`}   style={{
+            display: "block",
+            margin: "auto",
+            width: "90px",
+            height: "90px",
+            borderRadius: "50%",
+          }} alt="Profile Picture" />
       <Card.Body>
         <Card.Title><center style={{color:"#525E75",font:"caption",fontWeight:"bold",fontFamily:"sans-serif",fontSize:"14px"}}>{user.name}</center></Card.Title>
-        <Card.Text>
+        <Card.Text>        
         <div><center style={{color:"#BFBFBF",font:"caption",fontFamily:"initial"}}>{user.id}</center>
         <center style={{color:"#BFBFBF",font:"caption",fontFamily:"initial"}}>{user.designation}</center></div><br/>
         <Button style={{backgroundColor:"#ECFCFF",color:"black",width:"100%",borderColor:"#C8E6F5"}}>
@@ -295,9 +357,21 @@ style={{marginLeft:"55%",marginTop:"-3.9%"}}
       dialogClassName="modal-100w"
       aria-labelledby="example-custom-modal-styling-title"
     >
+      {selectedUser && (
       <Modal.Header closeButton>
-        <Modal.Title style={{color:"green"}}>Edit Employee</Modal.Title>
+          <Modal.Title style={{color:"darkgreen",fontWeight:"bold"}}>Edit Employee</Modal.Title>
+          <div key={selectedUser.id}>
+            <img
+              src={`http://localhost:7000/attendance/profile_image?profile_picture_id=${selectedUser.profile_picture_id}`}
+              className="empprofile"
+              alt="profile"
+            />
+          </div>
+          <div className="empname">
+            {selectedUser.name + "_" + selectedUser.id}
+          </div>
       </Modal.Header>
+      )}
       <Modal.Body>
         <EditForm theuser={selectedUser} />
       </Modal.Body>
@@ -306,20 +380,30 @@ style={{marginLeft:"55%",marginTop:"-3.9%"}}
     </div>
     ))}
     </div>
-    
+    <div>
     <div className="pagination-container">
-          <Pagination
-                activePage={activePage}
-                itemsCountPerPage={ITEMS_PER_PAGE}
-                totalItemsCount={filteredResults.length}
-                pageRangeDisplayed={12}
-                onChange={handlePageChange}
-                itemClass="page-item"
-                linkClass="page-link"
-                prevPageText="Prev"
-                nextPageText="Next"
-              />
-          </div>
+      <span>Views per page: </span>
+      <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+        {ITEMS_PER_PAGE_OPTIONS.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <Pagination
+        activePage={activePage}
+        itemsCountPerPage={itemsPerPage}
+        totalItemsCount={filteredResults.length}
+        pageRangeDisplayed={20}
+        onChange={handlePageChange}
+        itemClass="page-item"
+        linkClass="page-link"
+        prevPageText="Prev"
+        nextPageText="Next"
+        selectableRows
+      />
+    </div>
+    </div>
     </body >
     );
   }
