@@ -24,8 +24,28 @@ function Admincalendar() {
   const sub = name.split('_');
   const id = sub[1]
   const name1 = sub[0]
-  let image = ''
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(null);
+  const [employee, setEmployee] = useState(null);
+ 
+  useEffect(() => {
+    const apiUrl = `http://127.0.0.1:7000/attendance/showemp?id=${id}`;
 
+    fetch(apiUrl)
+      .then((res) => res.json())
+      .then(
+        (data) => {
+          console.log(data);
+          setEmployee(data);
+          setIsLoaded(true);
+        },
+        (error) => {
+          console.error(error);
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+  }, [id]);
   let [summarydata, setSummaryData] = useState([
     { workingdays: ' ', leavedays: ' ', overtime: ' ' }
   ]);
@@ -234,7 +254,7 @@ useEffect(() => {
     getuserdata(nextMonth, nextMonthYear);
   }
   
-  image = "http://localhost:7000/media/my_Employee/picture/" + name1+"_"+id+ ".jpg"
+  // const image = "http://localhost:7000/attendance/profile_image" + employee.profile_picture_id;
   //Active link function to keep the navlink active when clicked
 
   return (
@@ -275,10 +295,15 @@ useEffect(() => {
 
 
       <br />
-      <div class="profile">
-        <img src={`${image}`} class="center" alt="profile" />
-        <div class="name">{name1}</div>
-      </div>
+      <div className="profile">
+  <img
+    src={`http://localhost:7000/attendance/profile_image?profile_picture_id=${employee?.profile_picture_id}`}
+    className="center"
+    alt="profile"
+  />
+  <div className="name">{name1}</div>
+</div>
+
       <br />
 
       <br />
@@ -292,102 +317,6 @@ useEffect(() => {
           ></CSVLink>
         </i>
       </div>
-
-
-
-      {/* <i style={{ color: "green", fontSize: "35px", marginBottom: "200px", marginLeft: "1850px" }} onClick={() => setShow(true)} data-toggle="modal" className="bi bi-journal-text" /> */}
-      {/* <div className='modal-dialog'>
-        <Modal show={show} onHide={handleClose} >
-          <Modal.Header closeButton style={{ backgroundColor: '', color: 'white' }}>
-            <Modal.Title style={{ color: 'Green' }}>SUMMARY</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="container1">
-              <div className="col">
-                <div className="col">
-                  <b>Employee Id: </b>{empid.id}
-                </div>
-                <br />
-                <div className="col">
-                  <b>Name: </b>{name1}
-                </div>
-                <br />
-              </div>
-              <div className="col">
-                <div className="col">
-                  <b>Working Days: </b>{summarydata.workingdays}
-                </div>
-                <br />
-                <div className="col">
-                  <b>Over Time Days: </b>{summarydata.overtime} <i style={{ color: "green", fontSize: "20px", cursor: "pointer" }} onClick={() => setOtbox(!Otbox)} className={`bi ${Otbox ? 'bi-file-minus' : 'bi-file-plus'}`}></i>
-                </div>
-                <br />
-                <div className="col">
-                  <b>leave Days: </b>
-                  <span style={{ color: '' }}>{summarydata.leavedays}</span>
-                  <i style={{ color: "green", fontSize: "20px", cursor: "pointer" }} onClick={() => setleavebox(!leavebox)} className={`bi ${leavebox ? 'bi-file-minus' : 'bi-file-plus'}`}></i>
-                </div>
-              </div>
-
-              <div className="col">
-                <div className="col">
-                  {Otbox &&
-                    <Fade in={Otbox}>
-                      <ReactBootStrap.Table striped
-                        bordered="danger"
-                        borderColor="danger"
-                        hover
-                        variant="success">
-                        <thead>
-                          <tr>
-                            <th>Overtime Date</th>
-                            <th>Worked Hours</th>
-                            <th>Overtime Hours</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr key={id}>
-                            <td>{summarydata.overtimedate}</td>
-                            <td>{summarydata.workedhours}</td>
-                            <td>{summarydata.overtimehours}</td>
-                          </tr>
-                        </tbody>
-                      </ReactBootStrap.Table>
-                    </Fade>
-                  }
-                </div>
-                <div className="col">
-                  {leavebox && (
-                    <Fade in={leavebox}>
-                      <ReactBootStrap.Table striped
-                        bordered="danger"
-                        borderColor="danger"
-                        hover
-                        variant="success">
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {summarydata.leavedates.split('\n').map((date, index) => (
-                            <tr key={index}>
-                              <td style={{ border: '1px solid black', padding: '5px', borderRadius: '5px' }}>{date}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-
-                      </ReactBootStrap.Table>
-                    </Fade>
-                  )}
-
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-        </Modal>
-
-      </div> */}
       <div className={"toolbar"}>
         <button style={{ borderRadius: 10 }} class="previous" type="button" onClick={ev => previous()}>PREVIOUS</button>
         <button style={{ borderRadius: 10 }} class="next" type="button" onClick={ev => next()}>NEXT</button>

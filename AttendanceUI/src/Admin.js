@@ -20,7 +20,7 @@ function Admin(props) {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [role, setRole] = useState('');
-  console.log(email, name, mobile, role);
+  // console.log(email, name, mobile, role);
   const [showTooltip, setShowTooltip] = useState(false);
   const handleLogout = () => {
     navigate('/Adminlogin'); // Navigate to login page after logout
@@ -65,9 +65,12 @@ function Admin(props) {
     fetchUserData();
   }, []);
     // console.log(user) 
+
     return (
-      
+   
+    
       <div>
+        
   <style>{'body { background-color: rgb(255, 255, 255); }'}</style>
   <div className='main'></div>
   {/* <div className='logo'>
@@ -111,6 +114,8 @@ function Admin(props) {
     
             {/* <Footer /> */}
         </div>
+       
     );
+
 }
 export default Admin;

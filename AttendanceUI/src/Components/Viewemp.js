@@ -11,14 +11,12 @@ import { useMemo } from "react";
 import Card from 'react-bootstrap/Card';
 import "./Viewemp.css";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import MUIButton from '@material-ui/core/Button';
-import axios from 'axios';
 import Summary from "./Summary";
 import { IconButton } from '@material-ui/core';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 ///view employee
 const Home = () => {
-
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [users, setUsers] = useState({ blogs: [] });
@@ -36,14 +34,6 @@ const Home = () => {
         }
       );
   }, []);
-
-const [showModal, setShowModal] = useState(false);
-const handleShowModal = () => {
-  setShowModal(true);
-};
-const handleCloseModal = () => {
-  setShowModal(false);
-};
   //hide and show actions
   const showActionsBoxRef = useRef(null); // Ref for the showActionsBox element
   // const [showActionsBox, setShowActionsBox] = useState(false);
@@ -56,7 +46,6 @@ const handleCloseModal = () => {
     setShowActionsBox(!showActionsBox);
     setSelectedUseraction(user);
   };
-
   const handleOutsideClick = (event) => {
     if (
       showActionsBoxRef.current &&
@@ -65,24 +54,41 @@ const handleCloseModal = () => {
       setShowActionsBox(false);
     }
   };
-
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
-  //edit employee
+  function refreshPage() {
+    {
+      window.location.reload();
+    }
+  }
+  // // //edit employee
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  useEffect(() => {
+  const handleModalClose = () => {
     handleClose();
-  }, []);
+    window.location.reload(); // Reload the page when the modal is closed
+  };
   const [selectedUser, setselectedUser] = useState(null);
   const editEmployee = async (selectedEmployee) => {
     setselectedUser(selectedEmployee);
     setShow(true);
   };
+//summary model code:
+const [showModal, setShowModal] = useState(false);
+const handleShowModal = () => {
+  setShowModal(true);
+};
+const handleCloseModal = () => {
+  setShowModal(false);
+};
+//Navigate to EditForm
+const EditForm = useNavigate();
+const navigateToEditForm = () => {
+};
   //Navigate to Calendar
   const navigate = useNavigate();
   const navigateToCalendar = () => {
@@ -126,59 +132,61 @@ const fetchData = useCallback(() => {
       }
     );
 }, []);
+ // initially set to "active"
 
-  ///search employee
+
+
+// Call the fetchData function when the component mounts
+// refresh the details every 3 minutes
+useEffect(() => {
+  fetchData();
+  // const interval = setInterval(() => {
+  //   fetchData();
+  // }, 10000); // 3 minutes = 180000 milliseconds
+  // return () => clearInterval(interval);
+}, [fetchData]);
+   ///search employee
+  const [listType, setListType] = useState("all");
+
   const [searchString, setSearchString] = useState("");
-  const [filteredResults, setFilteredResults] = useState([]);
-  const [countFilteredResults, setCountFilteredResults] = useState(0);
-  const [countData, setCountData] = useState(0);
-  const [imageSrc, setImageSrc] = useState([]);
- 
-  useEffect(() => {
-    const fetchFilteredResults = () => {
-      const filteredResults = users.blogs && users.blogs.filter((singleEmpObject) => {
-        return Object.values(singleEmpObject).some((val) =>
-          val && val.toString().toLowerCase().includes(searchString.toString().toLowerCase())
-        );
-      }).map((empObject) => {
-        const profile_picture_id = empObject.profile_picture_id;
-        return {
-          ...empObject,
-          profile_picture_id
-        };
-      });
-      setFilteredResults(filteredResults);
-      setCountFilteredResults(filteredResults.length);
-      setCountData(users.blogs.length);
-    };
+  const filteredResults = users.blogs && users.blogs.filter((employee) => {
+    // Check if employee name or ID matches the search string
+    const matchesSearch = Object.values(employee).some((value) =>
+      value?.toString().toLowerCase().includes(searchString?.toString().toLowerCase() ?? "")
+    );
   
-    fetchFilteredResults();
-  }, [searchString, users.blogs]);
+    // Check if employee is active or not active, depending on the listType state
+    if (listType === "active") {
+      return employeesActive.some((activeEmployee) => activeEmployee.id === employee.id) && matchesSearch;
+    } else if (listType === "all") {
+      return matchesSearch;
+    } else {
+      return employeesNotActive.some((notActiveEmployee) => notActiveEmployee.id === employee.id) && matchesSearch;
+    }
+  });
   
-  // Fetch image blobs and update state
+  
+  
+  const countFilteredResults = filteredResults.length;
+  const countData = users.blogs.length;
 
-  
+
+
+
+// State to keep track of the current page
 const [activePage, setActivePage] = useState(1);
+const [itemsPerPage, setItemsPerPage] = useState(10);
 // Function to handle page change
 const handlePageChange = (pageNumber) => {
   setActivePage(pageNumber);
 };
-const handleclicktoaddemp = () => {
-  navigate('/Admin/addemp'); // Navigate to login page after logout
-}
-const handleclicktosummary = () => {
-  navigate('/Admin/Summary'); // Navigate to login page after logout
-}
-// Number of items to show per page
-// const [activePage, setActivePage] = useState(1);
-const [itemsPerPage, setItemsPerPage] = useState(10);
-// const handlePageChange = (pageNumber) => {
-//   setActivePage(pageNumber);
-// };
 const handleItemsPerPageChange = (event) => {
   setItemsPerPage(parseInt(event.target.value));
   setActivePage(1);
 };
+const handleclicktoaddemp = () => {
+  navigate('/Admin/addemp'); // Navigate to login page after logout
+}
 const startIndex = (activePage - 1) * itemsPerPage;
 const endIndex = startIndex + itemsPerPage;
 const displayedResults = filteredResults.slice(startIndex, endIndex);
@@ -195,7 +203,7 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
     return <div>Loading...</div>;
   } else {
     return (
-      <body className="viewemp">
+      <body  className="viewemp">
         <br />
         <div class="input-container3" style={{ width: "200px", float: "right", marginTop: "-4%",marginRight:"88%"}}>
         <input
@@ -218,40 +226,30 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
   )}
 </div>
 
-
-
-<button className="add-emp-button"  style={{marginLeft:"35%",marginTop:"-3.9%"}} onClick={handleclicktoaddemp}>
-  <PersonAddIcon style={{ fontSize: 40 }} />
-</button>
-
-  <>
-  <MUIButton
-  style={{marginLeft:"30%",marginTop:"-3.9%"}}
+<div>
+  <label htmlFor="listType">Employee:</label>
+  <select id="listType" style={{ borderRadius: 60 }} value={listType} onChange={(e) => setListType(e.target.value)}>
+    <option value="all">All Employees</option>
+    <option value="active">Active Employees</option>
+    <option value="notActive">Not Active Employees</option>
+  </select>
+</div>
+<MUIButton
+  style={{marginLeft:"30%",marginTop:"-4%"}}
   color="primary"
   onClick={handleShowModal}
 >
 <CloudDownloadIcon style={{ fontSize: 60 }} />
   <span style={{ marginLeft: '5px' }}></span>
 </MUIButton>
+<button className="add-emp-button"  style={{marginLeft:"35%",marginTop:"-3.6%"}} onClick={handleclicktoaddemp}>
+  <PersonAddIcon style={{ fontSize: 40 }} />
+</button>
 
-      <Modal show={showModal} onHide={handleCloseModal} className="summary-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Summary</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Summary />
-        </Modal.Body>
-        <Modal.Footer style={{ height: "40px" }}>
-  <Button variant="danger" onClick={handleCloseModal} style={{ width: "100px", fontSize: "15px", marginTop:"-18px" }}>
-    Close
-  </Button>
-</Modal.Footer>
-
-      </Modal>
-    </>
+<br/>
    <div className="row">
     {paginatedResults.map((user) => (
-   <div className="col-md-3 mb-2" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
+   <div className="col-md-3 mb-3" key={user.id} style={{  padding: "10px", borderRadius: "5px" }}>
     <Card md={4} className="employee"><br/>
    <div><i style={{float:"right",marginRight:'5%',marginTop:"2%",cursor:"pointer"}} onClick={() => handleHide(user)} className="fa fa-ellipsis-h"></i>
    <div style={{ float: "right", marginRight: "5%" }}>
@@ -317,7 +315,7 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
             data-toggle="modal"
             style={{border:"none"}}
           >
-          <i className="bi bi-file-earmark-text"></i><div style={{color:"#7F8487",float:"right",marginLeft:"10px"}}> Files</div>
+          <i className="bi bi-file-earmark-text"></i><div style={{color:"#7F8487",float:"right",marginLeft:"10px"}}>Files</div>
           </button>
         </Link><br/>
         </div> )}
@@ -380,6 +378,24 @@ const paginatedResults = filteredResults.slice(indexOfFirstItem, indexOfLastItem
     </div>
     ))}
     </div>
+    <>
+
+
+      <Modal show={showModal} onHide={handleCloseModal} className="summary-modal">
+        <Modal.Header closeButton>
+          <Modal.Title>Summary</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Summary />
+        </Modal.Body>
+        <Modal.Footer style={{ height: "40px" }}>
+  <Button variant="danger" onClick={handleCloseModal} style={{ width: "100px", fontSize: "15px", marginTop:"-18px" }}>
+    Close
+  </Button>
+</Modal.Footer>
+
+      </Modal>
+    </>
     <div>
     <div className="pagination-container">
       <span>Views per page: </span>

@@ -23,8 +23,8 @@ from django.db.models import Count
 from rest_framework.decorators import api_view
 from .constants import Login, Logout
 from django.db.models.functions import TruncDate
-from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours,DeletedEmployee
-from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer,EmployeeSerializer,EmployeeHoursSerializer,DeletedEmployeeSerializer
+from AttendanceApp.models import Employee, Admincalendarlogin, Hour, Breakhours, DeletedEmployee
+from AttendanceApp.serializers import AdmincalendarSerializer, EmployeeShowSerializer, CalendarSerializer,  EmployeedesignationSerializer, EmployeeShowbydesignationSerializer, HourcalendarSerializer, SummarySerializer, EmployeeexportSerializer, SummaryexportSerializer, BreakhoursSerializer, EmployeeSerializer, EmployeeHoursSerializer, DeletedEmployeeSerializer
 from django.db.models import Q
 import json
 import calendar
@@ -55,7 +55,6 @@ class RetriveEmp(APIView):
             emp_details = Employee.objects.all()
             serializer = EmployeeShowSerializer(emp_details, many=True)
             return Response(serializer.data)
-
 
 
 # Retrieve Employee By Id
@@ -89,9 +88,10 @@ class EmployeeEditView(APIView):
         employee.TNMCNO = data["TNMCNO"]
         employee.ValidlityDate = data["ValidlityDate"]
         employee.educationData = data["educationData"]
-        
+
         # Get the GridFS instance
-        client = MongoClient("mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority")
+        client = MongoClient(
+            "mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority")
         db = client["data"]
         fs = GridFS(db)
 
@@ -99,19 +99,23 @@ class EmployeeEditView(APIView):
         if 'proof' in request.FILES:
             proof_file = request.FILES['proof']
             file_contents1 = proof_file.read()
-            existing_proof_file = fs.find_one({"employee_id": employee.id, "filename": employee.name + "_" + employee.id + "_proof.pdf"})
+            existing_proof_file = fs.find_one(
+                {"employee_id": employee.id, "filename": employee.name + "_" + employee.id + "_proof.pdf"})
             if existing_proof_file:
                 fs.delete(existing_proof_file._id)
-            proof_file_id = fs.put(file_contents1, filename=employee.name + "_" + employee.id + "_proof.pdf", employee_id=employee.id, employee_name=employee.name)
+            proof_file_id = fs.put(file_contents1, filename=employee.name + "_" + employee.id +
+                                   "_proof.pdf", employee_id=employee.id, employee_name=employee.name)
 
         # Delete existing certificates file and insert the new certificates file
         if 'certificates' in request.FILES:
             certificates_file = request.FILES['certificates']
             file_contents = certificates_file.read()
-            existing_certificates_file = fs.find_one({"employee_id": employee.id, "filename": employee.name + "_" + employee.id + "_certificate.pdf"})
+            existing_certificates_file = fs.find_one(
+                {"employee_id": employee.id, "filename": employee.name + "_" + employee.id + "_certificate.pdf"})
             if existing_certificates_file:
                 fs.delete(existing_certificates_file._id)
-            certificates_file_id = fs.put(file_contents, filename=employee.name + "_" + employee.id + "_certificate.pdf", employee_id=employee.id, employee_name=employee.name)
+            certificates_file_id = fs.put(file_contents, filename=employee.name + "_" + employee.id +
+                                          "_certificate.pdf", employee_id=employee.id, employee_name=employee.name)
 
         employee.save()
         return Response("Updated Successfully")
@@ -166,7 +170,8 @@ class AdmincalendarlogoutView(APIView):
     @csrf_exempt
     def put(self, request, *args, **kwargs):
         data = request.data
-        user = (Admincalendarlogin.objects.get(id=data["id"], date=data["date"]))
+        user = (Admincalendarlogin.objects.get(
+            id=data["id"], date=data["date"]))
         user.name = data["name"]
         user.end = data["end"]
         user.date = data["date"]
@@ -246,7 +251,7 @@ class RetrieveCalendarDataById(APIView):
                     employee['barColor'] = 'yellow'
             # Add 'text' key to employee dictionary if it doesn't exist
             if 'text' not in employee:
-                employee['text'] ="Event"
+                employee['text'] = "Event"
             employee["id"] = emp_id
         serializers = HourcalendarSerializer(employeelist, many=True)
         return Response(serializers.data)
@@ -267,8 +272,6 @@ class Summary(APIView):
 
         # Calculating leave days (finding missing dates using dataframe)
 
-
-
         def leavedays():
             data = employeedata.values("date")
             df = pd.DataFrame(data)
@@ -278,9 +281,10 @@ class Summary(APIView):
             # print(todayDate)
             start_date = todayDate.replace(day=1)
             # print("start",start_date)
-            end_date =todayDate
+            end_date = todayDate
             # print(end_date)
-            xy = pd.date_range(start=start_date, end=end_date).difference(df.index)
+            xy = pd.date_range(
+                start=start_date, end=end_date).difference(df.index)
             return len(xy)
 
         # Calculating Overtime and overtime details
@@ -317,8 +321,9 @@ class Summary(APIView):
             df.index = pd.to_datetime(df.index)
             todayDate = datetime.date.today()
             start_date = todayDate.replace(day=1)
-            end_date =todayDate
-            xy = pd.date_range(start=start_date, end=end_date).difference(df.index)
+            end_date = todayDate
+            xy = pd.date_range(
+                start=start_date, end=end_date).difference(df.index)
             leave_dates = " ".join(date.strftime("%Y-%m-%d") for date in xy)
             return leave_dates
 
@@ -384,7 +389,7 @@ class RetriveEmployeeexport(APIView):
                 "workedhours": str(worked_hours),
                 "Breakhour": str(break_hours),
                 "overtimehours": str(overtime_hours),
-                "hour": str(hour),
+                "Total_hours_worked": str(hour),
                 "leavetype": leavetype
             })
         # Serialize the employee details list and return the response
@@ -394,22 +399,27 @@ class RetriveEmployeeexport(APIView):
 
 # Export Calendar Details (Summary export for download outside the calendar(Employee details))
 # This view is for exporting overall employee details per month
+# Export Calendar Details (Summary export for download outside the calendar(Employee details))
+# This view is for exporting overall employee details per month
+
+
 class RetriveSummaryExport(APIView):
     def post(self, request):
         data = request.data
         month = data["month"]
         year = data["year"]
-        selected_department = data.get("department", "") # get the selected department value
+        # get the selected department value
+        selected_department = data.get("department", "")
         # Get all employees who have logged in during the specified month and year
-        emp_data = Admincalendarlogin.objects.filter(Q(month=month) & Q(year=year)).values()
-        # print("empdata::",emp_data )
+        emp_data = Admincalendarlogin.objects.filter(
+            Q(month=month) & Q(year=year)).values()
         emp_ids = emp_data.values_list("name", flat=True).distinct()
-                # Define an empty queryset
+        # Define an empty queryset
         queryset = Employee.objects.none()
         if selected_department:
             queryset = queryset.filter(department=selected_department)
         emp_ids = emp_data.values_list("name", flat=True).distinct()
-         # Create a list to store the details for each employee
+        # Create a list to store the details for each employee
         emp_details = []
         for emp_id in emp_ids:
             # Split the name and id of the employee
@@ -431,18 +441,20 @@ class RetriveSummaryExport(APIView):
                     end_time = employee["end"]
                     hour = end_time - start_time
                     if hour > timedelta(hours=8):
-                        overtime_days += (hour - timedelta(hours=8)).total_seconds() / 3600
-                        # print(overtime_days)
+                        overtime_days += (hour - timedelta(hours=8)
+                                          ).total_seconds() / 3600
                     # Check if the event occurred on a Sunday
                     if start_time.weekday() == 6:
                         working_days += 1
-                        weekoff_used += 1# Increment weekoff_used since it's a working day on Sunday
+                        weekoff_used += 1  # Increment weekoff_used since it's a working day on Sunday
                     else:
                         working_days += 1
                 elif employee["leavetype"] == "CL":
                     cl_taken += 1
                 elif employee["leavetype"] == "SL":
                     sl_taken += 1
+             # Get the number of days in the specified month and year
+            days_in_month = calendar.monthrange(year, month)[1]
             # Calculate the total number of Sundays in the month
             month_calendar = calendar.monthcalendar(year, month)
             total_sundays = sum(1 for week in month_calendar if week[6] != 0)
@@ -451,13 +463,16 @@ class RetriveSummaryExport(APIView):
             today = datetime.date.today()
             if month == today.month and year == today.year:
                 month_days = today.day
-            # Calculate the number of leave days
-            loss_of_pay = month_days - working_days
             # # Update the total_weekoff and weekoff_used variables
             total_weekoff += total_sundays
+            remaining_weekoff = total_weekoff - weekoff_used
+            # Calculate the number of leave days
+            loss_of_pay = days_in_month - \
+                (working_days + cl_taken + sl_taken + remaining_weekoff)
             # Add the details for the employee to the list
             if id:
-                emp_det = Employee.objects.filter(id=id).values('department','designation')
+                emp_det = Employee.objects.filter(
+                    id=id).values('department', 'designation')
                 if emp_det:
                     department = emp_det[0]['department']
                     designation = emp_det[0]['designation']
@@ -467,7 +482,8 @@ class RetriveSummaryExport(APIView):
             else:
                 department = None
                 designation = None
-            if not selected_department or department == selected_department:  # add the employee details only if they belong to the selected department or if no department is selected
+            # add the employee details only if they belong to the selected department or if no department is selected
+            if not selected_department or department == selected_department:
                 # Create a dictionary to store the details for the employee
                 emp_dict = {
                     "id": id,
@@ -483,13 +499,15 @@ class RetriveSummaryExport(APIView):
                     "loss_of_pay": loss_of_pay,
                     "total_weekoff": total_weekoff,
                     "weekoff_used": weekoff_used,
+                    "remaining_weekoff": remaining_weekoff,
+                    "Days_in_a_month": days_in_month
                 }
                 # Add the details for the employee to the list
                 emp_details.append(emp_dict)
-                # print(emp_dict)
         # Serialize the employee details list and return the response
         serializer = SummaryexportSerializer(emp_details, many=True)
         return Response(serializer.data)
+
 
 class BreakhoursView(APIView):
     @ csrf_exempt
@@ -535,25 +553,32 @@ class RetriveBreakhours(APIView):
             Empbreak, many=True)
         return Response(serializer.data)
 
-#Email
+# Email
+
+
 @csrf_exempt
 def send_email(request):
     data = json.loads(request.body)
     subject = data['subject']
     message = data['message']
     recipient = data['recipient']
-    cc_recipients = data.get('cc', 'parthipanmurugan335317@gmail.com')  # get list of CC recipients from data or empty string if not provided
+    # get list of CC recipients from data or empty string if not provided
+    cc_recipients = data.get('cc', 'parthipanmurugan335317@gmail.com')
     from_email = 'parthibansmrft@gmail.com'
     signature = 'Contact Us, \n Shanmuga Hospital, \n 24, Saradha College Road,\n Salem-636007 Tamil Nadu,\n 8754033833,\n info@shanmugahospital.com,\n https://shanmugahospital.com/'
 
     recipient_list = [recipient]  # start with primary recipient
     if cc_recipients:
-        recipient_list += cc_recipients.split(',')  # add CC recipients to the list
+        # add CC recipients to the list
+        recipient_list += cc_recipients.split(',')
 
-    send_mail(subject, message + '\n\n\n\n\n' + signature, from_email, recipient_list, fail_silently=False)
+    send_mail(subject, message + '\n\n\n\n\n' + signature,
+              from_email, recipient_list, fail_silently=False)
     return JsonResponse({'message': 'Email sent successfully'})
 
-#Whatsapp using Twilio 
+# Whatsapp using Twilio
+
+
 @csrf_exempt
 def send_whatsapp(request):
     account_sid = 'ACe1d37f2342c44648499add958166abe2'
@@ -561,7 +586,7 @@ def send_whatsapp(request):
 
     data = json.loads(request.body)
     message = data['message']
-    to=data['to']
+    to = data['to']
     signature = 'Contact Us, \n Shanmuga Hospital, \n 24, Saradha College Road,\n Salem-636007 Tamil Nadu,\n 8754033833,\n info@shanmugahospital.com,\n https://shanmugahospital.com/'
     client = Client(account_sid, auth_token)
     client.messages.create(
@@ -569,13 +594,17 @@ def send_whatsapp(request):
         from_='whatsapp:+14155238886',
         body=message+"\n\n"+signature)
     return HttpResponse("whatsapp message sent sucessfully")
-    
+
+
 ...
+
+
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST':
         # Connect to MongoDB
-        client = MongoClient('mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
+        client = MongoClient(
+            'mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
         db = client['data']
         fs = GridFS(db)
 
@@ -596,21 +625,19 @@ def upload_file(request):
             return HttpResponse(f'File uploaded with ID {file_id} (stored inline)')
 
 
-
-
-
 @csrf_exempt
 def get_file(request):
     # Connect to MongoDB
-    
-    client = MongoClient('mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
+
+    client = MongoClient(
+        'mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
     db = client['data']
     fs = GridFS(db)
     # print("gridfs",fs)
     filename = request.GET.get('filename')
     # print("filename",filename)
     # file = fs.find_one({"filename": "parthiban.pdf"})
-    file = fs.find_one({"filename": filename })
+    file = fs.find_one({"filename": filename})
     # print("file",file)
     if file is not None:
         # Return the file contents as an HTTP response
@@ -623,20 +650,22 @@ def get_file(request):
     else:
         # Return a 404 error if the file is not found
         return HttpResponse(status=404)
- 
+
+
 @csrf_exempt
 def get_profile_image(request):
     # Connect to MongoDB
-    client = MongoClient('mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
+    client = MongoClient(
+        'mongodb+srv://madhu:salem2022@attedancemanagement.oylt7.mongodb.net/?retryWrites=true&w=majority')
     db = client['data']
     fs = GridFS(db)
-    
+
     # Get the employee's profile_picture_id from the request
     profile_picture_id = request.GET.get('profile_picture_id')
-    
+
     # Look up the corresponding file in GridFS
     file = fs.find_one(ObjectId(profile_picture_id))
-    
+
     if file is not None:
         # Return the file contents as an HTTP response
         response = HttpResponse(file.read())
@@ -646,6 +675,8 @@ def get_profile_image(request):
     else:
         # Return a 404 error if the file is not found
         return HttpResponse(status=404)
+
+
 class RetrieveEmployeehours(APIView):
     def post(self, request):
         data = request.data
@@ -654,7 +685,8 @@ class RetrieveEmployeehours(APIView):
         year = data.get("year")
         emp_id = data.get("id")
         # Get all employees who have logged in during the specified month and year
-        emp_data = Admincalendarlogin.objects.filter(Q(day=day)&Q(month=month) & Q(year=year))
+        emp_data = Admincalendarlogin.objects.filter(
+            Q(day=day) & Q(month=month) & Q(year=year))
         # Filter by employee ID if it is provided
         if emp_id:
             emp_data = emp_data.filter(id=emp_id)
@@ -662,20 +694,21 @@ class RetrieveEmployeehours(APIView):
         # Serialize the employee details list and return the response
         serializer = EmployeeHoursSerializer(emp_data, many=True)
         return Response(serializer.data)
-    
-
 
     # Retrieve Break Hours
 # This view retrieves the break login and logout time for break details
-import datetime
+
+
 class RetrieveBreak(APIView):
     @csrf_exempt
     def get(self, request):
         current_date = datetime.date.today()
-        department = request.GET.get('department') # get the department parameter from the request query params
+        # get the department parameter from the request query params
+        department = request.GET.get('department')
         employees = Employee.objects.all()
-        if department: # check if department is present in the query params
-            employees = employees.filter(department=department) # filter employees based on the selected department
+        if department:  # check if department is present in the query params
+            # filter employees based on the selected department
+            employees = employees.filter(department=department)
         emp_breaks = Breakhours.objects.filter(date=current_date)
         # Get the list of employee IDs that are currently on break
         emp_ids_on_break = [emp.id for emp in emp_breaks]
@@ -686,13 +719,15 @@ class RetrieveBreak(APIView):
         # Filter the employees based on whether they are on break or not
         employees_on_break = Employee.objects.filter(id__in=emp_ids_on_break)
         # Get the list of employee IDs that have logged in today
-        employee_logins = Admincalendarlogin.objects.filter(date=current_date).values()
+        employee_logins = Admincalendarlogin.objects.filter(
+            date=current_date).values()
         emp_ids_logged_in = [emp['id'] for emp in employee_logins]
         # Filter the employees based on whether they are on break or not
         employees_on_break = employees.filter(id__in=emp_ids_on_break)
         # Filter the employees based on whether they have logged in today or not
         employees_not_on_break = employees.exclude(id__in=emp_ids_on_break)
-        employees_not_on_break = employees_not_on_break.exclude(id__in=emp_ids_logged_in)
+        employees_not_on_break = employees_not_on_break.exclude(
+            id__in=emp_ids_logged_in)
         # Filter the employees based on whether they are active or not
         employees_active = employees.filter(id__in=emp_ids_logged_in)
         # Create a dictionary to store employee IDs and their corresponding lunch start times
@@ -705,8 +740,10 @@ class RetrieveBreak(APIView):
         for emp in employees_on_break:
             emp_dict = EmployeeShowSerializer(emp).data
             lunch_start = emp_lunch_starts.get(emp.id)
-            break_start_time = datetime.datetime.strptime(lunch_start, "%Y-%m-%d %I:%M %p")
-            emp_dict["break_start_time"] = datetime.datetime.strftime(break_start_time, "%I:%M %p")
+            break_start_time = datetime.datetime.strptime(
+                lunch_start, "%Y-%m-%d %I:%M %p")
+            emp_dict["break_start_time"] = datetime.datetime.strftime(
+                break_start_time, "%I:%M %p")
             emp_details_on_break.append(emp_dict)
         # Create a list of dictionaries for employees not on break
         emp_details_not_on_break = []

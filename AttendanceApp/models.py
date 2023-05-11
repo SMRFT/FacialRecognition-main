@@ -46,7 +46,7 @@ class Employee(models.Model):
     name = models.CharField(max_length=500)
     Gender = models.CharField(max_length=10)
     dob = models.CharField(max_length=500)
-    Maritalstatus= models.CharField(max_length=10)
+    Maritalstatus = models.CharField(max_length=10)
     mobile = models.CharField(max_length=500)
     department = models.CharField(max_length=500)
     RNRNO = models.IntegerField(blank=True, null=True)
@@ -58,36 +58,39 @@ class Employee(models.Model):
     proof = models.FileField(storage=GridFSStorage())
     certificates = models.FileField(storage=GridFSStorage())
     designation = models.CharField(max_length=500)
-    Aadhaarno= models.CharField(max_length=500)
-    PanNo=models.CharField(max_length=500)
-    IdentificationMark=models.CharField(max_length=500)
-    BloodGroup=models.CharField(max_length=500)
+    Aadhaarno = models.CharField(max_length=500)
+    PanNo = models.CharField(max_length=500)
+    IdentificationMark = models.CharField(max_length=500)
+    BloodGroup = models.CharField(max_length=500)
     address = models.CharField(max_length=500)
-    imgSrc =models.FileField(storage=GridFSStorage())
+    imgSrc = models.FileField(storage=GridFSStorage())
     imgSrcname = models.CharField(max_length=500)
     educationData = models.CharField(max_length=1200)
     experienceData = models.CharField(max_length=1200)
     referenceData = models.CharField(max_length=1200)
     selectedLanguages = models.CharField(max_length=500, blank=True)
+    added_at = models.DateTimeField(auto_now_add=True)
     profile_picture_id = models.CharField(max_length=24, null=True, blank=True)
+
+
 class DeletedEmployee(models.Model):
     id = models.CharField(primary_key=True, max_length=500)
     name = models.CharField(max_length=500)
     email = models.CharField(max_length=500)
     mobile = models.CharField(max_length=500)
     department = models.CharField(max_length=500)
-    deleted_at =models.DateField()
+    deleted_at = models.DateField()
     designation = models.CharField(max_length=500)
     address = models.CharField(max_length=500)
-    # imgSrc = models.ImageField() 
+    # imgSrc = models.ImageField()
     educationData = models.CharField(max_length=1200)
     experienceData = models.CharField(max_length=1200)
     referenceData = models.CharField(max_length=1200)
     selectedLanguages = models.CharField(max_length=500, blank=True)
-    Aadhaarno= models.CharField(max_length=500)
-    PanNo=models.CharField(max_length=500)
-    IdentificationMark=models.CharField(max_length=500)
-    BloodGroup=models.CharField(max_length=500)
+    Aadhaarno = models.CharField(max_length=500)
+    PanNo = models.CharField(max_length=500)
+    IdentificationMark = models.CharField(max_length=500)
+    BloodGroup = models.CharField(max_length=500)
     RNRNO = models.IntegerField(blank=True, null=True)
     TNMCNO = models.CharField(max_length=500, blank=True, null=True)
     ValidlityDate = models.DateField(blank=True, null=True)
@@ -95,7 +98,7 @@ class DeletedEmployee(models.Model):
     bankaccnum = models.IntegerField()
     profile_picture_id = models.CharField(max_length=24, null=True, blank=True)
 
-    
+
 # Admin Login
 
 
@@ -104,7 +107,7 @@ class Admin(AbstractUser):
     email = models.CharField(max_length=500, unique=True)
     password = models.CharField(max_length=500)
     role = models.CharField(max_length=100)
-    mobile = models.CharField(max_length=100)  
+    mobile = models.CharField(max_length=100)
     username = None
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -141,8 +144,8 @@ class Admincalendarlogin(models.Model):
     date = models.DateField()
     day = models.IntegerField()
     leavetype = models.CharField(max_length=500)
-    latelogin=models.TimeField()
-    earlyLogout=models.TimeField()
+    latelogin = models.TimeField()
+    earlyLogout = models.TimeField()
 
 # Event calendar model
 
@@ -175,6 +178,8 @@ class Summary(models.Model):
 # Employee calendar export model for single employee
 
 # Employee calendar export model for single employee
+
+
 class Employeeexport(models.Model):
     id = models.CharField(max_length=500, primary_key=True)
     name = models.CharField(max_length=500)
@@ -189,6 +194,8 @@ class Employeeexport(models.Model):
     Total_hours_worked = models.CharField(max_length=500)
     leavetype = models.CharField(max_length=500)
 # Employee calendar export model for all the employee
+
+
 class Summaryexport(models.Model):
     id = models.CharField(max_length=500, primary_key=True)
     name = models.CharField(max_length=500)
@@ -215,15 +222,14 @@ class Breakhours(models.Model):
     Breakhour = models.CharField(max_length=500)
 
 
-    
 class EmployeeHours(models.Model):
-    id = models.CharField(max_length=500,primary_key=True)
+    id = models.CharField(max_length=500, primary_key=True)
     name = models.CharField(max_length=500)
     month = models.IntegerField()
     year = models.IntegerField()
     date = models.DateField()
     day = models.IntegerField()
-    latelogin=models.TimeField()
-    earlyLogout=models.TimeField()
+    latelogin = models.TimeField()
+    earlyLogout = models.TimeField()
     # department = models.CharField(max_length=500)
     # designation = models.CharField(max_length=500)

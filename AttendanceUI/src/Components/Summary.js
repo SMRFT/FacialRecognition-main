@@ -19,8 +19,8 @@ function MyComponent() {
     function handleChange(e, selectedDate) {
         setSelectedDepartment(e.target.value);
         setStartDate(selectedDate);
-        console.log("Selected department:", e.target.value);
-        console.log("Selected date:", selectedDate);
+        // console.log("Selected department:", e.target.value);
+        // console.log("Selected date:", selectedDate);
       }
       useEffect(() => {
         const getuserdata = async () => {

@@ -1,52 +1,198 @@
 /* Set the background color of the body element to light blue */
 body {
-    background-color: lightblue;
+    background-color: rgb(225, 247, 248);
+}
+.employee-name{
+    margin-right: 60%;
+    margin-top: -7% !important;
+    color: rgb(14, 129, 138);
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .id{
+    margin-right: 68%;
+    color: rgb(62, 155, 161);
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: cursive;
+  }
+
+  .employee-id{
+    margin-right: 68%;
+    color: rgb(14, 129, 138);
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .department{
+    margin-right: 50%;
+    margin-top: -4% !important;
+    color: rgb(62, 155, 161);
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: cursive;
+  }
+
+  .employee-department{
+    margin-right: 50%;
+    color: rgb(14, 129, 138);
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+.summary-container{
+    margin: 50%;
+    margin-top: -14%;
+    width: fit-content;
+    height: 4cm !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.attendance-container{
+    margin: 50%;
+    margin-top: -14%;
+    width: fit-content;
+    height: 4cm !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.overtime-container{
+    margin: 50%;
+    margin-top: -14%;
+    width: fit-content;
+    height: 4cm !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary-table-container{
+    margin: 15%;
+    margin-left: 15%;
+    margin-top: -47%;
+    text-align: center;
+}
+
+.overtime-table-container{
+    margin: 15%;
+    margin-left: 38%;
+    margin-top: -47%;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.attendance-table-container{
+    margin: 15%;
+    margin-left: 22%;
+    margin-top: -47%;
+    text-align: center;
+}
+
+.react-datepicker__input-container input {
+    width:100% !important;
+    height: 40px !important;
+    font-size: 16px !important;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #CED4DA;
+    text-align: center;
+  }
+
+.divider {
+    display: inline-block;
+    width: 1px;
+    height: 100px;
+    background-color: rgb(208, 212, 212);
+    /* box-shadow: 3px 5px rgb(241, 243, 243); */
+    margin: 0 30px;
+    vertical-align: middle;
 }
 
 .employee-details-container {
-    margin: 20px;
+    margin: 15%;
     margin-top: 2%;
     padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #f9f6f6;
-    margin-right: 80%;
-  }
-  
-  h2 {
-    margin-top: 0;
-  }
-  
-  p {
-    margin: 5px 0;
+    border: none;
+    background-color: #cce9eede;
+    width: 40%;
+    border-radius: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-.download-container {
+  .details-row {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .details-heading {
+    font-weight: bold;
+    margin-right: 10px;
+    width: 180px;
+  }
+  
+  .details-value {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+  }
+
+  .colon {
+    font-size:large;
+    font-weight: bold;
+    margin-right: 10px;
+  }  
+
+.normal-container{
+    margin-left: 18%;
+    margin-top: 10%;
+    width: 75% !important;
+    height: 4cm !important;
+    border: none;
+    background: linear-gradient(to top right, #0fc7c7 0%, #e2ffff 100%);
+}
+
+.icon-container {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    margin-top: 80px;
-}
-
-.download-container>* {
-    align-self: flex-start;
-}
-
-.download-button1 {
-    margin: 10px;
-    position: fixed;
-    padding: 5px 10px;
-    border-radius: 5px;
-    width: 100px;
-    height: 50px;
-    font-size: 14px;
-    flex-direction: row;
-    justify-content: flex-end;
-    color: white;
-    background-color: rgb(234, 13, 13);
+    margin: 18%;
+    margin-top: 1%;
+    padding: 10px;
+    width: 75% !important;
+    height: 4cm !important;
     border: none;
-    cursor: pointer;
+    background: linear-gradient(to top right, #0fc7c7 0%, #e2ffff 100%);
 }
 
+thead th {
+    background-color: #bedde4de;
+    color:#5f9ea0;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+td{
+    text-align: center;
+}
+  
 .download-button,
 .view-button {
     margin: 10px;
@@ -61,115 +207,15 @@ body {
     cursor: pointer;
 }
 
-@media screen and (max-width: 768px) {
-    .download-container {
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .download-button,
-    .view-button,
-    .download-button1 {
-        margin: 5px;
-        padding: 5px 10px;
-        font-size: 12px;
-        width: 80px;
-        height: 40px;
-    }
-}
-
-
-
-
-.page-heading {
-    text-align: center;
-    margin-bottom: -80px;
-}
-
-.page-heading h1 {
-    font-size: 30px;
-    font-weight: bold;
-    color: #333;
-    text-shadow: 2px 2px #ddd;
-}
-
-.page-heading h1 span {
-    color: #f00;
-}
-
-.page-heading p {
-    font-size: 18px;
-    font-weight: bold;
-    color: #666;
-    margin-top: 10px;
-    text-transform: uppercase;
-}
-
 .message {
     margin-bottom: -0.9rem;
     margin-left: 1.5em;
 }
 
-
-
-.button22 {
-    background-color: #4CAF50;
-    /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.button22 :hover {
-    background-color: #3e8e41;
-}
-
-.button22 :focus {
-    outline: none;
-}
-
-/* Button with "Hide Data" text */
-.button22 [data-active="true"]::before {
-    content: "Hide ";
-}
-
-/* Button with "Employee Data" text */
-.button22 [data-active="false"]::before {
-    content: "Employee ";
-}
-
-/* Icon for "Hide Data" button */
-.button22 [data-active="true"]::after {
-    content: "\2193";
-    /* Down arrow unicode character */
-    margin-left: 5px;
-}
-
-/* Icon for "Employee Data" button */
-.button22 [data-active="false"]::after {
-    content: "\2191";
-    /* Up arrow unicode character */
-    margin-left: 5px;
-}
-
-
-
-
-  
   /* You can customize the styles based on your preferences */
-  
-
   .loading {
     margin: 20px;
     padding: 20px;
     background-color: #f8f8f8;
     /* Add additional styles as needed */
   }
-  

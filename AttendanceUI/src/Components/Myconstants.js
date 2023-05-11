@@ -1,4 +1,6 @@
-module.exports = Object.freeze({
+
+const Myconstants = Object.freeze({
+
     shift1Name: 'Morning',
     shift2Name: 'Afternoon',
     shift3Name: 'night',
@@ -24,4 +26,7 @@ module.exports = Object.freeze({
     lunchalreadylogout: 'You are Already in Lunch!',
     lunchalreadylogout: 'You are Already in Lunch!',
     lunchlogin: ' Thanks For Login...!'
+
 });
+
+export default Myconstants;

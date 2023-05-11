@@ -4,66 +4,82 @@
     justify-content: center;
     margin-top: 0%;
 }
+
 .date-picker {
     margin: 10px;
 }
+
 .date-picker label {
     font-size: 30px;
 }
+
 .date-picker .react-datepicker__input-container input {
     font-size: 10px;
     width: 100px;
 }
+
 .date-picker .react-datepicker__year-wrapper {
     width: 100px;
     margin: 10px 0;
 }
+
 .date-picker .react-datepicker__year-text,
 .date-picker .react-datepicker__month-text {
-    font-size: 10px;
+    font-size: 8px;
+    margin-left: 10%;
 }
+
 .date-picker i {
     margin-top: 20px;
-    font-size: 50px;
+    font-size: 30px;
     color: darkblue;
     cursor: pointer;
 }
+
 @media only screen and (min-width: 768px) {
     .container1 {
         flex-wrap: nowrap;
     }
+
     .date-picker {
         margin: 0 20px;
     }
+
     .date-picker label {
         font-size: 25px;
     }
+
     .date-picker .react-datepicker__input-container input {
         font-size: 25px;
         width: 250px;
     }
+
     .date-picker .react-datepicker__year-wrapper {
-        width: 250px;
+        width: 150px;
         margin: 20px 0;
     }
+
     .date-picker .react-datepicker__year-text,
     .date-picker .react-datepicker__month-text {
-        font-size: 25px;
+        font-size: 15px;
     }
+
     .date-picker i {
         margin-top: 20px;
-        font-size: 80px;
-        width: 100px;
-        height: 50px;
+        font-size: 30px;
+        width: 80px;
+        height: 30px;
         margin-right: 20px;
     }
 }
+
 .download-csv1 {
     display: flex;
     align-items: center;
     margin-left: 40%;
     margin-top: 5%;
 }
+
 .button {
     --width: 150px;
     --height: 50px;
@@ -81,6 +97,7 @@
     font-family: "Arial";
     transition: background 0.3s;
 }
+
 .button::before {
     position: absolute;
     content: attr(data-tooltip);
@@ -94,6 +111,7 @@
     bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) + 10px);
     left: calc(50% - var(--tooltip-width) / 2);
 }
+
 .button::after {
     position: absolute;
     content: '';
@@ -104,17 +122,20 @@
     left: calc(50% - 10px);
     bottom: calc(100% + var(--gap-between-tooltip-to-button) - 10px);
 }
+
 .button::after,
 .button::before {
     opacity: 0;
     visibility: hidden;
     transition: all 0.5s;
 }
+
 .text {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .button-wrapper,
 .text,
 .icon {
@@ -125,13 +146,16 @@
     left: 0;
     color: #fff;
 }
+
 .text {
     top: 0
 }
+
 .text,
 .icon {
     transition: top 0.5s;
 }
+
 .icon {
     color: #fff;
     top: 100%;
@@ -139,40 +163,49 @@
     align-items: center;
     justify-content: center;
 }
+
 .button:hover {
     background: #6C18FF;
 }
+
 .button:hover .text {
     top: -100%;
 }
+
 .button:hover .icon {
     top: 0;
 }
+
 .button:hover:before,
 .button:hover:after {
     opacity: 1;
     visibility: visible;
 }
+
 .button:hover:after {
     bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) - 20px);
 }
+
 .button:hover:before {
     bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
 }
+
 .my-datepicker {
     width: 80px;
-  }
-  /* .my-datepicker .react-datepicker__month-container {
+}
+
+/* .my-datepicker .react-datepicker__month-container {
     width: 250px;
   } */
-  .my-datepicker .react-datepicker__month {
+.my-datepicker .react-datepicker__month {
     margin: 0;
-  }
-  .react-datepicker__input-container input {
-    width:50% !important;
+}
+
+.react-datepicker__input-container input {
+    width: 50% !important;
     height: 34px;
     font-size: 16px !important;
     padding: 6px 12px;
     border-radius: 4px;
     border: 1px solid #CED4DA;
-  }
+}

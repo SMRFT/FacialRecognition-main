@@ -83,7 +83,7 @@ const TrashPage = () => {
         }} alt="Profile Picture" />
      
          <Card.Body>
-          <h2 style={{ marginBottom: "10px" }}>ID: {employee.id}</h2>
+          <h2 style={{ marginBottom: "10px" ,fontSize:"20px"}}>ID: {employee.id}</h2>
           <p style={{ marginBottom: "10px" }}>
             Name: {employee.name}
           </p>
