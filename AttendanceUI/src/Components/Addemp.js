@@ -238,7 +238,7 @@ function Addemp() {
         ({
           method: "POST",
           headers: {
-            "x-api-key": "6b447d65-7b43-4e94-ada9-cf54e57bdf16",
+            "x-api-key": "99ea99a4-3b1d-4090-b327-b2dc09efbb8d",
           },
           url: "http://localhost:8000/api/v1/recognition/faces/?subject=" + name + "_" + id,
           data: comprefaceImage,

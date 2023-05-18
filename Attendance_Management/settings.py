@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -68,6 +69,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Attendance_Management.wsgi.application'
+
+with open('E:\parthi\project\project demo 1\FacialRecognition-third-master\AttendanceApp\config.json') as config_file:
+    config = json.load(config_file)
+
+COMPREFACE_API_KEY = config['compreface']['api_key']
 
 
 # Database
@@ -171,7 +177,7 @@ EMAIL_HOST_PASSWORD = 'jgnuxbycnzywwvlw'
 # whatsapp
 TWILIO_ACCOUNT_SID = 'ACe1d37f2342c44648499add958166abe2'
 TWILIO_AUTH_TOKEN = 'c6ff1b2f81b4fcac652d4d71fce766a2'
-#whatsapp vonage
+# whatsapp vonage
 VONAGE_API_KEY = '4be358a0'
 VONAGE_API_SECRET = '6GF9TK0JGgbe4V0A'
 VONAGE_BRAND_NAME = 'parthiban'

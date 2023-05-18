@@ -4,10 +4,10 @@ from pickle import FROZENSET
 # from django.conf.urls import url
 from django.urls import path, include
 from AttendanceApp import views
-from AttendanceApp.Views.deteteemp import DeleteEmp,DeletedEmployeeList,PermanentDeleteEmp,RestoreEmployee
-from AttendanceApp.Views.adminview import EmployeeView, AdminLogin, AdminReg,UserDetails
-from AttendanceApp.Views.retrieveemp import EmployeeEditView, RetriveEmp, EmployeeSearchView, RetriveEmpById, AdminCalendarView, AdmincalendarloginView, AdmincalendarlogoutView, RetrieveCalendarDataById,  RetriveEmpdesignationCount, RetriveEmpBydesignation, Summary, RetriveEmployeeexport, BreakhoursView, BreakhourslogoutView, RetriveSummaryExport, RetriveBreakhours, send_email, send_whatsapp,upload_file,get_file,RetrieveEmployeehours,get_profile_image
-from .views import EmployeeView
+from AttendanceApp.Views.deteteemp import DeleteEmp, DeletedEmployeeList, PermanentDeleteEmp, RestoreEmployee
+from AttendanceApp.Views.adminview import EmployeeView, AdminLogin, AdminReg, UserDetails
+from AttendanceApp.Views.retrieveemp import EmployeeEditView, RetriveEmp, EmployeeSearchView, RetriveEmpById, AdminCalendarView, AdmincalendarloginView, AdmincalendarlogoutView, RetrieveCalendarDataById,  RetriveEmpdesignationCount, RetriveEmpBydesignation, Summary, RetriveEmployeeexport, BreakhoursView, BreakhourslogoutView, RetriveSummaryExport, RetriveBreakhours, send_email, send_whatsapp, upload_file, get_file, RetrieveEmployeehours, get_profile_image, login
+from .views import EmployeeView, upload_image
 from AttendanceApp.Views.retrieveemp import RetrieveBreak
 from django.conf.urls.static import static
 from django.conf import settings
@@ -40,15 +40,16 @@ urlpatterns = [
     path('send-whatsapp/', send_whatsapp, name='send_whatsapp'),
     path('upload_file/', upload_file, name='upload_file'),
     path('get_file', get_file, name='get_file'),
-    path('breakdetails', RetrieveBreak.as_view()), 
-    path('Employeehours',RetrieveEmployeehours.as_view()),
+    path('breakdetails', RetrieveBreak.as_view()),
+    path('Employeehours', RetrieveEmployeehours.as_view()),
     path("delete-employee", DeleteEmp.as_view()),
     path('deleted-employees/', DeletedEmployeeList.as_view()),
     path('permanentdelete', PermanentDeleteEmp.as_view()),
     path('restore-employee/', RestoreEmployee.as_view()),
     path("UserDetails", UserDetails.as_view()),
     path('profile_image', get_profile_image, name='profile_image'),
-
+    path('login/', login),
+    path('upload/', upload_image, name='upload_image'),
     # path('message/', send_whatsapp, name='message')
 ]
 

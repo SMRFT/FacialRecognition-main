@@ -36,13 +36,13 @@ function ApexChart() {
       const chartOptions = {
         chart: {
           id: 'chartyear',
-          type: 'bar',
-          height: 350,
-          background: '#F6F8FA',
+          type: 'pie',
+          height: 400,
+          // background: '#F6F8FA',
           toolbar: {
             show: true,
             tools: {
-              download: false,
+              download: true,
               selection: true,
               zoom: true,
               zoomin: true,
@@ -50,56 +50,48 @@ function ApexChart() {
               pan: true,
             },
           },
+          title: {
+            text: 'Employee Count by Month',
+            align: 'center',
+            margin: 10,
+            style: {
+              fontSize: '18px',
+              fontWeight: 'bold',
+              color: '#333',
+            },
+          },
         },
+        
+        // theme: {
+        //   monochrome: {
+        //     enabled: true
+        //   }
+        // },
         plotOptions: {
-          bar: {
-            horizontal: false,
-            endingShape: 'flat',
-            columnWidth: '30%',
+          pie: {
+            colors: ['#000000'],
+            dataLabels: {
+              enabled: true,
+              formatter: (value, { seriesIndex, dataPointIndex, w }) => {
+                const employeeCount = employeeData[dataPointIndex].count;
+                const employeeNames = employeeData[dataPointIndex].employees;
+                return `${employeeCount} employees: ${employeeNames}`;
+              },
+              style: {
+                fontSize: '14px',
+              },
+            },
           },
         },
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent'],
-        },
-        series: [
-          {
-            name: 'Employees',
-            data: employeeData.map((e) => e.count),
-          },
-        ],
-        xaxis: {
-          categories: employeeData.map((e) => e.month),
-          title: {
-            text: 'Month',
-          },
-        },
-        yaxis: {
-          title: {
-            text: 'Number of Employees',
-          },
-        },
+        
+        series: employeeData.map((e) => e.count),
+        labels: employeeData.map((e) => e.month),
         tooltip: {
           y: {
-            formatter: (value) => value + ' employees',
-          },
-          x: {
-            formatter: (value) => value,
-          },
-          marker: {
-            show: false,
-          },
-        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-            const employeeCount = employeeData[dataPointIndex].count;
-            const employeeNames = employeeData[dataPointIndex].employees;
-            return `<div class="apexcharts-tooltip-custom">
-              <div class="employee-count">${employeeCount} employees</div>
-              <div class="employee-names">${employeeNames}</div>
-            </div>`;
+            formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
+              const employeeNames = employeeData[dataPointIndex].employees;
+              return `${value} employees: ${employeeNames}`;
+            },
           },
         },
       };
@@ -107,6 +99,9 @@ function ApexChart() {
       chart.render();
     }
   }, [employeeData]);
+
+  
+  
 
   return <div id="chart" style={{width:"45%",marginLeft:"50%",marginTop:"-30%"}}></div>;
 }

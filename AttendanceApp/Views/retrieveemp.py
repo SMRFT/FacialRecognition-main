@@ -1,3 +1,6 @@
+import traceback
+import requests
+import compreface
 from twilio.rest import Client
 from django.http import JsonResponse, HttpResponse
 from django.core.mail import send_mail
@@ -55,6 +58,51 @@ class RetriveEmp(APIView):
             emp_details = Employee.objects.all()
             serializer = EmployeeShowSerializer(emp_details, many=True)
             return Response(serializer.data)
+
+
+@api_view(['POST'])
+def login(request):
+    name = request.data.get('name')
+    photo = request.FILES.get('photo')
+
+    # Check if photo field is provided
+    if not photo:
+        return Response({'success': False, 'error': 'No photo provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Authenticate the user with Compreface API
+    api_key = '6b447d65-7b43-4e94-ada9-cf54e57bdf16'
+    endpoint = 'http://localhost:8000/api/v1/recognition/faces/?subject'
+
+    headers = {
+        'Authorization': f'Token {api_key}',
+        'Content-Type': 'multipart/form-data',
+    }
+
+    files = {
+        'photo': (photo.name, photo, photo.content_type),
+    }
+
+    try:
+        response = requests.post(endpoint, files=files, headers=headers)
+        response.raise_for_status()
+        result = response.json()
+
+        if result and 'success' in result and result['success']:
+            return Response({'success': True, 'name': name})
+        else:
+            return Response({'success': False}, status=status.HTTP_401_UNAUTHORIZED)
+    except requests.exceptions.RequestException as e:
+        traceback.print_exc()
+        return Response({'success': False, 'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except json.JSONDecodeError as e:
+        traceback.print_exc()
+        return Response({'success': False, 'error': 'Invalid JSON response from API'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except KeyError as e:
+        traceback.print_exc()
+        return Response({'success': False, 'error': f'Missing key in API response: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        traceback.print_exc()
+        return Response({'success': False, 'error': 'An unexpected error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # Retrieve Employee By Id

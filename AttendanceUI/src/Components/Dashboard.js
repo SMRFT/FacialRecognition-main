@@ -6,11 +6,16 @@ import './Dashboard.css'
 import axios from "axios";
 import Footer from "./Footer"
 import Chart from 'chart.js/auto';
-import { Bar } from "react-chartjs-2";
+import { Bar,Doughnut } from "react-chartjs-2";
 // import ApexChart from './Apexchart';
 import Chart1 from "react-apexcharts";
 import Chart3 from "./Chart.js";
+import Chart4 from "./Slchart"
 // import "../Logo.css";
+import FusionCharts from "fusioncharts";
+import Charts from "fusioncharts/fusioncharts.charts";
+import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
+import ReactFC from "react-fusioncharts";
 import { People, Block, FreeBreakfast } from '@material-ui/icons';
 import { Table } from 'react-bootstrap'
 const Donut = () => {
@@ -55,7 +60,7 @@ const Donut = () => {
     };
     useEffect(() => {
     }, [chart]);
-
+    ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
     const [employeeData, setEmployeeData] = useState([]);
 
     useEffect(() => {
@@ -71,18 +76,40 @@ const Donut = () => {
   
     const activeEmployees = employeeData.employees_active || [];
     const inactiveEmployees = employeeData.employees_not_active || [];
-    const breakEmployees = employeeData.employees_on_break    || [];
-    const data = {
-      labels: ["Active Employees", "Inactive Employees","Break Employees"],
-      datasets: [
-        {
-          label: "Employee Status",
-          data: [activeEmployees.length, inactiveEmployees.length,breakEmployees.length],
-          backgroundColor: ["#36A2EB", "#FF6384", "#8ED0E4"],
-          hoverBackgroundColor: ["#36A2EB", "#FF6384", "#8ED0E4"],
-        },
-      ],
+    const breakEmployees = employeeData.employees_on_break || [];
+  
+    const chartData = [
+      {
+        label: "Active Employees",
+        value: activeEmployees.length,
+        color: "#36A2EB",
+      },
+      {
+        label: "Inactive Employees",
+        value: inactiveEmployees.length,
+        color: "#FF6384",
+      },
+      {
+        label: "Break Employees",
+        value: breakEmployees.length,
+        color: "#8ED0E4",
+      },
+    ];
+  
+    const dataSource = {
+      chart: {
+        caption: "Employee Status Distribution",
+        plottooltext: "<b>$value</b> employees are $label",
+        showlegend: "1",
+        showpercentvalues: "0", // set to 0 to show count instead of percentage
+        legendposition: "bottom",
+        usedataplotcolorforlabels: "1",
+        theme: "fusion",
+      },
+      data: chartData,
     };
+    
+  
   
     const activeEmployeesCount = activeEmployees.length;
 const inactiveEmployeesCount = inactiveEmployees.length;
@@ -106,13 +133,13 @@ const breakEmployeesCount = breakEmployees.length;
         },
         plotOptions: {
           bar: {
-            horizontal: false,
+            horizontal: true,
             columnWidth: "55%",
             endingShape: "rounded",
           },
         },
         dataLabels: {
-          enabled: false,
+          enabled: true,
         },
         stroke: {
           show: true,
@@ -297,47 +324,47 @@ const breakEmployeesCount = breakEmployees.length;
         });
     }, []);
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
     
     const [userExportData, setUserExportData] = useState([]);
     
     useEffect(() => {
-      const getExportData = async () => {
-        fetch("http://127.0.0.1:7000/attendance/EmployeeSummaryExport", {
-          method: "post",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            month: currentMonth,
-            year: currentYear,
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setUserExportData(data);
+      const fetchData = async () => {
+        const data = [];
+        for (let i = 1; i <= 12; i++) {
+          const response = await fetch("http://127.0.0.1:7000/attendance/EmployeeSummaryExport", {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              month: i,
+              year: currentYear,
+            }),
           });
+          const result = await response.json();
+          const totalUsers = result.length;
+          const slTakenByUser = result.reduce((acc, user) => acc + user.SL_Taken, 0);
+          const slTakenPercentage = (slTakenByUser / (totalUsers * 1)) * 100; // calculate percentage for each month
+          const slNotTakenPercentage = 100 - slTakenPercentage;
+          data.push({ month: i, slTakenPercentage, slNotTakenPercentage }); // add percentages to data array
+        }
+        setUserExportData(data);
       };
-      getExportData();
+      fetchData();
     }, []);
-    
-    const slTakenByUser = userExportData.reduce((acc, user) => {
-      return acc + user.SL_Taken;
-    }, 0);
-    
-    const totalUsers = userExportData.length;
-    const slTakenPercentage = (slTakenByUser / (totalUsers * 12)) * 100;
     
     const chartOptions8 = {
       chart: {
         type: "pie",
       },
-      series: [slTakenPercentage, 100 - slTakenPercentage],
-      labels: ["SL Taken", "SL Not Using"],
+      series: userExportData.map((monthData) => monthData.slTakenPercentage), // use percentages from userExportData to generate the pie chart
+      labels: userExportData.map((monthData) => `Month ${monthData.month}`),
       pie: {
         offsetX: -10,
         offsetY: 30,
       },
     };
+    
+    
     
     
 
@@ -360,25 +387,32 @@ const breakEmployeesCount = breakEmployees.length;
     <span>{breakEmployeesCount} Employees on Break</span>
   </div>
 </div>
-<div style={{ marginLeft:"-10%", width: '500px', height: '500px',marginTop:"5%" }}>
-  <Bar data={data} />
+<div style={{ marginLeft:"-10%", width: '500px', height: '300px',marginTop:"5%" }}>
+=
+  <ReactFC
+      type="pie3d"
+      width="120%"
+      height="120%"
+      dataFormat="JSON"
+      dataSource={dataSource}
+    />
 </div>
 
-<div style={{marginLeft:"60%",marginTop:"-35%"}}>
-    <Chart1 options={chartOptions8} series={chartOptions8.series} type="pie"  height={300} />
+<div style={{marginLeft:"30%",marginTop:"-22%", width: '400px', height: '200px'}}>
+    <Chart4 />
   </div>
-    <div style={{marginLeft:"-10%",marginTop:"12%"}}>
+    <div style={{marginLeft:"-10%",marginTop:"10%"}}>
         <Chart1
             options={chartOptions.options}
             series={chartOptions.series}
             type="bar"
-            height={370}
-            width={700}
+            height={500}
+            width={500}
         />
     </div>
-   
+   <div style={{marginLeft:"-50%",marginTop:"15%" }}>
 <Chart3/>
-
+</div>
       </body>
       
     )
