@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1fde1631.css",
+    "main.js": "/static/js/main.3d4f9a5f.js",
+    "static/media/bootstrap-icons.woff?": "/static/media/bootstrap-icons.e559bf06bc84fd9525e6.woff",
+    "static/media/bootstrap-icons.woff2?": "/static/media/bootstrap-icons.ea98e12d2d58747f9fc5.woff2",
+    "static/media/smrft.png": "/static/media/smrft.813708e3f9b19143a3a7.png",
+    "static/media/smrft_logo.png": "/static/media/smrft_logo.0ceb91f0bccb54558a72.png",
+    "index.html": "/index.html",
+    "main.1fde1631.css.map": "/static/css/main.1fde1631.css.map",
+    "main.3d4f9a5f.js.map": "/static/js/main.3d4f9a5f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1fde1631.css",
+    "static/js/main.3d4f9a5f.js"
+  ]
+}
