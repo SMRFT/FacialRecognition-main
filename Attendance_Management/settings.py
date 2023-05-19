@@ -48,6 +48,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Attendance_Management.urls'
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Add the URL of your React app
+    # Add any other allowed origins if needed
+]
 
 TEMPLATES = [
     {

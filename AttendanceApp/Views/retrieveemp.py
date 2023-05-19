@@ -1,6 +1,6 @@
 import traceback
 import requests
-import compreface
+
 from twilio.rest import Client
 from django.http import JsonResponse, HttpResponse
 from django.core.mail import send_mail
